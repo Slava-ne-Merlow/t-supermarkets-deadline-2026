@@ -1,7 +1,6 @@
 services:
   app-backend:
-    build:
-      context: /opt/miniapp/app-backend
+    image: miniapp-backend:latest
     container_name: miniapp-backend
     restart: unless-stopped
     environment:
@@ -14,8 +13,7 @@ services:
       - "8081:8080"
 
   app-frontend:
-    build:
-      context: /opt/miniapp/app-frontend
+    image: miniapp-frontend:latest
     container_name: miniapp-frontend
     restart: unless-stopped
     ports:

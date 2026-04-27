@@ -16,10 +16,34 @@ jobs:
     env:
       APP_SSH_PORT: ${{ secrets.APP_SSH_PORT || '2002' }}
       APP_DIR: /opt/miniapp
+      IMAGE_ARCHIVE: miniapp-images.tar.gz
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: |
+          docker build \
+            -t miniapp-backend:latest \
+            -t miniapp-backend:${{ github.sha }} \
+            services/app-backend
+
+      - name: Build frontend image
+        run: |
+          docker build \
+            -t miniapp-frontend:latest \
+            -t miniapp-frontend:${{ github.sha }} \
+            services/app-frontend
+
+      - name: Pack images
+        run: |
+          docker save \
+            miniapp-backend:latest \
+            miniapp-backend:${{ github.sha }} \
+            miniapp-frontend:latest \
+            miniapp-frontend:${{ github.sha }} \
+            | gzip > "$IMAGE_ARCHIVE"
 
       - name: Setup SSH key
         run: |
@@ -33,29 +57,24 @@ jobs:
           ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
           ssh-keyscan -p "$APP_SSH_PORT" -H "${{ secrets.APP_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Upload repo to server
+      - name: Upload deploy bundle
         run: |
           SSH_CMD="ssh -i ~/.ssh/id_ed25519 -p $APP_SSH_PORT -o IdentitiesOnly=yes -o PreferredAuthentications=publickey"
+          TARGET="${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}"
 
-          $SSH_CMD "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}" "mkdir -p '$APP_DIR/repo'"
+          $SSH_CMD "$TARGET" "mkdir -p '$APP_DIR/deploy'"
 
-          rsync -az --delete \
-            --exclude ".git/" \
-            --exclude ".github/" \
-            --exclude ".gradle/" \
-            --exclude ".angular/" \
-            --exclude "build/" \
-            --exclude "dist/" \
-            --exclude "node_modules/" \
-            --exclude ".env" \
+          rsync -az \
             -e "$SSH_CMD" \
-            ./ \
-            "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}:$APP_DIR/repo/"
+            "$IMAGE_ARCHIVE" \
+            infra/app-server/docker-compose.yml \
+            infra/app-server/deploy.sh \
+            "$TARGET:$APP_DIR/deploy/"
 
       - name: Run deploy script
         run: |
           ssh -i ~/.ssh/id_ed25519 -p "$APP_SSH_PORT" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}" "
-            mkdir -p '$APP_DIR/repo' &&
-            cd '$APP_DIR/repo' &&
-            APP_DIR='$APP_DIR' bash infra/app-server/deploy.sh
+            APP_DIR='$APP_DIR' \
+            IMAGE_ARCHIVE='$APP_DIR/deploy/$IMAGE_ARCHIVE' \
+            bash '$APP_DIR/deploy/deploy.sh'
           "
