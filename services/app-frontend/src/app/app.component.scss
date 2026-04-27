@@ -1,17 +1,18 @@
 :host {
   display: block;
-  height: 100dvh;
+  min-height: 100dvh;
   overflow: hidden;
   overscroll-behavior: none;
-  touch-action: pan-x;
   color: var(--tg-theme-text-color, #17212b);
   background: var(--tg-theme-bg-color, #f4f6f8);
 }
 
 .miniapp-shell {
   height: 100dvh;
-  overflow: hidden;
-  overscroll-behavior: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 18px;
   display: grid;
   place-items: center;
