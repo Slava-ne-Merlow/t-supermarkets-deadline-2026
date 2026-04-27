@@ -51,8 +51,8 @@
 
 .top-region.header-collapsed {
   gap: 0;
-  padding-top: calc(2px + env(safe-area-inset-top));
-  padding-bottom: 1px;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: 0;
 }
 
 .app-bar,
@@ -62,7 +62,9 @@
 }
 
 .app-bar {
-  min-height: 22px;
+  min-height: 14px;
+  height: 14px;
+  block-size: 14px !important;
 }
 
 .subscreen-bar {
@@ -71,7 +73,7 @@
 
 .app-bar-title {
   width: 100%;
-  min-height: 10px;
+  min-height: 8px;
   display: grid;
   place-items: center;
   font-size: 10px;
