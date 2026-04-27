@@ -33,7 +33,6 @@ type Tab = {
   id: TabId;
   label: string;
   icon: string;
-  badge?: string;
 };
 
 declare global {
@@ -58,7 +57,7 @@ export class AppComponent implements AfterViewInit {
     { id: 'home', label: 'Главная', icon: '@tui.star' },
     { id: 'payments', label: 'Платежи', icon: '@tui.circle-check' },
     { id: 'city', label: 'Город', icon: '@tui.link' },
-    { id: 'chat', label: 'Чат', icon: '@tui.ellipsis', badge: '11' },
+    { id: 'chat', label: 'Чат', icon: '@tui.ellipsis' },
     { id: 'showcase', label: 'Витрина', icon: '@tui.layout-grid' }
   ];
 

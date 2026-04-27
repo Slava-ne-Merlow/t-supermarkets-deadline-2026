@@ -201,17 +201,25 @@
 
 .tab-button {
   min-width: 0;
+  width: 100%;
   min-height: 52px;
   display: grid;
   justify-items: center;
   align-content: center;
+  justify-content: center;
   gap: 2px;
   padding: 0 2px;
   transform: translateY(-4px);
+  text-align: center;
   color: #8c8f96;
   border: 0;
   --tui-text-primary: currentColor;
   --tui-text-secondary: currentColor;
+}
+
+.tab-button[tuiTab] {
+  justify-self: stretch;
+  place-items: center;
 }
 
 .tab-button[tuiTab]._active,
@@ -224,6 +232,7 @@
   position: relative;
   display: grid;
   place-items: center;
+  justify-self: center;
   min-width: 34px;
   min-height: 27px;
 }
@@ -238,23 +247,6 @@
 .tab-icon-wrap tui-icon {
   inline-size: 27px;
   block-size: 27px;
-}
-
-.tab-badge {
-  position: absolute;
-  top: -8px;
-  right: -14px;
-  min-width: 26px;
-  height: 26px;
-  display: grid;
-  place-items: center;
-  padding: 0 7px;
-  border-radius: 999px;
-  background: #f13f38;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1;
 }
 
 .tab-label {
