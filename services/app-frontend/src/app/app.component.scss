@@ -253,6 +253,121 @@
   line-height: 1.08;
 }
 
+.home-actions {
+  display: grid;
+  gap: 18px;
+}
+
+.money-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.money-card,
+.quick-action {
+  border: 0;
+  color: #f7f7f8;
+  background: #1c1d20;
+  font: inherit;
+}
+
+.money-card {
+  min-height: clamp(132px, 34vw, 176px);
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  padding: clamp(18px, 5vw, 26px);
+  border-radius: 30px;
+  text-align: left;
+}
+
+.money-card strong {
+  font-size: clamp(20px, 6vw, 30px);
+  font-weight: 850;
+  line-height: 1.08;
+}
+
+.money-card > span:not(.spending-bar, .partner-icons) {
+  color: #f2f2f3;
+  font-size: clamp(16px, 4.6vw, 24px);
+  line-height: 1.1;
+}
+
+.spending-bar {
+  height: 18px;
+  display: grid;
+  grid-template-columns: 2fr 1.25fr .7fr .65fr .5fr 1.25fr;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.spending-bar i:nth-child(1) { background: #e77476; }
+.spending-bar i:nth-child(2) { background: #ff9228; }
+.spending-bar i:nth-child(3) { background: #55c2d4; }
+.spending-bar i:nth-child(4) { background: #aa95dd; }
+.spending-bar i:nth-child(5) { background: #f0a178; }
+.spending-bar i:nth-child(6) { background: #b7d1df; }
+
+.partner-icons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.partner-icons i {
+  width: clamp(42px, 11vw, 56px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 850;
+  font-style: normal;
+}
+
+.partner-icons i:nth-child(1) { background: #12572f; color: #79d232; }
+.partner-icons i:nth-child(2) { background: #f10d1c; }
+.partner-icons i:nth-child(3) { background: #ff7a1a; }
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.quick-action {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 0;
+  text-align: center;
+  background: transparent;
+}
+
+.quick-action > span {
+  width: 100%;
+  min-height: clamp(58px, 17vw, 82px);
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  background: #1c1d20;
+  color: #4a8cff;
+}
+
+.quick-action tui-icon {
+  inline-size: clamp(28px, 8vw, 42px);
+  block-size: clamp(28px, 8vw, 42px);
+}
+
+.quick-action em {
+  color: #f2f2f3;
+  font-size: clamp(12px, 3.6vw, 17px);
+  font-style: normal;
+  line-height: 1.12;
+}
+
 .bottom-tabs {
   position: absolute;
   right: 0;
@@ -559,6 +674,93 @@
   block-size: 36px;
 }
 
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  display: grid;
+  align-items: end;
+  background: rgb(0 0 0 / 46%);
+}
+
+.bottom-sheet {
+  min-height: 50dvh;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 8px clamp(18px, 5vw, 28px) calc(26px + env(safe-area-inset-bottom));
+  border-radius: 28px 28px 0 0;
+  background: #1c1d20;
+  color: #fff;
+  box-shadow: 0 -16px 44px rgb(0 0 0 / 42%);
+}
+
+.sheet-handle {
+  justify-self: center;
+  width: 44px;
+  height: 4px;
+  border-radius: 999px;
+  background: #6b6d73;
+}
+
+.sheet-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.sheet-header strong {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.sheet-header button {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  color: #aeb2ba;
+  background: #fff;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.sheet-placeholder {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  color: #c9ccd3;
+  text-align: center;
+}
+
+.sheet-placeholder tui-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  color: #6ea0ff;
+}
+
+.topup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.topup-grid button {
+  min-height: 56px;
+  border: 0;
+  border-radius: 18px;
+  color: #fff;
+  background: #2a2c31;
+  font-size: 20px;
+  font-weight: 800;
+}
+
 @media (max-width: 360px) {
   .screen,
   .subscreen {
@@ -572,5 +774,13 @@
 
   .tab-label {
     font-size: 11px;
+  }
+
+  .money-cards {
+    gap: 10px;
+  }
+
+  .quick-actions {
+    gap: 8px;
   }
 }

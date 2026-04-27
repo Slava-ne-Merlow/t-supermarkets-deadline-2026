@@ -63,6 +63,61 @@
                 </button>
               }
             </section>
+
+            <section class="home-actions" aria-label="Быстрые действия">
+              <div class="money-cards">
+                <button class="money-card" type="button" (click)="openHomeSheet('operations')">
+                  <strong>Все операции</strong>
+                  <span>Трат в апреле<br />31 822 ₽</span>
+                  <span class="spending-bar" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i><i></i><i></i>
+                  </span>
+                </button>
+
+                <button class="money-card cashback-card" type="button" (click)="openHomeSheet('cashback')">
+                  <strong>Кэшбэк<br />и бонусы</strong>
+                  <span class="partner-icons" aria-hidden="true">
+                    <i>АБ</i>
+                    <i>М</i>
+                    <i>Д</i>
+                  </span>
+                </button>
+              </div>
+
+              <div class="quick-actions">
+                <button
+                  class="quick-action"
+                  type="button"
+                  (click)="openDeepLink('bank100000000004://Main/PhoneByPhoto')"
+                >
+                  <span><tui-icon icon="@tui.arrow-right" /></span>
+                  <em>Перевести<br />по телефону</em>
+                </button>
+
+                <button class="quick-action" type="button" (click)="openHomeSheet('topup')">
+                  <span><tui-icon icon="@tui.plus" /></span>
+                  <em>Пополнить<br />Black</em>
+                </button>
+
+                <button
+                  class="quick-action"
+                  type="button"
+                  (click)="openDeepLink('bank100000000004://Main/Pay/ScanQR')"
+                >
+                  <span><tui-icon icon="@tui.qr-code" /></span>
+                  <em>Сканировать<br />QR-код</em>
+                </button>
+
+                <button
+                  class="quick-action"
+                  type="button"
+                  (click)="openDeepLink('bank100000000004://Main/tpaybluetooth')"
+                >
+                  <span><tui-icon icon="@tui.contactless" /></span>
+                  <em>Оплатить<br />айфоном</em>
+                </button>
+              </div>
+            </section>
           }
 
           @for (height of contentPlaceholders; track $index) {
@@ -175,6 +230,40 @@
         <button class="story-like" type="button" aria-label="Нравится">
           <tui-icon icon="@tui.heart" />
         </button>
+      </section>
+    }
+
+    @if (activeHomeSheet) {
+      <section class="sheet-backdrop" (click)="closeHomeSheet()">
+        <div class="bottom-sheet" (click)="$event.stopPropagation()">
+          <span class="sheet-handle" aria-hidden="true"></span>
+          <header class="sheet-header">
+            <strong>{{ homeSheetTitle }}</strong>
+            <button type="button" aria-label="Закрыть" (click)="closeHomeSheet()">×</button>
+          </header>
+
+          @switch (activeHomeSheet) {
+            @case ('operations') {
+              <div class="sheet-placeholder">
+                <tui-icon icon="@tui.info" />
+                <span>Здесь позже появится детализация операций.</span>
+              </div>
+            }
+            @case ('cashback') {
+              <div class="sheet-placeholder">
+                <tui-icon icon="@tui.star" />
+                <span>Здесь позже появятся кэшбэк, бонусы и партнерские предложения.</span>
+              </div>
+            }
+            @case ('topup') {
+              <div class="topup-grid">
+                @for (amount of topUpAmounts; track amount) {
+                  <button type="button">{{ amount }} ₽</button>
+                }
+              </div>
+            }
+          }
+        </div>
       </section>
     }
   </main>

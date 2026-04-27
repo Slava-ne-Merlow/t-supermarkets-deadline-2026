@@ -21,7 +21,15 @@ const MINIAPP_ICONS = {
   '@tui.info':
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle vector-effect="non-scaling-stroke" cx="12" cy="12" r="10"/><path vector-effect="non-scaling-stroke" d="M12 16v-4"/><path vector-effect="non-scaling-stroke" d="M12 8h.01"/></svg>',
   '@tui.heart':
-    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="black" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M19.5 12.572 12 20l-7.5-7.428A5 5 0 1 1 12 6.006a5 5 0 1 1 7.5 6.566"/></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="black" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M19.5 12.572 12 20l-7.5-7.428A5 5 0 1 1 12 6.006a5 5 0 1 1 7.5 6.566"/></svg>',
+  '@tui.arrow-right':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M5 12h14"/><path vector-effect="non-scaling-stroke" d="m12 5 7 7-7 7"/></svg>',
+  '@tui.plus':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M12 5v14"/><path vector-effect="non-scaling-stroke" d="M5 12h14"/></svg>',
+  '@tui.qr-code':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path vector-effect="non-scaling-stroke" d="M15 15h1v1h-1zM19 15h1v1h-1zM15 19h5"/></svg>',
+  '@tui.contactless':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M5 12c3.5-4 10.5-4 14 0"/><path vector-effect="non-scaling-stroke" d="M8 15c2.2-2.2 5.8-2.2 8 0"/><path vector-effect="non-scaling-stroke" d="M11 18c.7-.7 1.3-.7 2 0"/></svg>'
 } as const;
 
 export const appConfig: ApplicationConfig = {

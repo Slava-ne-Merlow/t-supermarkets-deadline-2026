@@ -47,6 +47,8 @@ type Story = {
   slides: readonly StorySlide[];
 };
 
+type HomeSheet = 'operations' | 'cashback' | 'topup';
+
 declare global {
   interface Window {
     Telegram?: {
@@ -216,6 +218,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   settingsOpen = false;
   activeStoryIndex: number | null = null;
   activeSlideIndex = 0;
+  activeHomeSheet: HomeSheet | null = null;
+
+  readonly topUpAmounts = [100, 200, 500, 1000, 2000];
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
@@ -273,6 +278,19 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.activeStory?.slides[this.activeSlideIndex] ?? null;
   }
 
+  get homeSheetTitle(): string {
+    switch (this.activeHomeSheet) {
+      case 'operations':
+        return 'Все операции';
+      case 'cashback':
+        return 'Кэшбэк и бонусы';
+      case 'topup':
+        return 'Пополнить Black';
+      default:
+        return '';
+    }
+  }
+
   ngAfterViewInit(): void {
     document.addEventListener('touchend', this.preventDoubleTapZoom, { passive: false });
 
@@ -314,6 +332,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
     this.settingsOpen = false;
+    this.closeHomeSheet();
     this.closeStory();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -324,6 +343,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.searchOpen = true;
+    this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -337,6 +357,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.settingsOpen = true;
+    this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -351,6 +372,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     this.activeStoryIndex = index;
     this.activeSlideIndex = 0;
+    this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -394,6 +416,20 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.activeStoryIndex -= 1;
       this.activeSlideIndex = this.stories[this.activeStoryIndex].slides.length - 1;
     }
+  }
+
+  openHomeSheet(sheet: HomeSheet): void {
+    this.activeHomeSheet = sheet;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeHomeSheet(): void {
+    this.activeHomeSheet = null;
+  }
+
+  openDeepLink(url: string): void {
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+    window.location.href = url;
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {
