@@ -3,7 +3,6 @@ set -euo pipefail
 
 APP_DIR="${APP_DIR:-/opt/miniapp}"
 IMAGE_ARCHIVE="${IMAGE_ARCHIVE:-$APP_DIR/deploy/miniapp-images.tar.gz}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 mkdir -p "$APP_DIR"
 
@@ -17,17 +16,21 @@ if [ ! -f "$IMAGE_ARCHIVE" ]; then
     exit 1
 fi
 
-cp "$SCRIPT_DIR/docker-compose.yml" "$APP_DIR/docker-compose.yml"
-
 gzip -dc "$IMAGE_ARCHIVE" | docker load
 
-cd "$APP_DIR"
+docker rm -f miniapp-backend >/dev/null 2>&1 || true
+docker rm -f miniapp-frontend >/dev/null 2>&1 || true
 
-if docker compose version >/dev/null 2>&1; then
-    docker compose up -d
-elif command -v docker-compose >/dev/null 2>&1; then
-    docker-compose up -d
-else
-    echo "Docker Compose is not installed. Install docker compose plugin or docker-compose." >&2
-    exit 1
-fi
+docker run -d \
+    --name miniapp-backend \
+    --restart unless-stopped \
+    --env-file "$APP_DIR/.env" \
+    -e SERVER_PORT=8080 \
+    -p 8081:8080 \
+    miniapp-backend:latest
+
+docker run -d \
+    --name miniapp-frontend \
+    --restart unless-stopped \
+    -p 8082:80 \
+    miniapp-frontend:latest

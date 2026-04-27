@@ -67,7 +67,6 @@ jobs:
           rsync -az \
             -e "$SSH_CMD" \
             "$IMAGE_ARCHIVE" \
-            infra/app-server/docker-compose.yml \
             infra/app-server/deploy.sh \
             "$TARGET:$APP_DIR/deploy/"
 

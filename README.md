@@ -20,8 +20,8 @@ Deploy flow:
 
 - GitHub Actions builds `miniapp-backend` and `miniapp-frontend` images.
 - Images are packed into `miniapp-images.tar.gz`.
-- The archive and compose files are uploaded to the VM.
-- The VM loads images with `docker load` and runs `docker compose up -d`.
+- The archive and deploy script are uploaded to the VM.
+- The VM loads images with `docker load` and runs containers with plain Docker.
 
 If the frontend is served directly from the same VM, use:
 
