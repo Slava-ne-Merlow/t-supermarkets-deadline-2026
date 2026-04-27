@@ -38,11 +38,14 @@ jobs:
 
       - name: Pack images
         run: |
+          docker pull caddy:2-alpine
+          docker tag caddy:2-alpine miniapp-caddy:latest
           docker save \
             miniapp-backend:latest \
             miniapp-backend:${{ github.sha }} \
             miniapp-frontend:latest \
             miniapp-frontend:${{ github.sha }} \
+            miniapp-caddy:latest \
             | gzip > "$IMAGE_ARCHIVE"
 
       - name: Setup SSH key

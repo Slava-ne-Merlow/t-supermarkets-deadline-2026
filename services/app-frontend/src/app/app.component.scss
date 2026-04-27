@@ -1,0 +1,142 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: var(--tg-theme-text-color, #17212b);
+  background: var(--tg-theme-bg-color, #f4f6f8);
+}
+
+.miniapp-shell {
+  min-height: 100vh;
+  padding: 18px;
+  display: grid;
+  place-items: center;
+}
+
+.panel {
+  width: min(100%, 460px);
+  display: grid;
+  gap: 18px;
+}
+
+.app-mark {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #2aabee;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.intro {
+  display: grid;
+  gap: 8px;
+}
+
+.eyebrow,
+.status,
+.user-card span,
+.meta-grid span,
+.user-card small {
+  margin: 0;
+  color: var(--tg-theme-hint-color, #66717c);
+}
+
+.eyebrow,
+.user-card span,
+.meta-grid span {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.status {
+  font-size: 16px;
+}
+
+.user-card,
+.meta-grid div {
+  border: 1px solid rgba(117, 136, 153, 0.22);
+  background: var(--tg-theme-secondary-bg-color, #fff);
+  border-radius: 8px;
+}
+
+.user-card {
+  padding: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.user-card strong {
+  font-size: 22px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.meta-grid div {
+  min-width: 0;
+  padding: 14px 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.meta-grid strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 700;
+}
+
+.primary {
+  color: var(--tg-theme-button-text-color, #fff);
+  background: var(--tg-theme-button-color, #2aabee);
+}
+
+.secondary {
+  color: var(--tg-theme-link-color, #2aabee);
+  background: var(--tg-theme-secondary-bg-color, #fff);
+  border: 1px solid rgba(117, 136, 153, 0.28);
+}
+
+@media (max-width: 420px) {
+  .miniapp-shell {
+    padding: 16px;
+    place-items: start stretch;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .meta-grid {
+    grid-template-columns: 1fr;
+  }
+}

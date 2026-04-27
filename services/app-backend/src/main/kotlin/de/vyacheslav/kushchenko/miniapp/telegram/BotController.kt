@@ -34,7 +34,7 @@ class BotController(
         message(startText)
             .markup {
                 inlineKeyboardMarkup {
-                    url("Открыть приложение") { frontendUrl }
+                    webAppInfo("Открыть приложение") { frontendUrl }
                 }
             }
             .send(user, bot)

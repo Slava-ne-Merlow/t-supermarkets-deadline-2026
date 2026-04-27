@@ -21,11 +21,12 @@ Deploy flow:
 - GitHub Actions builds `miniapp-backend` and `miniapp-frontend` images.
 - Images are packed into `miniapp-images.tar.gz`.
 - The archive and deploy script are uploaded to the VM.
-- The VM loads images with `docker load` and runs containers with plain Docker.
+- The VM loads images with `docker load` and runs backend, frontend, and Caddy containers with plain Docker.
 
 If the frontend is served directly from the same VM, use:
 
-- `APP_FRONTEND_URL=http://144.31.68.159:8082`
+- `APP_PUBLIC_HOST=144-31-68-159.sslip.io`
+- `APP_FRONTEND_URL=https://144-31-68-159.sslip.io`
 
 Use quotes for values with spaces in `/opt/miniapp/.env`, for example:
 
