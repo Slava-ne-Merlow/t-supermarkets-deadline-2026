@@ -707,7 +707,7 @@
 .settings-screen,
 .account-screen {
   position: absolute;
-  inset: 0 0 calc(88px + env(safe-area-inset-bottom));
+  inset: 0 0 calc(80px + env(safe-area-inset-bottom));
   z-index: 14;
   overflow-x: hidden;
   overflow-y: auto;
