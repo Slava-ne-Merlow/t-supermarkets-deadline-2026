@@ -10,12 +10,18 @@
           <span class="app-bar-title">{{ appBarTitle }}</span>
         </tui-app-bar>
 
-        @if (isHome) {
-          <button class="profile-row" type="button" (click)="openSettings()">
-            <span tuiAvatar size="xl" class="avatar">{{ avatarLabel }}</span>
-            <span class="profile-name">{{ displayName }}</span>
-            <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
-          </button>
+        @if (hasSearchHeader) {
+          @if (isHome) {
+            <button class="header-row profile-row" type="button" (click)="openSettings()">
+              <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
+              <span class="header-title profile-name">{{ displayName }}</span>
+              <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
+            </button>
+          } @else {
+            <div class="header-row">
+              <span class="header-title">Платежи</span>
+            </div>
+          }
 
           <tui-textfield
             class="search-field"
@@ -35,11 +41,18 @@
         }
       </header>
 
-      <div class="content-stack" [class.payments]="isPayments">
-        @for (height of contentPlaceholders; track $index) {
-          <div class="placeholder" tuiCardMedium [style.min-height.px]="height"></div>
-        }
-      </div>
+      @if (isStubTab) {
+        <div class="maintenance" tuiCardLarge>
+          <tui-icon icon="@tui.info" />
+          <strong>Ведутся технические работы</strong>
+        </div>
+      } @else {
+        <div class="content-stack" [class.payments]="isPayments">
+          @for (height of contentPlaceholders; track $index) {
+            <div class="placeholder" tuiCardMedium [style.min-height.px]="height"></div>
+          }
+        </div>
+      }
     </section>
 
     <tui-tabs
@@ -55,8 +68,6 @@
           type="button"
           class="tab-button"
           [class.active]="tab.id === activeTab"
-          [class.disabled]="!tab.enabled"
-          [disabled]="!tab.enabled"
           (click)="selectTab(index)"
         >
           <span class="tab-icon-wrap">
@@ -73,7 +84,9 @@
     @if (searchOpen) {
       <section class="subscreen">
         <tui-app-bar class="subscreen-bar" size="l">
-          <button tuiAppBarBack type="button" tuiSlot="start" (click)="closeSearch()"></button>
+          <button class="back-button" type="button" tuiSlot="start" (click)="closeSearch()">
+            <tui-icon icon="@tui.chevron-left" />
+          </button>
           <span>Поиск</span>
         </tui-app-bar>
 
@@ -104,7 +117,9 @@
     @if (settingsOpen) {
       <section class="subscreen">
         <tui-app-bar class="subscreen-bar" size="l">
-          <button tuiAppBarBack type="button" tuiSlot="start" (click)="closeSettings()"></button>
+          <button class="back-button" type="button" tuiSlot="start" (click)="closeSettings()">
+            <tui-icon icon="@tui.chevron-left" />
+          </button>
           <span>Настройки</span>
         </tui-app-bar>
 

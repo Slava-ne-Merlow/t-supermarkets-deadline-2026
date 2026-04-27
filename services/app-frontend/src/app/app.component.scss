@@ -7,6 +7,10 @@
   background: var(--tg-theme-bg-color, #000);
 }
 
+:host tui-icon {
+  color: currentColor;
+}
+
 .miniapp-shell {
   position: relative;
   width: min(100%, 560px);
@@ -36,15 +40,24 @@
   top: 0;
   z-index: 4;
   display: grid;
-  gap: 14px;
-  padding: calc(16px + env(safe-area-inset-top)) 0 18px;
+  gap: 9px;
+  overflow: hidden;
+  padding: calc(8px + env(safe-area-inset-top)) 0 10px;
   background: var(--tg-theme-bg-color, #000);
+  transition:
+    gap 160ms ease,
+    padding 160ms ease;
+}
+
+.top-region.header-collapsed {
+  gap: 0;
+  padding-bottom: 4px;
 }
 
 .app-bar,
 .subscreen-bar {
   --tui-background-base: transparent;
-  min-height: 44px;
+  min-height: 36px;
   color: var(--tg-theme-text-color, #f5f5f7);
 }
 
@@ -64,22 +77,30 @@
 }
 
 .profile-row {
+  text-align: left;
+}
+
+.header-row {
   width: 100%;
-  min-height: 72px;
+  min-height: 46px;
+  max-height: 50px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
   padding: 0;
   color: inherit;
   background: transparent;
   border: 0;
-  text-align: left;
+  overflow: hidden;
   transition:
     opacity 180ms ease,
     transform 180ms ease,
     max-height 180ms ease,
     margin 180ms ease;
+}
+
+.profile-row.header-row {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
 }
 
 .avatar {
@@ -90,10 +111,10 @@
   font-weight: 700;
 }
 
-.profile-name {
+.header-title {
   min-width: 0;
   overflow: hidden;
-  font-size: clamp(34px, 10vw, 52px);
+  font-size: clamp(24px, 7vw, 34px);
   font-weight: 800;
   line-height: 1;
   text-overflow: ellipsis;
@@ -101,14 +122,16 @@
 }
 
 .profile-chevron {
-  inline-size: 32px;
-  block-size: 32px;
+  inline-size: 24px;
+  block-size: 24px;
   color: #fff;
 }
 
 .search-field {
   width: 100%;
-  min-height: 62px;
+  min-height: 48px;
+  max-height: 54px;
+  overflow: hidden;
   transition:
     opacity 160ms ease,
     transform 160ms ease,
@@ -117,10 +140,11 @@
 }
 
 .search-field input {
-  font-size: 22px;
+  font-size: 17px;
 }
 
 .search-collapsed .search-field {
+  min-height: 0;
   max-height: 0;
   margin-top: -12px;
   opacity: 0;
@@ -128,9 +152,10 @@
   transform: translateY(-8px);
 }
 
-.header-collapsed .profile-row {
+.header-collapsed .header-row {
+  min-height: 0;
   max-height: 0;
-  margin-top: -10px;
+  margin-top: -8px;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-10px);
@@ -138,12 +163,12 @@
 
 .content-stack {
   display: grid;
-  gap: 28px;
-  padding: 10px 0 16px;
+  gap: 22px;
+  padding: 6px 0 16px;
 }
 
 .content-stack.payments {
-  padding-top: 22px;
+  padding-top: 6px;
 }
 
 .placeholder {
@@ -165,9 +190,9 @@
   z-index: 6;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  align-items: stretch;
-  min-height: calc(82px + env(safe-area-inset-bottom));
-  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  align-items: start;
+  min-height: calc(88px + env(safe-area-inset-bottom));
+  padding: 3px 4px calc(20px + env(safe-area-inset-bottom));
   overflow: visible;
   border-top: 1px solid rgb(255 255 255 / 6%);
   background: rgb(30 31 34 / 96%);
@@ -176,14 +201,17 @@
 
 .tab-button {
   min-width: 0;
-  min-height: 62px;
+  min-height: 52px;
   display: grid;
   justify-items: center;
   align-content: center;
-  gap: 4px;
+  gap: 2px;
   padding: 0 2px;
+  transform: translateY(-4px);
   color: #8c8f96;
   border: 0;
+  --tui-text-primary: currentColor;
+  --tui-text-secondary: currentColor;
 }
 
 .tab-button[tuiTab]._active,
@@ -192,21 +220,24 @@
   color: #6ea0ff;
 }
 
-.tab-button.disabled {
-  opacity: 1;
-}
-
 .tab-icon-wrap {
   position: relative;
   display: grid;
   place-items: center;
   min-width: 34px;
-  min-height: 30px;
+  min-height: 27px;
+}
+
+.tab-icon-wrap tui-icon,
+.maintenance tui-icon,
+.back-button tui-icon,
+.profile-chevron {
+  color: currentColor;
 }
 
 .tab-icon-wrap tui-icon {
-  inline-size: 30px;
-  block-size: 30px;
+  inline-size: 27px;
+  block-size: 27px;
 }
 
 .tab-badge {
@@ -229,11 +260,36 @@
 .tab-label {
   max-width: 100%;
   overflow: hidden;
-  font-size: clamp(12px, 3.3vw, 15px);
+  font-size: clamp(10px, 2.8vw, 12px);
   font-weight: 650;
   line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.maintenance {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  margin-top: 12px;
+  border-radius: 8px;
+  background: #1c1d20;
+  color: #d6d8de;
+  text-align: center;
+}
+
+.maintenance tui-icon {
+  inline-size: 44px;
+  block-size: 44px;
+  color: #6ea0ff;
+}
+
+.maintenance strong {
+  max-width: 240px;
+  font-size: 18px;
+  line-height: 1.25;
 }
 
 .subscreen {
@@ -258,6 +314,23 @@
   background: var(--tg-theme-bg-color, #000);
   font-size: 20px;
   font-weight: 800;
+}
+
+.back-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tg-theme-text-color, #f5f5f7);
+}
+
+.back-button tui-icon {
+  inline-size: 30px;
+  block-size: 30px;
 }
 
 .subscreen-body {

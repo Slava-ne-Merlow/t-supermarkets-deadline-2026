@@ -33,7 +33,6 @@ type Tab = {
   id: TabId;
   label: string;
   icon: string;
-  enabled: boolean;
   badge?: string;
 };
 
@@ -56,11 +55,11 @@ export class AppComponent implements AfterViewInit {
   private readonly webApp = window.Telegram?.WebApp;
 
   readonly tabs: readonly Tab[] = [
-    { id: 'home', label: 'Главная', icon: '@tui.star', enabled: true },
-    { id: 'payments', label: 'Платежи', icon: '@tui.circle-check', enabled: true },
-    { id: 'city', label: 'Город', icon: '@tui.link', enabled: false },
-    { id: 'chat', label: 'Чат', icon: '@tui.ellipsis', enabled: false, badge: '11' },
-    { id: 'showcase', label: 'Витрина', icon: '@tui.layout-grid', enabled: false }
+    { id: 'home', label: 'Главная', icon: '@tui.star' },
+    { id: 'payments', label: 'Платежи', icon: '@tui.circle-check' },
+    { id: 'city', label: 'Город', icon: '@tui.link' },
+    { id: 'chat', label: 'Чат', icon: '@tui.ellipsis', badge: '11' },
+    { id: 'showcase', label: 'Витрина', icon: '@tui.layout-grid' }
   ];
 
   readonly user = this.webApp?.initDataUnsafe?.user;
@@ -96,20 +95,28 @@ export class AppComponent implements AfterViewInit {
     return this.activeTab === 'payments';
   }
 
+  get hasSearchHeader(): boolean {
+    return this.isHome || this.isPayments;
+  }
+
+  get isStubTab(): boolean {
+    return !this.hasSearchHeader;
+  }
+
   get searchCollapsed(): boolean {
-    return this.isHome && this.scrollTop > 18;
+    return this.hasSearchHeader && this.scrollTop > 12;
   }
 
   get headerCollapsed(): boolean {
-    return !this.isHome || this.scrollTop > 96;
+    return !this.hasSearchHeader || this.scrollTop > 68;
   }
 
   get title(): string {
-    return this.isPayments ? 'Платежи' : 'Главная';
+    return this.tabs[this.activeTabIndex]?.label ?? 'Главная';
   }
 
   get appBarTitle(): string {
-    return this.isHome && !this.headerCollapsed ? '' : this.title;
+    return this.hasSearchHeader && !this.headerCollapsed ? '' : this.title;
   }
 
   get contentPlaceholders(): readonly number[] {
@@ -141,8 +148,7 @@ export class AppComponent implements AfterViewInit {
   selectTab(index: number): void {
     const tab = this.tabs[index];
 
-    if (!tab?.enabled) {
-      this.activeTabIndex = this.tabs.findIndex((item) => item.id === this.activeTab);
+    if (!tab) {
       return;
     }
 
@@ -155,7 +161,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   openSearch(): void {
-    if (!this.isHome) {
+    if (!this.hasSearchHeader) {
       return;
     }
 
