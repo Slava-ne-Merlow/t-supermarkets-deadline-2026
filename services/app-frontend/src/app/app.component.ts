@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
 import { TuiAvatar, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
+import { AccountBalanceStore } from './account-balance.store';
 
 type TelegramUser = {
   first_name?: string;
@@ -66,6 +67,7 @@ declare global {
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
   private readonly webApp = window.Telegram?.WebApp;
+  readonly accountBalanceStore = inject(AccountBalanceStore);
   private lastTouchEnd = 0;
   private homeSheetCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
@@ -483,6 +485,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.homeSheetClosing = false;
     this.activeHomeSheet = sheet;
     this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  topUpBalance(amount: number): void {
+    this.accountBalanceStore.topUp(amount);
+    this.webApp?.HapticFeedback?.impactOccurred('medium');
+    this.closeHomeSheet();
   }
 
   closeHomeSheet(immediate = false): void {
