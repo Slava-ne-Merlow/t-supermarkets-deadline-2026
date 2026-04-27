@@ -29,7 +29,11 @@ const MINIAPP_ICONS = {
   '@tui.qr-code':
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path vector-effect="non-scaling-stroke" d="M15 15h1v1h-1zM19 15h1v1h-1zM15 19h5"/></svg>',
   '@tui.contactless':
-    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M5 12c3.5-4 10.5-4 14 0"/><path vector-effect="non-scaling-stroke" d="M8 15c2.2-2.2 5.8-2.2 8 0"/><path vector-effect="non-scaling-stroke" d="M11 18c.7-.7 1.3-.7 2 0"/></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M5 12c3.5-4 10.5-4 14 0"/><path vector-effect="non-scaling-stroke" d="M8 15c2.2-2.2 5.8-2.2 8 0"/><path vector-effect="non-scaling-stroke" d="M11 18c.7-.7 1.3-.7 2 0"/></svg>',
+  '@tui.arrow-up':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="M12 19V5"/><path vector-effect="non-scaling-stroke" d="m5 12 7-7 7 7"/></svg>',
+  '@tui.crown':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="black" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path vector-effect="non-scaling-stroke" d="m2 7 5 5 5-8 5 8 5-5-3 11H5z"/></svg>'
 } as const;
 
 export const appConfig: ApplicationConfig = {

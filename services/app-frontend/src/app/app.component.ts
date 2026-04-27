@@ -47,7 +47,7 @@ type Story = {
   slides: readonly StorySlide[];
 };
 
-type HomeSheet = 'operations' | 'cashback' | 'topup';
+type HomeSheet = 'operations' | 'cashback' | 'cashbackBalance' | 'survey' | 'topup';
 
 declare global {
   interface Window {
@@ -68,6 +68,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private readonly webApp = window.Telegram?.WebApp;
   private lastTouchEnd = 0;
   private homeSheetCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -215,14 +216,18 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   activeTabIndex = 0;
   searchQuery = '';
   scrollTop = 0;
+  accountScrollTop = 0;
   searchOpen = false;
   settingsOpen = false;
   activeStoryIndex: number | null = null;
   activeSlideIndex = 0;
   activeHomeSheet: HomeSheet | null = null;
   homeSheetClosing = false;
+  accountScreenOpen = false;
+  accountScreenClosing = false;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
+  readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone={+79269061483}';
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
@@ -268,8 +273,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.headerCollapsed ? this.title : '';
   }
 
+  get accountBarCollapsed(): boolean {
+    return this.accountScrollTop > 120;
+  }
+
   get contentPlaceholders(): readonly number[] {
-    return this.isPayments ? [104, 118, 96, 128, 112, 132] : [122, 126, 118, 146, 104, 132];
+    return this.isPayments ? [104, 118, 96, 128, 112, 132] : [];
   }
 
   get activeStory(): Story | null {
@@ -281,15 +290,19 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   get isLargeHomeSheet(): boolean {
-    return this.activeHomeSheet === 'operations' || this.activeHomeSheet === 'cashback';
+    return this.activeHomeSheet === 'operations' || this.activeHomeSheet === 'cashback' || this.activeHomeSheet === 'cashbackBalance';
   }
 
   get homeSheetTitle(): string {
     switch (this.activeHomeSheet) {
       case 'operations':
-        return 'Все операции';
+        return 'Операции';
       case 'cashback':
         return 'Кэшбэк и бонусы';
+      case 'cashbackBalance':
+        return 'Кэшбэк';
+      case 'survey':
+        return 'Опрос';
       case 'topup':
         return 'Пополнить Black';
       default:
@@ -312,6 +325,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     document.removeEventListener('touchend', this.preventDoubleTapZoom);
     this.clearHomeSheetCloseTimer();
+    this.clearAccountScreenCloseTimer();
   }
 
   markReady(): void {
@@ -326,6 +340,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.scrollTop = (event.target as HTMLElement).scrollTop;
   }
 
+  onAccountScroll(event: Event): void {
+    this.accountScrollTop = (event.target as HTMLElement).scrollTop;
+  }
+
   selectTab(index: number): void {
     const tab = this.tabs[index];
 
@@ -336,9 +354,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.activeTabIndex = index;
     this.activeTab = tab.id;
     this.scrollTop = 0;
+    this.accountScrollTop = 0;
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
     this.settingsOpen = false;
+    this.closeAccountScreen(true);
     this.closeHomeSheet(true);
     this.closeStory();
     this.webApp?.HapticFeedback?.impactOccurred('light');
@@ -350,6 +370,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.searchOpen = true;
+    this.closeAccountScreen();
     this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -364,6 +385,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.settingsOpen = true;
+    this.closeAccountScreen();
     this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -379,6 +401,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     this.activeStoryIndex = index;
     this.activeSlideIndex = 0;
+    this.closeAccountScreen();
     this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -423,6 +446,36 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.activeStoryIndex -= 1;
       this.activeSlideIndex = this.stories[this.activeStoryIndex].slides.length - 1;
     }
+  }
+
+  openAccountScreen(): void {
+    this.clearAccountScreenCloseTimer();
+    this.accountScreenClosing = false;
+    this.accountScreenOpen = true;
+    this.accountScrollTop = 0;
+    this.closeHomeSheet(true);
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeAccountScreen(immediate = false): void {
+    if (!this.accountScreenOpen) {
+      return;
+    }
+
+    this.clearAccountScreenCloseTimer();
+
+    if (immediate) {
+      this.accountScreenClosing = false;
+      this.accountScreenOpen = false;
+      return;
+    }
+
+    this.accountScreenClosing = true;
+    this.accountScreenCloseTimer = window.setTimeout(() => {
+      this.accountScreenOpen = false;
+      this.accountScreenClosing = false;
+      this.accountScreenCloseTimer = null;
+    }, 280);
   }
 
   openHomeSheet(sheet: HomeSheet): void {
@@ -474,6 +527,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.homeSheetCloseTimer);
     this.homeSheetCloseTimer = null;
+  }
+
+  private clearAccountScreenCloseTimer(): void {
+    if (!this.accountScreenCloseTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.accountScreenCloseTimer);
+    this.accountScreenCloseTimer = null;
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {

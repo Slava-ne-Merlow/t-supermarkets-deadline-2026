@@ -375,6 +375,151 @@
   line-height: 1.12;
 }
 
+.bank-account-card {
+  width: 100%;
+  min-height: clamp(136px, 34vw, 168px);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(16px, 5vw, 28px);
+  align-items: start;
+  padding: clamp(28px, 7vw, 42px) clamp(24px, 6vw, 34px);
+  border: 0;
+  border-radius: 30px;
+  background: #1c1d20;
+  color: #f7f7f8;
+  text-align: left;
+  font: inherit;
+}
+
+.account-ruble {
+  width: clamp(44px, 11vw, 58px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #3f86ff;
+  background: radial-gradient(circle at 50% 50%, #d8e6ff 0 31%, #3f86ff 32%);
+  font-size: clamp(20px, 5.5vw, 28px);
+  font-weight: 850;
+}
+
+.account-card-copy {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+.account-card-copy strong {
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 850;
+  line-height: 1.08;
+}
+
+.account-card-copy > span:not(.bank-card-mini) {
+  font-size: clamp(17px, 5vw, 26px);
+  line-height: 1;
+}
+
+.bank-card-mini {
+  min-width: 62px;
+  min-height: 38px;
+  height: 38px;
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 8px;
+  align-items: end;
+  margin-top: 8px;
+  padding: 0 6px 6px;
+  overflow: hidden;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 10%) 1px, transparent 1px) 0 0 / 5px 5px,
+    linear-gradient(#333, #050505);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.bank-card-mini b {
+  font-size: 8px;
+}
+
+.cashback-pill {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #4d4e52;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.cashback-pill tui-icon {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.survey-banner {
+  position: relative;
+  min-height: clamp(118px, 30vw, 154px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: clamp(22px, 6vw, 32px);
+  overflow: hidden;
+  border: 0;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 88% 22%, rgb(255 255 255 / 24%), transparent 26%),
+    linear-gradient(135deg, #e34c93 0%, #c81967 52%, #f06aa2 100%);
+  color: #fff;
+  text-align: left;
+  font: inherit;
+}
+
+.survey-banner > span:first-child {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+}
+
+.survey-banner strong {
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 850;
+  line-height: 1.08;
+}
+
+.survey-banner em {
+  max-width: 360px;
+  font-size: clamp(15px, 4.2vw, 23px);
+  font-style: normal;
+  line-height: 1.16;
+}
+
+.survey-visual {
+  width: clamp(74px, 19vw, 108px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  background: rgb(255 255 255 / 20%);
+  transform: rotate(8deg);
+}
+
+.survey-visual tui-icon {
+  inline-size: 46%;
+  block-size: 46%;
+  color: #fff;
+}
+
 .bottom-tabs {
   position: absolute;
   right: 0;
@@ -543,6 +688,186 @@
 
 .settings-card span:last-child {
   color: #8c8f96;
+}
+
+.account-screen {
+  position: absolute;
+  inset: 0 0 calc(88px + env(safe-area-inset-bottom));
+  z-index: 14;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 clamp(16px, 4vw, 30px) 18px;
+  background: #000;
+  color: #f7f7f8;
+  animation: account-screen-in 280ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+.account-screen::-webkit-scrollbar {
+  display: none;
+}
+
+.account-screen.closing {
+  animation-name: account-screen-out;
+}
+
+.account-screen-bar {
+  --tui-background-base: #151516;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: 74px;
+  margin: 0 calc(-1 * clamp(16px, 4vw, 30px));
+  padding-inline: clamp(16px, 4vw, 30px);
+  padding-top: env(safe-area-inset-top);
+  background: #151516;
+  color: #fff;
+}
+
+.account-bar-title {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding-right: 40px;
+  opacity: 0;
+  font-size: 16px;
+  font-weight: 850;
+  line-height: 1;
+  transition: opacity 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.account-bar-title.visible {
+  opacity: 1;
+}
+
+.account-screen-body {
+  display: grid;
+  gap: 24px;
+  //padding-top: 24px;
+}
+
+.account-hero {
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 12px;
+  min-height: 260px;
+  padding: 0 clamp(22px, 7vw, 48px);
+  margin: 0 calc(-1 * clamp(16px, 4vw, 30px));
+  padding-inline: calc(clamp(16px, 4vw, 30px) + clamp(22px, 7vw, 48px));
+  background: linear-gradient(180deg, #151516 0%, #151516 62%, rgb(21 21 22 / 70%) 78%, rgb(0 0 0 / 0%) 100%);
+}
+
+.account-hero > span:first-child {
+  font-size: clamp(22px, 6.2vw, 34px);
+  font-weight: 850;
+}
+
+.account-hero strong {
+  font-size: clamp(38px, 10.5vw, 58px);
+  font-weight: 850;
+  line-height: 1;
+}
+
+.bank-card-mini.large {
+  justify-self: start;
+  transform: none;
+}
+
+.account-action-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 22px clamp(20px, 5vw, 32px);
+  border-radius: 28px;
+  background: #1c1d20;
+}
+
+.account-action-panel button,
+.account-detail-card {
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+}
+
+.account-action-panel button {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  color: #78a6ff;
+  text-align: center;
+}
+
+.account-action-panel button > span {
+  width: 34px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #78a6ff;
+  color: #111;
+}
+
+.account-action-panel tui-icon {
+  inline-size: 22px;
+  block-size: 22px;
+  color: #111;
+}
+
+.account-action-panel strong {
+  font-size: clamp(13px, 3.6vw, 18px);
+  font-weight: 850;
+  line-height: 1.15;
+}
+
+.account-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.account-detail-card {
+  min-height: clamp(132px, 34vw, 176px);
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  padding: clamp(18px, 5vw, 28px);
+  border-radius: 30px;
+  background: #1c1d20;
+  text-align: left;
+}
+
+.account-detail-card strong {
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 850;
+  line-height: 1.08;
+}
+
+.account-detail-card > span:not(.spending-bar, .cashback-pill) {
+  color: #f1f2f4;
+  font-size: clamp(14px, 4vw, 20px);
+  line-height: 1.1;
+}
+
+.cashback-detail-card {
+  align-content: start;
+}
+
+.cashback-detail-card > span:not(.cashback-pill) {
+  color: #9da0a8;
+}
+
+.cashback-detail-card .cashback-pill {
+  justify-self: start;
+  margin-bottom: 10px;
+}
+
+.account-screen-placeholder {
+  min-height: 400px;
+  background: #050505;
 }
 
 .story-viewer {
@@ -812,6 +1137,24 @@
   }
 }
 
+@keyframes account-screen-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes account-screen-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @media (max-width: 360px) {
   .screen,
   .subscreen {
@@ -833,5 +1176,14 @@
 
   .quick-actions {
     gap: 8px;
+  }
+
+  .bank-account-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .bank-account-card .cashback-pill {
+    grid-column: 2;
+    justify-self: start;
   }
 }

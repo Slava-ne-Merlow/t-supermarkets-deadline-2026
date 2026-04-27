@@ -88,7 +88,7 @@
                 <button
                   class="quick-action"
                   type="button"
-                  (click)="openDeepLink('bank100000000004://Main/PayByMobileNumber?numberPhone={+79269061483}')"
+                  (click)="openDeepLink(transferDeepLink)"
                 >
                   <span><tui-icon icon="@tui.arrow-right" /></span>
                   <em>Перевести<br />по телефону</em>
@@ -118,6 +118,29 @@
                 </button>
               </div>
             </section>
+
+            <button class="bank-account-card" type="button" (click)="openAccountScreen()">
+              <span class="account-ruble" aria-hidden="true">₽</span>
+              <span class="account-card-copy">
+                <strong>6 776,87 ₽</strong>
+                <span>Black</span>
+                <span class="bank-card-mini">5619 <b>МИР</b></span>
+              </span>
+              <span class="cashback-pill" aria-hidden="true">
+                <tui-icon icon="@tui.crown" />
+                0 ₽
+              </span>
+            </button>
+
+            <button class="survey-banner" type="button" (click)="openHomeSheet('survey')">
+              <span>
+                <strong>Пройдите опрос</strong>
+                <em>Уточните свои предпочтения для раздела Т-Супермаркеты</em>
+              </span>
+              <span class="survey-visual" aria-hidden="true">
+                <tui-icon icon="@tui.circle-check" />
+              </span>
+            </button>
           }
 
           @for (height of contentPlaceholders; track $index) {
@@ -205,6 +228,57 @@
       </section>
     }
 
+    @if (accountScreenOpen) {
+      <section class="account-screen" [class.closing]="accountScreenClosing" (scroll)="onAccountScroll($event)">
+        <tui-app-bar class="account-screen-bar" size="l">
+          <button class="back-button" type="button" tuiSlot="start" (click)="closeAccountScreen()">
+            <tui-icon icon="@tui.chevron-left" />
+          </button>
+          <span class="account-bar-title" [class.visible]="accountBarCollapsed">Black · 6 776,87 ₽</span>
+        </tui-app-bar>
+
+        <div class="account-screen-body">
+          <section class="account-hero">
+            <span>Black</span>
+            <strong>6 776,87 ₽</strong>
+            <span class="bank-card-mini large">5619 <b>МИР</b></span>
+          </section>
+
+          <section class="account-action-panel">
+            <button type="button" (click)="openHomeSheet('topup')">
+              <span><tui-icon icon="@tui.plus" /></span>
+              <strong>Пополнить<br />счет</strong>
+            </button>
+            <button type="button" (click)="openDeepLink(transferDeepLink)">
+              <span><tui-icon icon="@tui.arrow-up" /></span>
+              <strong>Оплатить<br />или перевести</strong>
+            </button>
+          </section>
+
+          <section class="account-detail-grid">
+            <button class="account-detail-card" type="button" (click)="openHomeSheet('operations')">
+              <strong>Операции<br />по счету</strong>
+              <span>Трат в апреле<br />31 832 ₽</span>
+              <span class="spending-bar" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i>
+              </span>
+            </button>
+
+            <button class="account-detail-card cashback-detail-card" type="button" (click)="openHomeSheet('cashbackBalance')">
+              <span class="cashback-pill">
+                <tui-icon icon="@tui.crown" />
+                0 ₽
+              </span>
+              <strong>Накоплено<br />кэшбэка</strong>
+              <span>Начните тратить,<br />и все появится</span>
+            </button>
+          </section>
+
+          <div class="account-screen-placeholder"></div>
+        </div>
+      </section>
+    }
+
     @if (activeStory && activeSlide) {
       <section class="story-viewer">
         <div
@@ -260,6 +334,18 @@
               <div class="sheet-placeholder">
                 <tui-icon icon="@tui.star" />
                 <span>Здесь позже появятся кэшбэк, бонусы и партнерские предложения.</span>
+              </div>
+            }
+            @case ('cashbackBalance') {
+              <div class="sheet-placeholder">
+                <tui-icon icon="@tui.crown" />
+                <span>Здесь позже появится история начисленного кэшбэка.</span>
+              </div>
+            }
+            @case ('survey') {
+              <div class="sheet-placeholder">
+                <tui-icon icon="@tui.circle-check" />
+                <span>Здесь позже появится короткий опрос про предпочтения.</span>
               </div>
             }
             @case ('topup') {
