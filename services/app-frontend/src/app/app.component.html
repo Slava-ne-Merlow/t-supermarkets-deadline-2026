@@ -1,6 +1,6 @@
 <tui-root>
   <main class="miniapp-shell">
-    <section class="screen" (scroll)="onScroll($event)">
+    <section #screen class="screen" (scroll)="onScroll($event)">
       <header
         class="top-region"
         [class.search-collapsed]="searchCollapsed"
@@ -10,19 +10,19 @@
           <span class="app-bar-title">{{ appBarTitle }}</span>
         </tui-app-bar>
 
-        @if (hasSearchHeader) {
-          @if (isHome) {
-            <button class="header-row profile-row" type="button" (click)="openSettings()">
-              <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
-              <span class="header-title profile-name">{{ displayName }}</span>
-              <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
-            </button>
-          } @else {
-            <div class="header-row">
-              <span class="header-title">Платежи</span>
-            </div>
-          }
+        @if (isHome) {
+          <button class="header-row profile-row" type="button" (click)="openSettings()">
+            <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
+            <span class="header-title profile-name">{{ displayName }}</span>
+            <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
+          </button>
+        } @else {
+          <div class="header-row">
+            <span class="header-title">{{ title }}</span>
+          </div>
+        }
 
+        @if (hasSearchHeader) {
           <tui-textfield
             class="search-field"
             iconStart="@tui.search"
@@ -42,7 +42,7 @@
       </header>
 
       @if (isStubTab) {
-        <div class="maintenance" tuiCardLarge>
+        <div class="maintenance">
           <tui-icon icon="@tui.info" />
           <strong>Ведутся технические работы</strong>
         </div>

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
 import { TuiAvatar, TuiTabs } from '@taiga-ui/kit';
@@ -52,6 +52,9 @@ declare global {
 })
 export class AppComponent implements AfterViewInit {
   private readonly webApp = window.Telegram?.WebApp;
+
+  @ViewChild('screen')
+  private readonly screen?: ElementRef<HTMLElement>;
 
   readonly tabs: readonly Tab[] = [
     { id: 'home', label: 'Главная', icon: '@tui.star' },
@@ -107,7 +110,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   get headerCollapsed(): boolean {
-    return !this.hasSearchHeader || this.scrollTop > 68;
+    return this.scrollTop > 68;
   }
 
   get title(): string {
@@ -115,7 +118,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   get appBarTitle(): string {
-    return this.hasSearchHeader && !this.headerCollapsed ? '' : this.title;
+    return this.headerCollapsed ? this.title : '';
   }
 
   get contentPlaceholders(): readonly number[] {
@@ -154,6 +157,7 @@ export class AppComponent implements AfterViewInit {
     this.activeTabIndex = index;
     this.activeTab = tab.id;
     this.scrollTop = 0;
+    this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
     this.settingsOpen = false;
     this.webApp?.HapticFeedback?.impactOccurred('light');
