@@ -9,6 +9,7 @@ type TelegramUser = {
   first_name?: string;
   last_name?: string;
   username?: string;
+  photo_url?: string;
   language_code?: string;
 };
 
@@ -71,6 +72,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private lastTouchEnd = 0;
   private homeSheetCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private settingsScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -221,6 +223,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   accountScrollTop = 0;
   searchOpen = false;
   settingsOpen = false;
+  settingsScreenClosing = false;
   activeStoryIndex: number | null = null;
   activeSlideIndex = 0;
   activeHomeSheet: HomeSheet | null = null;
@@ -237,6 +240,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   get avatarLabel(): string {
     return this.displayName.trim().charAt(0).toUpperCase() || 'Г';
+  }
+
+  get avatarUrl(): string | null {
+    return this.user?.photo_url ?? null;
   }
 
   get username(): string {
@@ -328,6 +335,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     document.removeEventListener('touchend', this.preventDoubleTapZoom);
     this.clearHomeSheetCloseTimer();
     this.clearAccountScreenCloseTimer();
+    this.clearSettingsScreenCloseTimer();
   }
 
   markReady(): void {
@@ -359,7 +367,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.accountScrollTop = 0;
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
-    this.settingsOpen = false;
+    this.closeSettings(true);
     this.closeAccountScreen(true);
     this.closeHomeSheet(true);
     this.closeStory();
@@ -372,6 +380,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.searchOpen = true;
+    this.closeSettings();
     this.closeAccountScreen();
     this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
@@ -386,14 +395,33 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
+    this.clearSettingsScreenCloseTimer();
+    this.settingsScreenClosing = false;
     this.settingsOpen = true;
     this.closeAccountScreen();
     this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
-  closeSettings(): void {
-    this.settingsOpen = false;
+  closeSettings(immediate = false): void {
+    if (!this.settingsOpen) {
+      return;
+    }
+
+    this.clearSettingsScreenCloseTimer();
+
+    if (immediate) {
+      this.settingsScreenClosing = false;
+      this.settingsOpen = false;
+      return;
+    }
+
+    this.settingsScreenClosing = true;
+    this.settingsScreenCloseTimer = window.setTimeout(() => {
+      this.settingsOpen = false;
+      this.settingsScreenClosing = false;
+      this.settingsScreenCloseTimer = null;
+    }, 280);
   }
 
   openStory(index: number): void {
@@ -403,6 +431,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     this.activeStoryIndex = index;
     this.activeSlideIndex = 0;
+    this.closeSettings();
     this.closeAccountScreen();
     this.closeHomeSheet();
     this.webApp?.HapticFeedback?.impactOccurred('light');
@@ -544,6 +573,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.accountScreenCloseTimer);
     this.accountScreenCloseTimer = null;
+  }
+
+  private clearSettingsScreenCloseTimer(): void {
+    if (!this.settingsScreenCloseTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.settingsScreenCloseTimer);
+    this.settingsScreenCloseTimer = null;
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {

@@ -13,7 +13,11 @@
 
           @if (isHome) {
             <button class="header-row profile-row" type="button" (click)="openSettings()">
-              <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
+              @if (avatarUrl) {
+                <img class="avatar avatar-image" [src]="avatarUrl" alt="" />
+              } @else {
+                <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
+              }
               <span class="header-title profile-name">{{ displayName }}</span>
               <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
             </button>
@@ -207,23 +211,34 @@
     }
 
     @if (settingsOpen) {
-      <section class="subscreen">
-        <tui-app-bar class="subscreen-bar" size="l">
+      <section class="settings-screen" [class.closing]="settingsScreenClosing">
+        <tui-app-bar class="settings-screen-bar" size="l">
           <button class="back-button" type="button" tuiSlot="start" (click)="closeSettings()">
             <tui-icon icon="@tui.chevron-left" />
           </button>
           <span>Настройки</span>
         </tui-app-bar>
 
-        <div class="subscreen-body">
+        <div class="settings-screen-body">
           <div class="settings-card" tuiCardLarge>
-            <span tuiAvatar size="xl" class="avatar">{{ avatarLabel }}</span>
+            @if (avatarUrl) {
+              <img class="avatar avatar-image large" [src]="avatarUrl" alt="" />
+            } @else {
+              <span tuiAvatar size="xl" class="avatar">{{ avatarLabel }}</span>
+            }
             <strong>{{ displayName }}</strong>
             <span>{{ username }}</span>
           </div>
 
-          <div class="placeholder slim" tuiCardMedium></div>
-          <div class="placeholder slim" tuiCardMedium></div>
+          <button class="survey-banner settings-survey" type="button" (click)="openHomeSheet('survey')">
+            <span>
+              <strong>Пройдите опрос</strong>
+              <em>Уточните свои предпочтения для раздела Т-Супермаркеты</em>
+            </span>
+            <span class="survey-visual" aria-hidden="true">
+              <tui-icon icon="@tui.circle-check" />
+            </span>
+          </button>
         </div>
       </section>
     }

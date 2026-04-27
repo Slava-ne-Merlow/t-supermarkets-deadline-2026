@@ -122,6 +122,20 @@
   font-weight: 700;
 }
 
+.avatar-image {
+  width: 40px;
+  height: 40px;
+  display: block;
+  object-fit: cover;
+  border-radius: 999px;
+  background: #4b4b4d;
+}
+
+.avatar-image.large {
+  width: 96px;
+  height: 96px;
+}
+
 .header-title {
   min-width: 0;
   overflow: hidden;
@@ -690,6 +704,7 @@
   color: #8c8f96;
 }
 
+.settings-screen,
 .account-screen {
   position: absolute;
   inset: 0 0 calc(88px + env(safe-area-inset-bottom));
@@ -705,16 +720,18 @@
   animation: account-screen-in 280ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
+.settings-screen::-webkit-scrollbar,
 .account-screen::-webkit-scrollbar {
   display: none;
 }
 
+.settings-screen.closing,
 .account-screen.closing {
   animation-name: account-screen-out;
 }
 
+.settings-screen-bar,
 .account-screen-bar {
-  --tui-background-base: #151516;
   position: sticky;
   top: 0;
   z-index: 3;
@@ -724,6 +741,26 @@
   padding-top: env(safe-area-inset-top);
   background: #151516;
   color: #fff;
+}
+
+.settings-screen-bar {
+  --tui-background-base: var(--tg-theme-bg-color, #000);
+  background: var(--tg-theme-bg-color, #000);
+}
+
+.account-screen-bar {
+  --tui-background-base: #151516;
+  background: #151516;
+}
+
+.settings-screen-body {
+  display: grid;
+  gap: 18px;
+  padding-top: 18px;
+}
+
+.settings-survey {
+  margin-top: 4px;
 }
 
 .account-bar-title {
