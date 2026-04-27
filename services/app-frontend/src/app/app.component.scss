@@ -21,6 +21,7 @@
   width: min(100%, 460px);
   display: grid;
   gap: 18px;
+  padding: 18px;
 }
 
 .app-mark {
@@ -68,13 +69,6 @@ h1 {
   font-size: 16px;
 }
 
-.user-card,
-.meta-grid div {
-  border: 1px solid rgba(117, 136, 153, 0.22);
-  background: var(--tg-theme-secondary-bg-color, #fff);
-  border-radius: 8px;
-}
-
 .user-card {
   padding: 18px;
   display: grid;
@@ -112,23 +106,7 @@ h1 {
 }
 
 button {
-  min-height: 48px;
-  border: 0;
-  border-radius: 8px;
-  padding: 0 16px;
-  font: inherit;
-  font-weight: 700;
-}
-
-.primary {
-  color: var(--tg-theme-button-text-color, #fff);
-  background: var(--tg-theme-button-color, #2aabee);
-}
-
-.secondary {
-  color: var(--tg-theme-link-color, #2aabee);
-  background: var(--tg-theme-secondary-bg-color, #fff);
-  border: 1px solid rgba(117, 136, 153, 0.28);
+  width: 100%;
 }
 
 @media (max-width: 420px) {

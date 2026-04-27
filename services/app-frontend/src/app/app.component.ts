@@ -1,4 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { TuiButton, TuiRoot } from '@taiga-ui/core';
+import { TuiCard } from '@taiga-ui/layout';
 
 type TelegramUser = {
   first_name?: string;
@@ -34,6 +36,7 @@ declare global {
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [TuiButton, TuiCard, TuiRoot],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

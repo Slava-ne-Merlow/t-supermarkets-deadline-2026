@@ -1,45 +1,47 @@
-<main class="miniapp-shell">
-  <section class="panel">
-    <div class="app-mark">MA</div>
+<tui-root>
+  <main class="miniapp-shell">
+    <section class="panel" tuiCardLarge>
+      <div class="app-mark">MA</div>
 
-    <div class="intro">
-      <p class="eyebrow">Telegram Mini App</p>
-      <h1>Миниапа открыта</h1>
-      <p class="status">
+      <div class="intro">
+        <p class="eyebrow">Telegram Mini App</p>
+        <h1>Миниапа открыта</h1>
+        <p class="status">
+          @if (launchedInTelegram) {
+            Запущено внутри Telegram
+          } @else {
+            Локальный режим
+          }
+        </p>
+      </div>
+
+      <div class="user-card" tuiCardMedium>
+        <span>Пользователь</span>
+        <strong>{{ displayName }}</strong>
+        <small>{{ username }}</small>
+      </div>
+
+      <div class="meta-grid">
+        <div tuiCardMedium>
+          <span>Платформа</span>
+          <strong>{{ platform }}</strong>
+        </div>
+        <div tuiCardMedium>
+          <span>Тема</span>
+          <strong>{{ colorScheme }}</strong>
+        </div>
+        <div tuiCardMedium>
+          <span>SDK</span>
+          <strong>{{ version }}</strong>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button tuiButton type="button" appearance="primary" size="m" (click)="markReady()">Готово</button>
         @if (launchedInTelegram) {
-          Запущено внутри Telegram
-        } @else {
-          Локальный режим
+          <button tuiButton type="button" appearance="secondary" size="m" (click)="close()">Закрыть</button>
         }
-      </p>
-    </div>
-
-    <div class="user-card">
-      <span>Пользователь</span>
-      <strong>{{ displayName }}</strong>
-      <small>{{ username }}</small>
-    </div>
-
-    <div class="meta-grid">
-      <div>
-        <span>Платформа</span>
-        <strong>{{ platform }}</strong>
       </div>
-      <div>
-        <span>Тема</span>
-        <strong>{{ colorScheme }}</strong>
-      </div>
-      <div>
-        <span>SDK</span>
-        <strong>{{ version }}</strong>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button type="button" class="primary" (click)="markReady()">Готово</button>
-      @if (launchedInTelegram) {
-        <button type="button" class="secondary" (click)="close()">Закрыть</button>
-      }
-    </div>
-  </section>
-</main>
+    </section>
+  </main>
+</tui-root>
