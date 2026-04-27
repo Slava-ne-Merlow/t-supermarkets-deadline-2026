@@ -13,9 +13,14 @@
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   padding: 18px;
   display: grid;
   place-items: center;
+}
+
+.miniapp-shell::-webkit-scrollbar {
+  display: none;
 }
 
 .panel {
