@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
 import { TuiAvatar, TuiTabs } from '@taiga-ui/kit';
@@ -50,8 +50,9 @@ declare global {
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnDestroy {
   private readonly webApp = window.Telegram?.WebApp;
+  private lastTouchEnd = 0;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -126,6 +127,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    document.addEventListener('touchend', this.preventDoubleTapZoom, { passive: false });
+
     if (!this.webApp) {
       return;
     }
@@ -133,6 +136,10 @@ export class AppComponent implements AfterViewInit {
     this.webApp.ready();
     this.webApp.expand();
     this.webApp.disableVerticalSwipes?.();
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('touchend', this.preventDoubleTapZoom);
   }
 
   markReady(): void {
@@ -188,4 +195,14 @@ export class AppComponent implements AfterViewInit {
   closeSettings(): void {
     this.settingsOpen = false;
   }
+
+  private readonly preventDoubleTapZoom = (event: TouchEvent): void => {
+    const now = Date.now();
+
+    if (now - this.lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+
+    this.lastTouchEnd = now;
+  };
 }

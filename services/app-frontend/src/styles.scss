@@ -6,6 +6,8 @@ body {
   overflow: hidden;
   overscroll-behavior: none;
   background: var(--tg-theme-bg-color, #f4f6f8);
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
