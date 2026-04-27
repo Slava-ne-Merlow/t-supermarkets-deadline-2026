@@ -429,15 +429,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   openDeepLink(url: string): void {
     this.webApp?.HapticFeedback?.impactOccurred('light');
-
-    if (url.startsWith('http')) {
-      this.webApp?.openLink?.(url);
-      return;
-    }
-
-    // Для демо: показываем fallback, а не пытаемся открыть приватный deeplink
-    alert('В демо-режиме этот раздел открывается в приложении банка');
-
+    window.location.href = url;
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {
