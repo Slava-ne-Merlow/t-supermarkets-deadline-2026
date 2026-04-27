@@ -50,6 +50,21 @@
         </div>
       } @else {
         <div class="content-stack" [class.payments]="isPayments">
+          @if (isHome) {
+            <section class="stories-strip" aria-label="Истории">
+              @for (story of stories; track story.title; let index = $index) {
+                <button
+                  type="button"
+                  class="story-card"
+                  [style.background-image]="'linear-gradient(180deg, rgb(0 0 0 / 4%), rgb(0 0 0 / 68%)), url(' + story.image + ')'"
+                  (click)="openStory(index)"
+                >
+                  <span>{{ story.title }}</span>
+                </button>
+              }
+            </section>
+          }
+
           @for (height of contentPlaceholders; track $index) {
             <div class="placeholder" tuiCardMedium [style.min-height.px]="height"></div>
           }
@@ -132,6 +147,34 @@
           <div class="placeholder slim" tuiCardMedium></div>
           <div class="placeholder slim" tuiCardMedium></div>
         </div>
+      </section>
+    }
+
+    @if (activeStory && activeSlide) {
+      <section class="story-viewer">
+        <div
+          class="story-stage"
+          [style.background-image]="'linear-gradient(180deg, rgb(0 0 0 / 0%) 32%, rgb(0 0 0 / 52%) 64%, rgb(0 0 0 / 90%) 100%), url(' + activeSlide.image + ')'"
+        >
+          <div class="story-progress">
+            @for (slide of activeStory.slides; track slide.title; let index = $index) {
+              <span [class.done]="index < activeSlideIndex" [class.active]="index === activeSlideIndex"></span>
+            }
+          </div>
+
+          <button class="story-close" type="button" (click)="closeStory()">×</button>
+          <button class="story-touch previous" type="button" aria-label="Предыдущий слайд" (click)="previousStorySlide()"></button>
+          <button class="story-touch next" type="button" aria-label="Следующий слайд" (click)="nextStorySlide()"></button>
+
+          <div class="story-copy">
+            <h2>{{ activeSlide.title }}</h2>
+            <p>{{ activeSlide.description }}</p>
+          </div>
+        </div>
+
+        <button class="story-like" type="button" aria-label="Нравится">
+          <tui-icon icon="@tui.heart" />
+        </button>
       </section>
     }
   </main>

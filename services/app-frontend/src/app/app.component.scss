@@ -206,6 +206,49 @@
   min-height: 82px;
 }
 
+.stories-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(132px, 38vw, 164px);
+  gap: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  margin: 0 calc(-1 * clamp(16px, 4vw, 30px));
+  padding: 2px clamp(16px, 4vw, 30px) 4px;
+}
+
+.stories-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.story-card {
+  position: relative;
+  min-height: 150px;
+  display: grid;
+  align-items: end;
+  padding: 14px;
+  overflow: hidden;
+  border: 2px solid #4779f2;
+  border-radius: 26px;
+  background-color: #1c1d20;
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  text-align: left;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+.story-card span {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.08;
+}
+
 .bottom-tabs {
   position: absolute;
   right: 0;
@@ -374,6 +417,142 @@
 
 .settings-card span:last-child {
   color: #8c8f96;
+}
+
+.story-viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+  background: #000;
+  color: #fff;
+}
+
+.story-stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 0 0 16px 16px;
+  background-color: #1c1d20;
+  background-position: center;
+  background-size: cover;
+}
+
+.story-progress {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  right: 14px;
+  left: 14px;
+  z-index: 2;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+}
+
+.story-progress span {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 32%);
+}
+
+.story-progress span::before {
+  content: "";
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+}
+
+.story-progress span.done::before,
+.story-progress span.active::before {
+  width: 100%;
+}
+
+.story-close {
+  position: absolute;
+  top: calc(38px + env(safe-area-inset-top));
+  right: 18px;
+  z-index: 3;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 92%);
+  color: #b8bbc2;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.story-touch {
+  position: absolute;
+  top: 80px;
+  bottom: 0;
+  z-index: 2;
+  width: 36%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.story-touch.previous {
+  left: 0;
+}
+
+.story-touch.next {
+  right: 0;
+}
+
+.story-copy {
+  position: absolute;
+  right: 24px;
+  bottom: 28px;
+  left: 24px;
+  z-index: 2;
+  display: grid;
+  gap: 14px;
+}
+
+.story-copy h2,
+.story-copy p {
+  margin: 0;
+}
+
+.story-copy h2 {
+  font-size: clamp(38px, 11vw, 64px);
+  font-weight: 850;
+  line-height: 1.06;
+}
+
+.story-copy p {
+  max-width: 92%;
+  font-size: clamp(20px, 5.5vw, 32px);
+  line-height: 1.22;
+}
+
+.story-like {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin: 16px 0 0 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+}
+
+.story-like tui-icon {
+  inline-size: 36px;
+  block-size: 36px;
 }
 
 @media (max-width: 360px) {

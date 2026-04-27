@@ -35,6 +35,18 @@ type Tab = {
   icon: string;
 };
 
+type StorySlide = {
+  title: string;
+  description: string;
+  image: string;
+};
+
+type Story = {
+  title: string;
+  image: string;
+  slides: readonly StorySlide[];
+};
+
 declare global {
   interface Window {
     Telegram?: {
@@ -65,6 +77,131 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     { id: 'showcase', label: 'Витрина', icon: '@tui.layout-grid' }
   ];
 
+  readonly stories: readonly Story[] = [
+    {
+      title: 'Сервисы и продукты',
+      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Сервисы рядом',
+          description: 'Собрали быстрые действия для покупок, платежей и ежедневных задач.',
+          image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Кэшбэк недели',
+          description: 'Выбирайте категории и забирайте больше бонусов за привычные покупки.',
+          image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Умные платежи',
+          description: 'Платите в пару тапов и следите за регулярными списаниями.',
+          image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    },
+    {
+      title: 'Ближайший банкомат',
+      image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Найдите точку рядом',
+          description: 'Покажем ближайшие банкоматы и полезные места на карте.',
+          image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    },
+    {
+      title: 'Городские события',
+      image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Афиша на вечер',
+          description: 'Концерты, выставки и стендап - выбирайте событие под настроение.',
+          image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Билеты без очередей',
+          description: 'Сохраняйте подборки и переходите к покупке прямо из миниапы.',
+          image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Выходные в городе',
+          description: 'Маршруты для прогулок, еды и коротких поездок рядом.',
+          image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Спецпредложения',
+          description: 'Смотрите скидки партнеров и планируйте досуг выгоднее.',
+          image: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    },
+    {
+      title: 'Дом и уборка',
+      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Дом без лишних забот',
+          description: 'Закажите клининг, проверьте чек-лист и освободите вечер.',
+          image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'План на неделю',
+          description: 'Напоминания помогут не забыть бытовые задачи и покупки.',
+          image: 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    },
+    {
+      title: 'Свежие продукты',
+      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Корзина на ужин',
+          description: 'Овощи, фрукты и готовые наборы - соберите заказ быстрее.',
+          image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Сезонные подборки',
+          description: 'Покажем продукты, которые сейчас особенно хороши.',
+          image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Рецепты в один тап',
+          description: 'Выберите блюдо, а список покупок соберется автоматически.',
+          image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    },
+    {
+      title: 'Кофе и встречи',
+      image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Места для встреч',
+          description: 'Кофейни поблизости, тихие столики и быстрые маршруты.',
+          image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    },
+    {
+      title: 'Путешествия рядом',
+      image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=720&q=80',
+      slides: [
+        {
+          title: 'Маршрут на день',
+          description: 'Короткие поездки, красивые места и идеи для выходных.',
+          image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1080&q=80'
+        },
+        {
+          title: 'Соберите план',
+          description: 'Добавляйте точки, сохраняйте маршрут и делитесь с друзьями.',
+          image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80'
+        }
+      ]
+    }
+  ];
+
   readonly user = this.webApp?.initDataUnsafe?.user;
   readonly launchedInTelegram = Boolean(this.webApp);
   readonly platform = this.webApp?.platform ?? 'browser';
@@ -77,6 +214,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   scrollTop = 0;
   searchOpen = false;
   settingsOpen = false;
+  activeStoryIndex: number | null = null;
+  activeSlideIndex = 0;
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
@@ -126,6 +265,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.isPayments ? [104, 118, 96, 128, 112, 132] : [122, 126, 118, 146, 104, 132];
   }
 
+  get activeStory(): Story | null {
+    return this.activeStoryIndex === null ? null : this.stories[this.activeStoryIndex] ?? null;
+  }
+
+  get activeSlide(): StorySlide | null {
+    return this.activeStory?.slides[this.activeSlideIndex] ?? null;
+  }
+
   ngAfterViewInit(): void {
     document.addEventListener('touchend', this.preventDoubleTapZoom, { passive: false });
 
@@ -167,6 +314,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
     this.settingsOpen = false;
+    this.closeStory();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -194,6 +342,58 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   closeSettings(): void {
     this.settingsOpen = false;
+  }
+
+  openStory(index: number): void {
+    if (!this.stories[index]) {
+      return;
+    }
+
+    this.activeStoryIndex = index;
+    this.activeSlideIndex = 0;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeStory(): void {
+    this.activeStoryIndex = null;
+    this.activeSlideIndex = 0;
+  }
+
+  nextStorySlide(): void {
+    const story = this.activeStory;
+
+    if (!story) {
+      return;
+    }
+
+    if (this.activeSlideIndex < story.slides.length - 1) {
+      this.activeSlideIndex += 1;
+      return;
+    }
+
+    if (this.activeStoryIndex !== null && this.activeStoryIndex < this.stories.length - 1) {
+      this.activeStoryIndex += 1;
+      this.activeSlideIndex = 0;
+      return;
+    }
+
+    this.closeStory();
+  }
+
+  previousStorySlide(): void {
+    if (!this.activeStory) {
+      return;
+    }
+
+    if (this.activeSlideIndex > 0) {
+      this.activeSlideIndex -= 1;
+      return;
+    }
+
+    if (this.activeStoryIndex !== null && this.activeStoryIndex > 0) {
+      this.activeStoryIndex -= 1;
+      this.activeSlideIndex = this.stories[this.activeStoryIndex].slides.length - 1;
+    }
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {
