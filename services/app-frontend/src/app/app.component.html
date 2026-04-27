@@ -1,46 +1,47 @@
 <tui-root>
   <main class="miniapp-shell">
     <section #screen class="screen" (scroll)="onScroll($event)">
-      <header
-        class="top-region"
-        [class.search-collapsed]="searchCollapsed"
-        [class.header-collapsed]="headerCollapsed"
-      >
-        <tui-app-bar class="app-bar" size="l">
-          <span class="app-bar-title">{{ appBarTitle }}</span>
-        </tui-app-bar>
+      @if (!isStubTab) {
+        <header
+          class="top-region"
+          [class.search-collapsed]="searchCollapsed"
+          [class.header-collapsed]="headerCollapsed"
+        >
+          <tui-app-bar class="app-bar" size="l">
+            <span class="app-bar-title">{{ appBarTitle }}</span>
+          </tui-app-bar>
 
-        @if (isHome) {
-          <button class="header-row profile-row" type="button" (click)="openSettings()">
-            <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
-            <span class="header-title profile-name">{{ displayName }}</span>
-            <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
-          </button>
-        } @else {
-          <div class="header-row">
-            <span class="header-title">{{ title }}</span>
-          </div>
-        }
+          @if (isHome) {
+            <button class="header-row profile-row" type="button" (click)="openSettings()">
+              <span tuiAvatar size="m" class="avatar">{{ avatarLabel }}</span>
+              <span class="header-title profile-name">{{ displayName }}</span>
+              <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
+            </button>
+          } @else {
+            <div class="header-row">
+              <span class="header-title">{{ title }}</span>
+            </div>
+          }
 
-        @if (hasSearchHeader) {
-          <tui-textfield
-            class="search-field"
-            iconStart="@tui.search"
-            tuiTextfieldAppearance="textfield"
-            tuiTextfieldSize="m"
-          >
-            <input
-              tuiInput
-              class="asajsajsa"
-              name="homeSearch"
-              inputmode="search"
-              placeholder="Поиск"
-              [(ngModel)]="searchQuery"
-              (focus)="openSearch()"
-            />
-          </tui-textfield>
-        }
-      </header>
+          @if (hasSearchHeader) {
+            <tui-textfield
+              class="search-field"
+              iconStart="@tui.search"
+              tuiTextfieldAppearance="textfield"
+              tuiTextfieldSize="m"
+            >
+              <input
+                tuiInput
+                name="homeSearch"
+                inputmode="search"
+                placeholder="Поиск"
+                [(ngModel)]="searchQuery"
+                (focus)="openSearch()"
+              />
+            </tui-textfield>
+          }
+        </header>
+      }
 
       @if (isStubTab) {
         <div class="maintenance">
