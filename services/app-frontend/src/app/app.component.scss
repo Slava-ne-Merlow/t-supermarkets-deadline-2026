@@ -212,8 +212,8 @@
   z-index: 1;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: clamp(132px, 38vw, 164px);
-  gap: 12px;
+  grid-auto-columns: clamp(104px, 30vw, 128px);
+  gap: 10px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
@@ -227,13 +227,13 @@
 
 .story-card {
   position: relative;
-  min-height: 150px;
+  min-height: 116px;
   display: grid;
   align-items: end;
-  padding: 14px;
+  padding: 10px;
   overflow: hidden;
   border: 2px solid #4779f2;
-  border-radius: 26px;
+  border-radius: 20px;
   background-color: #1c1d20;
   background-position: center;
   background-size: cover;
@@ -247,7 +247,7 @@
   z-index: 1;
   max-width: 100%;
   overflow-wrap: anywhere;
-  font-size: 21px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1.08;
 }
