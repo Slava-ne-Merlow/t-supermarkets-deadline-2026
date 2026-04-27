@@ -37,6 +37,10 @@ fi
 frontend_url="https://$frontend_host"
 
 cat > "$APP_DIR/Caddyfile" <<EOF
+{
+    auto_https disable_redirects
+}
+
 $frontend_host {
     encode gzip
     reverse_proxy miniapp-frontend:80
@@ -70,7 +74,6 @@ docker run -d \
     --name miniapp-caddy \
     --restart unless-stopped \
     --network miniapp-net \
-    -p 80:80 \
     -p 443:443 \
     -v "$APP_DIR/Caddyfile:/etc/caddy/Caddyfile:ro" \
     -v "$APP_DIR/caddy-data:/data" \
