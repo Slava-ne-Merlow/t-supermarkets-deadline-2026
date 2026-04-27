@@ -23,14 +23,21 @@ jobs:
 
       - name: Setup SSH key
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.APP_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          install -m 700 -d ~/.ssh
+          printf '%s\n' '${{ secrets.APP_SSH_PRIVATE_KEY }}' > ~/.ssh/id_ed25519
+          sed -i 's/\r$//' ~/.ssh/id_ed25519
+          if grep -q '\\n' ~/.ssh/id_ed25519; then
+            perl -0pi -e 's/\\n/\n/g' ~/.ssh/id_ed25519
+          fi
           chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
           ssh-keyscan -p "$APP_SSH_PORT" -H "${{ secrets.APP_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Upload repo to server
         run: |
-          ssh -i ~/.ssh/id_ed25519 -p "$APP_SSH_PORT" "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}" "mkdir -p '$APP_DIR/repo'"
+          SSH_CMD="ssh -i ~/.ssh/id_ed25519 -p $APP_SSH_PORT -o IdentitiesOnly=yes -o PreferredAuthentications=publickey"
+
+          $SSH_CMD "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}" "mkdir -p '$APP_DIR/repo'"
 
           rsync -az --delete \
             --exclude ".git/" \
@@ -41,13 +48,13 @@ jobs:
             --exclude "dist/" \
             --exclude "node_modules/" \
             --exclude ".env" \
-            -e "ssh -i ~/.ssh/id_ed25519 -p $APP_SSH_PORT" \
+            -e "$SSH_CMD" \
             ./ \
             "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}:$APP_DIR/repo/"
 
       - name: Run deploy script
         run: |
-          ssh -i ~/.ssh/id_ed25519 -p "$APP_SSH_PORT" "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}" "
+          ssh -i ~/.ssh/id_ed25519 -p "$APP_SSH_PORT" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey "${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}" "
             mkdir -p '$APP_DIR/repo' &&
             cd '$APP_DIR/repo' &&
             APP_DIR='$APP_DIR' bash infra/app-server/deploy.sh

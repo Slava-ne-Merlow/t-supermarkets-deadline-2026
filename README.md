@@ -15,3 +15,7 @@ Optional backend environment:
 Deploy target path:
 
 - `/opt/miniapp`
+
+If the frontend is served directly from the same VM, use:
+
+- `APP_FRONTEND_URL=http://144.31.68.159:8082`
