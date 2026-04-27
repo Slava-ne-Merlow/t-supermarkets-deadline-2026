@@ -1,0 +1,33 @@
+[versions]
+kotlin = "2.2.20"
+spring = "3.5.6"
+spring-dependency-management = "1.1.7"
+telegram-bot = "7.8.0"
+ksp-plugin = "2.2.20-2.0.3"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring" }
+spring-kotlin = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+jacoco = { id = "jacoco" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
+telegram-bot = { id = "eu.vendeli.telegram-bot", version.ref = "telegram-bot" }
+
+[libraries]
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
+kotlin-jackson = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+
+spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
+spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-docker = { module = "org.springframework.boot:spring-boot-docker-compose" }
+
+telegram-spring-starter = { module = "eu.vendeli:spring-ktgram-starter", version.ref = "telegram-bot" }
+telegram-ksp = { module = "eu.vendeli:ksp-jvm", version.ref = "telegram-bot" }
+telegram-core = { module = "eu.vendeli:telegram-bot-jvm", version.ref = "telegram-bot" }
+
+[bundles]
+kotlin = ["kotlin-reflect", "kotlin-stdlib", "kotlin-jackson"]

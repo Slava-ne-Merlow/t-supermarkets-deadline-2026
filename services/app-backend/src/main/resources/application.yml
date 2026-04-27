@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: miniapp-backend
+  devtools:
+    restart:
+      enabled: false
+  docker:
+    compose:
+      enabled: false
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+logging:
+  level:
+    root: INFO
+    de.vyacheslav.kushchenko.miniapp: INFO
+
+app:
+  frontend-url: ${APP_FRONTEND_URL:http://localhost:4200}
+  start-text: ${APP_START_TEXT:Привет! Открой мини-приложение по кнопке ниже.}
+
+ktgram:
+  auto-start-polling: true
+  bot:
+    - token: ${TELEGRAM_BOT_TOKEN:${TELEGRAM_TOKEN:}}
+      pckg: de.vyacheslav.kushchenko.miniapp.telegram
+      identifier: ${TELEGRAM_USERNAME:MiniAppBot}
