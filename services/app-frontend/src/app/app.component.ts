@@ -106,11 +106,11 @@ export class AppComponent implements AfterViewInit {
   }
 
   get searchCollapsed(): boolean {
-    return this.hasSearchHeader && this.scrollTop > 12;
+    return this.hasSearchHeader && this.scrollTop > 8;
   }
 
   get headerCollapsed(): boolean {
-    return this.scrollTop > 68;
+    return this.scrollTop > 42;
   }
 
   get title(): string {
