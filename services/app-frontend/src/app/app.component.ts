@@ -439,10 +439,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     document.body.appendChild(link);
     link.click();
     link.remove();
-
-    window.setTimeout(() => {
-      window.location.assign(url);
-    }, 80);
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {
