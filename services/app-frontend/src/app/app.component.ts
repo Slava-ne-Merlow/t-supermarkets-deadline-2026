@@ -229,7 +229,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   accountScreenClosing = false;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
-  readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone={+79269061483}';
+  readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';

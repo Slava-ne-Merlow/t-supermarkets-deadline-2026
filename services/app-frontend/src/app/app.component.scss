@@ -532,7 +532,7 @@
   justify-items: stretch;
   column-gap: 0;
   min-height: calc(88px + env(safe-area-inset-bottom));
-  padding: 3px 4px calc(0px + env(safe-area-inset-bottom));
+  padding: 3px 4px calc(20px + env(safe-area-inset-bottom));
   overflow: visible;
   border-top: 1px solid rgb(255 255 255 / 6%);
   background: rgb(30 31 34 / 96%);
