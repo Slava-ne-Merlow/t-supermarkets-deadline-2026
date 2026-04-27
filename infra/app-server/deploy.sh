@@ -11,12 +11,11 @@ if [ ! -f "$APP_DIR/.env" ]; then
     exit 1
 fi
 
-if [ ! -f "$IMAGE_ARCHIVE" ]; then
-    echo "Missing image archive: $IMAGE_ARCHIVE" >&2
-    exit 1
+if [ -f "$IMAGE_ARCHIVE" ]; then
+    gzip -dc "$IMAGE_ARCHIVE" | docker load
+else
+    echo "No image archive found at $IMAGE_ARCHIVE; reusing local Docker images."
 fi
-
-gzip -dc "$IMAGE_ARCHIVE" | docker load
 
 read_env_value() {
     local name="$1"

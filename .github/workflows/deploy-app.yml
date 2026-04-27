@@ -8,7 +8,6 @@ on:
       - "services/app-frontend/**"
       - "infra/app-server/**"
       - ".github/workflows/deploy-app.yml"
-      - "README.md"
 
 jobs:
   deploy:
@@ -21,8 +20,53 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed parts
+        id: changes
+        run: |
+          before="${{ github.event.before }}"
+
+          if [ "$before" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$before^{commit}" 2>/dev/null; then
+            changed_files="$(git ls-files)"
+          else
+            changed_files="$(git diff --name-only "$before" "${{ github.sha }}")"
+          fi
+
+          printf '%s\n' "$changed_files"
+
+          backend_changed=false
+          frontend_changed=false
+          caddy_changed=false
+
+          if printf '%s\n' "$changed_files" | grep -q '^services/app-backend/'; then
+            backend_changed=true
+          fi
+
+          if printf '%s\n' "$changed_files" | grep -q '^services/app-frontend/'; then
+            frontend_changed=true
+          fi
+
+          if printf '%s\n' "$changed_files" | grep -Eq '^(infra/app-server/deploy\.sh|\.github/workflows/deploy-app\.yml)$'; then
+            caddy_changed=true
+          fi
+
+          if [ "$backend_changed" = true ] || [ "$frontend_changed" = true ] || [ "$caddy_changed" = true ]; then
+            image_changed=true
+          else
+            image_changed=false
+          fi
+
+          {
+            echo "backend=$backend_changed"
+            echo "frontend=$frontend_changed"
+            echo "caddy=$caddy_changed"
+            echo "image=$image_changed"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Build backend image
+        if: steps.changes.outputs.backend == 'true'
         run: |
           docker build \
             -t miniapp-backend:latest \
@@ -30,23 +74,37 @@ jobs:
             services/app-backend
 
       - name: Build frontend image
+        if: steps.changes.outputs.frontend == 'true'
         run: |
           docker build \
             -t miniapp-frontend:latest \
             -t miniapp-frontend:${{ github.sha }} \
             services/app-frontend
 
-      - name: Pack images
+      - name: Pull Caddy image
+        if: steps.changes.outputs.caddy == 'true'
         run: |
           docker pull caddy:2-alpine
           docker tag caddy:2-alpine miniapp-caddy:latest
-          docker save \
-            miniapp-backend:latest \
-            miniapp-backend:${{ github.sha }} \
-            miniapp-frontend:latest \
-            miniapp-frontend:${{ github.sha }} \
-            miniapp-caddy:latest \
-            | gzip > "$IMAGE_ARCHIVE"
+
+      - name: Pack images
+        if: steps.changes.outputs.image == 'true'
+        run: |
+          images=()
+
+          if [ "${{ steps.changes.outputs.backend }}" = "true" ]; then
+            images+=("miniapp-backend:latest" "miniapp-backend:${{ github.sha }}")
+          fi
+
+          if [ "${{ steps.changes.outputs.frontend }}" = "true" ]; then
+            images+=("miniapp-frontend:latest" "miniapp-frontend:${{ github.sha }}")
+          fi
+
+          if [ "${{ steps.changes.outputs.caddy }}" = "true" ]; then
+            images+=("miniapp-caddy:latest")
+          fi
+
+          docker save "${images[@]}" | gzip > "$IMAGE_ARCHIVE"
 
       - name: Setup SSH key
         run: |
@@ -65,13 +123,14 @@ jobs:
           SSH_CMD="ssh -i ~/.ssh/id_ed25519 -p $APP_SSH_PORT -o IdentitiesOnly=yes -o PreferredAuthentications=publickey"
           TARGET="${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}"
 
-          $SSH_CMD "$TARGET" "mkdir -p '$APP_DIR/deploy'"
+          $SSH_CMD "$TARGET" "mkdir -p '$APP_DIR/deploy' && rm -f '$APP_DIR/deploy/$IMAGE_ARCHIVE'"
 
-          rsync -az \
-            -e "$SSH_CMD" \
-            "$IMAGE_ARCHIVE" \
-            infra/app-server/deploy.sh \
-            "$TARGET:$APP_DIR/deploy/"
+          files=(infra/app-server/deploy.sh)
+          if [ -f "$IMAGE_ARCHIVE" ]; then
+            files+=("$IMAGE_ARCHIVE")
+          fi
+
+          rsync -az -e "$SSH_CMD" "${files[@]}" "$TARGET:$APP_DIR/deploy/"
 
       - name: Run deploy script
         run: |
