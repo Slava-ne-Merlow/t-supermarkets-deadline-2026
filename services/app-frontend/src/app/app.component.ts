@@ -16,12 +16,8 @@ type TelegramWebApp = {
   version?: string;
   ready: () => void;
   expand: () => void;
+  disableVerticalSwipes?: () => void;
   close: () => void;
-  MainButton?: {
-    setText: (text: string) => void;
-    show: () => void;
-    onClick: (callback: () => void) => void;
-  };
   HapticFeedback?: {
     impactOccurred: (style: 'light' | 'medium' | 'heavy') => void;
   };
@@ -65,9 +61,7 @@ export class AppComponent implements AfterViewInit {
 
     this.webApp.ready();
     this.webApp.expand();
-    this.webApp.MainButton?.setText('Закрыть');
-    this.webApp.MainButton?.show();
-    this.webApp.MainButton?.onClick(() => this.webApp?.close());
+    this.webApp.disableVerticalSwipes?.();
   }
 
   markReady(): void {
