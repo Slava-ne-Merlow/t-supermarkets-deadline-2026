@@ -287,12 +287,11 @@
 }
 
 .maintenance {
-  min-height: calc(100dvh + 40px);
+  min-height: 100%;
   display: grid;
   place-items: center;
   align-content: center;
   gap: 14px;
-  padding-bottom: 180px;
   color: #d6d8de;
   text-align: center;
 }
