@@ -1,6 +1,8 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { TuiButton, TuiRoot } from '@taiga-ui/core';
-import { TuiCard } from '@taiga-ui/layout';
+import { FormsModule } from '@angular/forms';
+import { TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
+import { TuiAvatar, TuiTabs } from '@taiga-ui/kit';
+import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
 
 type TelegramUser = {
   first_name?: string;
@@ -25,6 +27,16 @@ type TelegramWebApp = {
   };
 };
 
+type TabId = 'home' | 'payments' | 'city' | 'chat' | 'showcase';
+
+type Tab = {
+  id: TabId;
+  label: string;
+  icon: string;
+  enabled: boolean;
+  badge?: string;
+};
+
 declare global {
   interface Window {
     Telegram?: {
@@ -36,12 +48,20 @@ declare global {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TuiButton, TuiCard, TuiRoot],
+  imports: [FormsModule, TuiAppBar, TuiAvatar, TuiCard, TuiIcon, TuiInput, TuiRoot, TuiTabs, TuiTextfield],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements AfterViewInit {
   private readonly webApp = window.Telegram?.WebApp;
+
+  readonly tabs: readonly Tab[] = [
+    { id: 'home', label: 'Главная', icon: '@tui.star', enabled: true },
+    { id: 'payments', label: 'Платежи', icon: '@tui.circle-check', enabled: true },
+    { id: 'city', label: 'Город', icon: '@tui.link', enabled: false },
+    { id: 'chat', label: 'Чат', icon: '@tui.ellipsis', enabled: false, badge: '11' },
+    { id: 'showcase', label: 'Витрина', icon: '@tui.layout-grid', enabled: false }
+  ];
 
   readonly user = this.webApp?.initDataUnsafe?.user;
   readonly launchedInTelegram = Boolean(this.webApp);
@@ -49,12 +69,51 @@ export class AppComponent implements AfterViewInit {
   readonly colorScheme = this.webApp?.colorScheme ?? 'light';
   readonly version = this.webApp?.version ?? 'local';
 
+  activeTab: TabId = 'home';
+  activeTabIndex = 0;
+  searchQuery = '';
+  scrollTop = 0;
+  searchOpen = false;
+  settingsOpen = false;
+
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
   }
 
+  get avatarLabel(): string {
+    return this.displayName.trim().charAt(0).toUpperCase() || 'Г';
+  }
+
   get username(): string {
     return this.user?.username ? `@${this.user.username}` : 'без username';
+  }
+
+  get isHome(): boolean {
+    return this.activeTab === 'home';
+  }
+
+  get isPayments(): boolean {
+    return this.activeTab === 'payments';
+  }
+
+  get searchCollapsed(): boolean {
+    return this.isHome && this.scrollTop > 18;
+  }
+
+  get headerCollapsed(): boolean {
+    return !this.isHome || this.scrollTop > 96;
+  }
+
+  get title(): string {
+    return this.isPayments ? 'Платежи' : 'Главная';
+  }
+
+  get appBarTitle(): string {
+    return this.isHome && !this.headerCollapsed ? '' : this.title;
+  }
+
+  get contentPlaceholders(): readonly number[] {
+    return this.isPayments ? [104, 118, 96, 128, 112, 132] : [122, 126, 118, 146, 104, 132];
   }
 
   ngAfterViewInit(): void {
@@ -73,5 +132,51 @@ export class AppComponent implements AfterViewInit {
 
   close(): void {
     this.webApp?.close();
+  }
+
+  onScroll(event: Event): void {
+    this.scrollTop = (event.target as HTMLElement).scrollTop;
+  }
+
+  selectTab(index: number): void {
+    const tab = this.tabs[index];
+
+    if (!tab?.enabled) {
+      this.activeTabIndex = this.tabs.findIndex((item) => item.id === this.activeTab);
+      return;
+    }
+
+    this.activeTabIndex = index;
+    this.activeTab = tab.id;
+    this.scrollTop = 0;
+    this.searchOpen = false;
+    this.settingsOpen = false;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  openSearch(): void {
+    if (!this.isHome) {
+      return;
+    }
+
+    this.searchOpen = true;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeSearch(): void {
+    this.searchOpen = false;
+  }
+
+  openSettings(): void {
+    if (!this.isHome) {
+      return;
+    }
+
+    this.settingsOpen = true;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeSettings(): void {
+    this.settingsOpen = false;
   }
 }

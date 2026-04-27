@@ -1,47 +1,124 @@
 <tui-root>
   <main class="miniapp-shell">
-    <section class="panel" tuiCardLarge>
-      <div class="app-mark">MA</div>
+    <section class="screen" (scroll)="onScroll($event)">
+      <header
+        class="top-region"
+        [class.search-collapsed]="searchCollapsed"
+        [class.header-collapsed]="headerCollapsed"
+      >
+        <tui-app-bar class="app-bar" size="l">
+          <span class="app-bar-title">{{ appBarTitle }}</span>
+        </tui-app-bar>
 
-      <div class="intro">
-        <p class="eyebrow">Telegram Mini App</p>
-        <h1>Миниапа открыта</h1>
-        <p class="status">
-          @if (launchedInTelegram) {
-            Запущено внутри Telegram
-          } @else {
-            Локальный режим
-          }
-        </p>
-      </div>
+        @if (isHome) {
+          <button class="profile-row" type="button" (click)="openSettings()">
+            <span tuiAvatar size="xl" class="avatar">{{ avatarLabel }}</span>
+            <span class="profile-name">{{ displayName }}</span>
+            <tui-icon icon="@tui.chevron-right" class="profile-chevron" />
+          </button>
 
-      <div class="user-card" tuiCardMedium>
-        <span>Пользователь</span>
-        <strong>{{ displayName }}</strong>
-        <small>{{ username }}</small>
-      </div>
+          <tui-textfield
+            class="search-field"
+            iconStart="@tui.search"
+            tuiTextfieldAppearance="textfield"
+            tuiTextfieldSize="l"
+          >
+            <input
+              tuiInput
+              name="homeSearch"
+              inputmode="search"
+              placeholder="Поиск"
+              [(ngModel)]="searchQuery"
+              (focus)="openSearch()"
+            />
+          </tui-textfield>
+        }
+      </header>
 
-      <div class="meta-grid">
-        <div tuiCardMedium>
-          <span>Платформа</span>
-          <strong>{{ platform }}</strong>
-        </div>
-        <div tuiCardMedium>
-          <span>Тема</span>
-          <strong>{{ colorScheme }}</strong>
-        </div>
-        <div tuiCardMedium>
-          <span>SDK</span>
-          <strong>{{ version }}</strong>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button tuiButton type="button" appearance="primary" size="m" (click)="markReady()">Готово</button>
-        @if (launchedInTelegram) {
-          <button tuiButton type="button" appearance="secondary" size="m" (click)="close()">Закрыть</button>
+      <div class="content-stack" [class.payments]="isPayments">
+        @for (height of contentPlaceholders; track $index) {
+          <div class="placeholder" tuiCardMedium [style.min-height.px]="height"></div>
         }
       </div>
     </section>
+
+    <tui-tabs
+      class="bottom-tabs"
+      size="m"
+      [activeItemIndex]="activeTabIndex"
+      (activeItemIndexChange)="selectTab($event)"
+      [underline]="false"
+    >
+      @for (tab of tabs; track tab.id; let index = $index) {
+        <button
+          tuiTab
+          type="button"
+          class="tab-button"
+          [class.active]="tab.id === activeTab"
+          [class.disabled]="!tab.enabled"
+          [disabled]="!tab.enabled"
+          (click)="selectTab(index)"
+        >
+          <span class="tab-icon-wrap">
+            <tui-icon [icon]="tab.icon" />
+            @if (tab.badge) {
+              <span class="tab-badge">{{ tab.badge }}</span>
+            }
+          </span>
+          <span class="tab-label">{{ tab.label }}</span>
+        </button>
+      }
+    </tui-tabs>
+
+    @if (searchOpen) {
+      <section class="subscreen">
+        <tui-app-bar class="subscreen-bar" size="l">
+          <button tuiAppBarBack type="button" tuiSlot="start" (click)="closeSearch()"></button>
+          <span>Поиск</span>
+        </tui-app-bar>
+
+        <div class="subscreen-body">
+          <tui-textfield
+            class="search-field active-search"
+            iconStart="@tui.search"
+            tuiTextfieldAppearance="textfield"
+            [tuiTextfieldCleaner]="true"
+            tuiTextfieldSize="l"
+          >
+            <input
+              tuiInput
+              name="searchScreen"
+              inputmode="search"
+              placeholder="Поиск"
+              [(ngModel)]="searchQuery"
+            />
+          </tui-textfield>
+
+          <div class="placeholder slim" tuiCardMedium></div>
+          <div class="placeholder slim" tuiCardMedium></div>
+          <div class="placeholder slim" tuiCardMedium></div>
+        </div>
+      </section>
+    }
+
+    @if (settingsOpen) {
+      <section class="subscreen">
+        <tui-app-bar class="subscreen-bar" size="l">
+          <button tuiAppBarBack type="button" tuiSlot="start" (click)="closeSettings()"></button>
+          <span>Настройки</span>
+        </tui-app-bar>
+
+        <div class="subscreen-body">
+          <div class="settings-card" tuiCardLarge>
+            <span tuiAvatar size="xl" class="avatar">{{ avatarLabel }}</span>
+            <strong>{{ displayName }}</strong>
+            <span>{{ username }}</span>
+          </div>
+
+          <div class="placeholder slim" tuiCardMedium></div>
+          <div class="placeholder slim" tuiCardMedium></div>
+        </div>
+      </section>
+    }
   </main>
 </tui-root>
