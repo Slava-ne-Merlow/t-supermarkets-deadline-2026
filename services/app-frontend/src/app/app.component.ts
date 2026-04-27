@@ -67,6 +67,7 @@ declare global {
 export class AppComponent implements AfterViewInit, OnDestroy {
   private readonly webApp = window.Telegram?.WebApp;
   private lastTouchEnd = 0;
+  private homeSheetCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -219,6 +220,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   activeStoryIndex: number | null = null;
   activeSlideIndex = 0;
   activeHomeSheet: HomeSheet | null = null;
+  homeSheetClosing = false;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
 
@@ -278,6 +280,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.activeStory?.slides[this.activeSlideIndex] ?? null;
   }
 
+  get isLargeHomeSheet(): boolean {
+    return this.activeHomeSheet === 'operations' || this.activeHomeSheet === 'cashback';
+  }
+
   get homeSheetTitle(): string {
     switch (this.activeHomeSheet) {
       case 'operations':
@@ -305,6 +311,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener('touchend', this.preventDoubleTapZoom);
+    this.clearHomeSheetCloseTimer();
   }
 
   markReady(): void {
@@ -332,7 +339,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
     this.settingsOpen = false;
-    this.closeHomeSheet();
+    this.closeHomeSheet(true);
     this.closeStory();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -419,12 +426,31 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   openHomeSheet(sheet: HomeSheet): void {
+    this.clearHomeSheetCloseTimer();
+    this.homeSheetClosing = false;
     this.activeHomeSheet = sheet;
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
-  closeHomeSheet(): void {
-    this.activeHomeSheet = null;
+  closeHomeSheet(immediate = false): void {
+    if (!this.activeHomeSheet) {
+      return;
+    }
+
+    this.clearHomeSheetCloseTimer();
+
+    if (immediate) {
+      this.homeSheetClosing = false;
+      this.activeHomeSheet = null;
+      return;
+    }
+
+    this.homeSheetClosing = true;
+    this.homeSheetCloseTimer = window.setTimeout(() => {
+      this.activeHomeSheet = null;
+      this.homeSheetClosing = false;
+      this.homeSheetCloseTimer = null;
+    }, 280);
   }
 
   openDeepLink(url: string): void {
@@ -439,6 +465,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     document.body.appendChild(link);
     link.click();
     link.remove();
+  }
+
+  private clearHomeSheetCloseTimer(): void {
+    if (!this.homeSheetCloseTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.homeSheetCloseTimer);
+    this.homeSheetCloseTimer = null;
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {

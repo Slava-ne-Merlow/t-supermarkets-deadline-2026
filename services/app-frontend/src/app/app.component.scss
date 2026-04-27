@@ -334,7 +334,9 @@
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  column-gap: clamp(8px, 3vw, 14px);
+  row-gap: 10px;
+  align-items: start;
 }
 
 .quick-action {
@@ -351,23 +353,23 @@
 
 .quick-action > span {
   width: 100%;
-  height: clamp(58px, 17vw, 82px);
+  height: clamp(48px, 14vw, 66px);
   min-height: 0;
   display: grid;
   place-items: center;
-  border-radius: 22px;
+  border-radius: 18px;
   background: #1c1d20;
   color: #4a8cff;
 }
 
 .quick-action tui-icon {
-  inline-size: clamp(28px, 8vw, 42px);
-  block-size: clamp(28px, 8vw, 42px);
+  inline-size: clamp(30px, 9vw, 44px);
+  block-size: clamp(30px, 9vw, 44px);
 }
 
 .quick-action em {
   color: #f2f2f3;
-  font-size: clamp(12px, 3.6vw, 17px);
+  font-size: clamp(10px, 3.1vw, 14px);
   font-weight: 400;
   font-style: normal;
   line-height: 1.12;
@@ -686,52 +688,56 @@
   display: grid;
   align-items: end;
   background: rgb(0 0 0 / 46%);
+  animation: sheet-backdrop-in 280ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+.sheet-backdrop.closing {
+  animation-name: sheet-backdrop-out;
 }
 
 .bottom-sheet {
-  min-height: 50dvh;
+  width: 100%;
   display: grid;
   align-content: start;
   gap: 18px;
-  padding: 8px clamp(18px, 5vw, 28px) calc(26px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  padding: calc(8px + env(safe-area-inset-top)) clamp(18px, 5vw, 28px) calc(26px + env(safe-area-inset-bottom));
   border-radius: 28px 28px 0 0;
   background: #1c1d20;
   color: #fff;
   box-shadow: 0 -16px 44px rgb(0 0 0 / 42%);
+  animation: sheet-slide-in 280ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
-.sheet-handle {
-  justify-self: center;
-  width: 44px;
-  height: 4px;
-  border-radius: 999px;
-  background: #6b6d73;
+.bottom-sheet.closing {
+  animation-name: sheet-slide-out;
 }
 
-.sheet-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
+.bottom-sheet.large {
+  height: calc(100dvh - 14px);
+  grid-template-rows: auto 1fr;
 }
 
-.sheet-header strong {
-  font-size: 24px;
-  line-height: 1.1;
+.bottom-sheet.compact {
+  min-height: 50dvh;
 }
 
-.sheet-header button {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  padding: 0;
+.sheet-app-bar {
+  --tui-background-base: transparent;
+  min-height: 42px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.sheet-close-button {
+  padding: 8px 0;
   border: 0;
-  border-radius: 999px;
-  color: #aeb2ba;
-  background: #fff;
-  font-size: 28px;
-  line-height: 1;
+  color: #6ea0ff;
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 650;
 }
 
 .sheet-placeholder {
@@ -750,6 +756,10 @@
   color: #6ea0ff;
 }
 
+.bottom-sheet.large .sheet-placeholder {
+  min-height: 0;
+}
+
 .topup-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -764,6 +774,42 @@
   background: #2a2c31;
   font-size: 20px;
   font-weight: 800;
+}
+
+@keyframes sheet-slide-in {
+  from {
+    transform: translateY(104%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheet-slide-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(104%);
+  }
+}
+
+@keyframes sheet-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @media (max-width: 360px) {

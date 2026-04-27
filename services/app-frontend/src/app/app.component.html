@@ -234,13 +234,20 @@
     }
 
     @if (activeHomeSheet) {
-      <section class="sheet-backdrop" (click)="closeHomeSheet()">
-        <div class="bottom-sheet" (click)="$event.stopPropagation()">
-          <span class="sheet-handle" aria-hidden="true"></span>
-          <header class="sheet-header">
-            <strong>{{ homeSheetTitle }}</strong>
-            <button type="button" aria-label="Закрыть" (click)="closeHomeSheet()">×</button>
-          </header>
+      <section class="sheet-backdrop" [class.closing]="homeSheetClosing" (click)="closeHomeSheet()">
+        <div
+          class="bottom-sheet"
+          [class.large]="isLargeHomeSheet"
+          [class.compact]="!isLargeHomeSheet"
+          [class.closing]="homeSheetClosing"
+          (click)="$event.stopPropagation()"
+        >
+          <tui-app-bar class="sheet-app-bar" size="m">
+            <button class="sheet-close-button" type="button" tuiSlot="start" (click)="closeHomeSheet()">
+              Закрыть
+            </button>
+            <span>{{ homeSheetTitle }}</span>
+          </tui-app-bar>
 
           @switch (activeHomeSheet) {
             @case ('operations') {
