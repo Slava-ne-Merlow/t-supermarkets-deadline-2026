@@ -55,6 +55,7 @@ type HomeSheet =
   | 'cashbackBalance'
   | 'survey'
   | 'topup'
+  | 'regularPaymentAdd'
   | 'orders'
   | 'cityCategory'
   | 'supermarkets'
@@ -137,6 +138,15 @@ type CheckoutOption = {
   total: number;
   etaMinutes: number;
   tags: readonly string[];
+};
+
+type RegularPayment = {
+  id: number;
+  title: string;
+  subtitle: string;
+  total: number;
+  storeName: string;
+  itemsCount: number;
 };
 
 declare global {
@@ -552,7 +562,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   selectedCheckoutOption: CheckoutOption | null = null;
   supermarketAssortment = signal<SupermarketAssortment | null>(null);
   supermarketCart = signal<Record<string, number>>({});
+  regularPayments = signal<readonly RegularPayment[]>([]);
   paymentPhoneNumber = '';
+  regularPaymentSetupActive = false;
+  private regularPaymentId = 1;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
@@ -810,6 +823,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     );
   }
 
+  get hasHomeSheetAppBar(): boolean {
+    return this.activeHomeSheet !== 'regularPaymentAdd';
+  }
+
   get homeSheetTitle(): string {
     switch (this.activeHomeSheet) {
       case 'operations':
@@ -822,6 +839,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return 'Опрос';
       case 'topup':
         return 'Пополнить Black';
+      case 'regularPaymentAdd':
+        return '';
       case 'orders':
         return 'Заказы';
       case 'cityCategory':
@@ -1116,6 +1135,18 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.openHomeSheet('supermarkets');
   }
 
+  openRegularPaymentAddSheet(): void {
+    this.openHomeSheet('regularPaymentAdd');
+  }
+
+  startProductDeliveryRegularPayment(): void {
+    this.regularPaymentSetupActive = true;
+    this.supermarketCart.set({});
+    this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
+    this.openHomeSheet('supermarkets');
+  }
+
   changeCartQuantity(product: SupermarketProduct, delta: number): void {
     this.checkoutRequested = false;
     this.selectedCheckoutOption = null;
@@ -1219,6 +1250,21 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   confirmSupermarketOrder(): void {
     if (!this.selectedCheckoutOption) {
       return;
+    }
+
+    if (this.regularPaymentSetupActive) {
+      this.regularPayments.update(payments => [
+        {
+          id: this.regularPaymentId++,
+          title: 'Доставка продуктов',
+          subtitle: 'Предупредим за день и за час, потом доставим',
+          total: this.selectedCheckoutOption?.total ?? 0,
+          storeName: this.selectedCheckoutOption?.store.name ?? 'Партнер',
+          itemsCount: this.cartTotalCount()
+        },
+        ...payments
+      ]);
+      this.regularPaymentSetupActive = false;
     }
 
     this.webApp?.HapticFeedback?.impactOccurred('medium');
@@ -1354,6 +1400,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.activeHomeSheet = null;
       this.checkoutRequested = false;
       this.selectedCheckoutOption = null;
+      this.regularPaymentSetupActive = false;
       this.closeOperationDetail(true);
       return;
     }
@@ -1365,6 +1412,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.homeSheetClosing = false;
       this.checkoutRequested = false;
       this.selectedCheckoutOption = null;
+      this.regularPaymentSetupActive = false;
       this.homeSheetCloseTimer = null;
     }, 280);
   }

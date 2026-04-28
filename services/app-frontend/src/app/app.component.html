@@ -446,16 +446,37 @@
           <button class="back-button" type="button" tuiSlot="start" (click)="closeRegularPaymentsScreen()">
             <tui-icon icon="@tui.chevron-left" />
           </button>
-          <span class="account-bar-title visible">Регулярные платежи</span>
         </tui-app-bar>
 
         <div class="regular-payments-body">
-          <section class="regular-empty-state">
-            <tui-icon icon="@tui.calendar-clock" />
-            <strong>Пока пусто</strong>
-            <span>Здесь появятся регулярные платежи и автоплатежи.</span>
-          </section>
+          <h1>Регулярные платежи</h1>
+
+          @if (regularPayments().length === 0) {
+            <section class="regular-empty-card">
+              <strong>Нет автоплатежей</strong>
+              <span>С ними проще — в нужные дни платеж или перевод будет списываться сам</span>
+            </section>
+          } @else {
+            <section class="regular-payments-list">
+              @for (payment of regularPayments(); track payment.id) {
+                <article class="regular-payment-item">
+                  <span class="regular-payment-icon">
+                    <tui-icon icon="@tui.shopping-basket" />
+                  </span>
+                  <span>
+                    <strong>{{ payment.title }}</strong>
+                    <em>{{ payment.storeName }} · {{ payment.itemsCount }} товаров · {{ formatRubles(payment.total) }} ₽</em>
+                    <small>{{ payment.subtitle }}</small>
+                  </span>
+                </article>
+              }
+            </section>
+          }
         </div>
+
+        <footer class="regular-payments-footer">
+          <button type="button" (click)="openRegularPaymentAddSheet()">Добавить</button>
+        </footer>
       </section>
     }
 
@@ -498,12 +519,14 @@
           [class.closing]="homeSheetClosing"
           (click)="$event.stopPropagation()"
         >
-          <tui-app-bar class="sheet-app-bar" size="m">
-            <button class="sheet-close-button" type="button" tuiSlot="start" (click)="closeHomeSheet()">
-              Закрыть
-            </button>
-            <span>{{ homeSheetTitle }}</span>
-          </tui-app-bar>
+          @if (hasHomeSheetAppBar) {
+            <tui-app-bar class="sheet-app-bar" size="m">
+              <button class="sheet-close-button" type="button" tuiSlot="start" (click)="closeHomeSheet()">
+                Закрыть
+              </button>
+              <span>{{ homeSheetTitle }}</span>
+            </tui-app-bar>
+          }
 
           @switch (activeHomeSheet) {
             @case ('operations') {
@@ -605,6 +628,22 @@
                   <button type="button" (click)="topUpBalance(amount)">{{ amount }} ₽</button>
                 }
               </div>
+            }
+            @case ('regularPaymentAdd') {
+              <section class="regular-add-sheet">
+                <span class="sheet-drag-handle" aria-hidden="true"></span>
+                <h2>Что хотите добавить?</h2>
+                <button class="regular-add-option" type="button" (click)="startProductDeliveryRegularPayment()">
+                  <span class="regular-add-icon">
+                    <tui-icon icon="@tui.shopping-basket" />
+                  </span>
+                  <span>
+                    <strong>Доставка продуктов</strong>
+                    <em>Предупредим за день и за час, потом доставим</em>
+                  </span>
+                  <tui-icon icon="@tui.chevron-right" />
+                </button>
+              </section>
             }
             @case ('supermarkets') {
               <section class="supermarket-sheet">
@@ -722,7 +761,7 @@
                     </section>
 
                     <button class="checkout-confirm-button" type="button" (click)="confirmSupermarketOrder()">
-                      Оформить заказ
+                      {{ regularPaymentSetupActive ? 'Добавить регулярную доставку' : 'Оформить заказ' }}
                     </button>
                   </section>
                 } @else {
@@ -816,7 +855,9 @@
                         <strong>{{ cartTotalCount() ? 'В корзине ' + cartTotalCount() : 'Корзина пуста' }}</strong>
                         <em>минимум {{ formatRubles(cartMinTotal()) }} ₽</em>
                       </span>
-                      <button type="button" [disabled]="cartTotalCount() === 0" (click)="requestCheckoutOptions()">Заказать</button>
+                      <button type="button" [disabled]="cartTotalCount() === 0" (click)="requestCheckoutOptions()">
+                        {{ regularPaymentSetupActive ? 'Настроить' : 'Заказать' }}
+                      </button>
                     </footer>
                   }
                 }

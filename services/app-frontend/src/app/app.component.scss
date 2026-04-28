@@ -1167,6 +1167,12 @@
   background: #000;
 }
 
+.regular-payments-screen {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
 .settings-screen-body {
   display: grid;
   gap: 18px;
@@ -1199,44 +1205,7 @@
   //padding-top: 24px;
 }
 
-.regular-payments-body {
-  min-height: calc(100% - 74px);
-  display: grid;
-  align-items: start;
-  padding-top: 18px;
-}
-
-.regular-empty-state {
-  min-height: 210px;
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 10px;
-  padding: 24px;
-  border-radius: 28px;
-  background: #1c1d20;
-  text-align: center;
-}
-
-.regular-empty-state tui-icon {
-  color: #6ea0ff;
-  inline-size: 42px;
-  block-size: 42px;
-}
-
-.regular-empty-state strong {
-  color: #f7f7f8;
-  font-size: 22px;
-  font-weight: 850;
-  line-height: 1.1;
-}
-
-.regular-empty-state span {
-  max-width: 260px;
-  color: #9da0a8;
-  font-size: 14px;
-  line-height: 1.25;
-}
+.regular-payments-body{min-height:0;display:grid;align-content:start;gap:24px;overflow-y:auto;padding-top:18px;padding-bottom:24px;scrollbar-width:none}.regular-payments-body::-webkit-scrollbar{display:none}.regular-payments-body h1{margin:0;color:#f7f7f8;font-size:clamp(34px,10vw,56px);font-weight:850;line-height:1.04}.regular-empty-card{display:grid;gap:12px;padding:24px;border-radius:28px;background:#1c1d20;text-align:left}.regular-empty-card strong{color:#f7f7f8;font-size:clamp(22px,6vw,30px);font-weight:850;line-height:1.1}.regular-empty-card span{max-width:360px;color:#9da0a8;font-size:clamp(17px,4.8vw,24px);line-height:1.24}.regular-payments-footer{z-index:4;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgb(0 0 0 / 0%),#000 28%)}.regular-payments-footer button{width:100%;min-height:64px;border:0;border-radius:22px;background:#ffe35b;color:#303136;font:inherit;font-size:22px;font-weight:500}.regular-payments-list{display:grid;gap:12px}.regular-payment-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding:16px;border-radius:24px;background:#1c1d20}.regular-payment-icon{width:48px;aspect-ratio:1;display:grid;place-items:center;border-radius:999px;background:#5d91ff;color:#fff}.regular-payment-icon tui-icon{inline-size:26px;block-size:26px}.regular-payment-item span:last-child{min-width:0;display:grid;gap:4px}.regular-payment-item strong{color:#f7f7f8;font-size:18px;font-weight:850}.regular-payment-item em,.regular-payment-item small{overflow:hidden;color:#9da0a8;font-size:13px;font-style:normal;line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
 
 .account-hero {
   display: grid;
@@ -1957,6 +1926,8 @@
   font-size: 20px;
   font-weight: 800;
 }
+
+.regular-add-sheet{display:grid;gap:26px;padding-top:2px}.sheet-drag-handle{justify-self:center;width:44px;height:6px;border-radius:999px;background:#606166}.regular-add-sheet h2{margin:0;color:#f7f7f8;font-size:clamp(24px,7vw,34px);font-weight:850;line-height:1.08}.regular-add-option{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:2px 0;border:0;background:transparent;color:#f7f7f8;text-align:left;font:inherit}.regular-add-icon{width:56px;aspect-ratio:1;display:grid;place-items:center;border-radius:999px;background:#5d91ff;color:#fff}.regular-add-icon tui-icon{inline-size:30px;block-size:30px}.regular-add-option span:nth-child(2){min-width:0;display:grid;gap:7px}.regular-add-option strong{font-size:clamp(20px,5.6vw,28px);font-weight:500;line-height:1.08}.regular-add-option em{color:#9da0a8;font-size:clamp(15px,4.2vw,20px);font-style:normal;line-height:1.22}.regular-add-option>tui-icon{color:#8d9098;inline-size:28px;block-size:28px}
 
 .supermarket-sheet {
   min-height: 0;
