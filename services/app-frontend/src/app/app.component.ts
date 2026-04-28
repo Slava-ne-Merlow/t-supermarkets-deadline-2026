@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
+import { TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
 import { TuiAvatar, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
 import { AccountBalanceStore } from './account-balance.store';
@@ -83,7 +83,7 @@ declare global {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, TuiAppBar, TuiAvatar, TuiCard, TuiIcon, TuiInput, TuiRoot, TuiTabs, TuiTextfield],
+  imports: [FormsModule, TuiAppBar, TuiAvatar, TuiCard, TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTabs, TuiTextfield],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -95,7 +95,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private settingsScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private operationDetailCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
-  private cashbackCommentTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -233,7 +232,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
   ];
 
-  readonly operationGroups: readonly OperationGroup[] = [
+  readonly operationGroups = signal<readonly OperationGroup[]>([
     {
       day: 'Сегодня',
       items: [
@@ -384,7 +383,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         }
       ]
     }
-  ];
+  ]);
 
   readonly user = this.webApp?.initDataUnsafe?.user;
   readonly launchedInTelegram = Boolean(this.webApp);
@@ -408,10 +407,28 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   accountScreenClosing = false;
   activeOperation: Operation | null = null;
   operationDetailClosing = false;
-  cashbackCommentVisible = false;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
+  readonly spendingTotal = computed(() =>
+    this.operationGroups().reduce((total, group) => total + group.items.reduce((sum, operation) => sum + operation.amount, 0), 0)
+  );
+  readonly spendingTotalLabel = computed(() => `${this.formatRubles(this.spendingTotal())} ₽`);
+  readonly cashbackOperationGroups = computed<readonly OperationGroup[]>(() =>
+    this.operationGroups()
+      .map(group => ({
+        day: group.day,
+        items: group.items.filter(operation => this.operationCashbackTotal(operation) > 0)
+      }))
+      .filter(group => group.items.length > 0)
+  );
+  readonly cashbackTotal = computed(() =>
+    this.cashbackOperationGroups().reduce(
+      (total, group) => total + group.items.reduce((sum, operation) => sum + this.operationCashbackTotal(operation), 0),
+      0
+    )
+  );
+  readonly cashbackTotalLabel = computed(() => `${this.formatRubles(this.cashbackTotal())} ₽`);
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
@@ -516,7 +533,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearAccountScreenCloseTimer();
     this.clearSettingsScreenCloseTimer();
     this.clearOperationDetailCloseTimer();
-    this.clearCashbackCommentTimer();
   }
 
   markReady(): void {
@@ -744,15 +760,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       .replace(/\u00a0/g, ' ');
   }
 
-  showCashbackComment(event: Event): void {
-    event.stopPropagation();
-    this.clearCashbackCommentTimer();
-    this.cashbackCommentVisible = true;
-    this.webApp?.HapticFeedback?.impactOccurred('light');
-    this.cashbackCommentTimer = window.setTimeout(() => {
-      this.cashbackCommentVisible = false;
-      this.cashbackCommentTimer = null;
-    }, 2600);
+  operationCashbackTotal(operation: Operation): number {
+    return (operation.cashback ?? 0) + (operation.extraCashback ?? 0);
   }
 
   closeHomeSheet(immediate = false): void {
@@ -817,15 +826,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.operationDetailCloseTimer);
     this.operationDetailCloseTimer = null;
-  }
-
-  private clearCashbackCommentTimer(): void {
-    if (!this.cashbackCommentTimer) {
-      return;
-    }
-
-    window.clearTimeout(this.cashbackCommentTimer);
-    this.cashbackCommentTimer = null;
   }
 
   private clearSettingsScreenCloseTimer(): void {
