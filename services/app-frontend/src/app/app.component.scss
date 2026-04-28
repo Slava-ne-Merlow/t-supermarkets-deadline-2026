@@ -647,7 +647,7 @@
   position: sticky;
   top: 0;
   z-index: 0;
-  min-height: calc(min(64dvh, 560px) + var(--city-pull));
+  min-height: calc(min(56dvh, 480px) + var(--city-pull));
   display: grid;
   align-content: end;
   gap: 18px;
