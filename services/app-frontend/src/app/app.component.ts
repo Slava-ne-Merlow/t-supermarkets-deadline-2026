@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
-import { TuiAvatar, TuiProgress, TuiTabs } from '@taiga-ui/kit';
+import { TuiAvatar, TuiCounter, TuiProgress, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
 import { AccountBalanceStore } from './account-balance.store';
 
@@ -57,7 +57,8 @@ type HomeSheet =
   | 'topup'
   | 'orders'
   | 'cityCategory'
-  | 'supermarkets';
+  | 'supermarkets'
+  | 'supermarketCart';
 
 type CitySlide = {
   title: string;
@@ -157,6 +158,7 @@ declare global {
     TuiHint,
     TuiIcon,
     TuiInput,
+    TuiCounter,
     TuiProgress,
     TuiRoot,
     TuiTabs,
@@ -783,7 +785,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.activeHomeSheet === 'operations' ||
       this.activeHomeSheet === 'cashback' ||
       this.activeHomeSheet === 'cashbackBalance' ||
-      this.activeHomeSheet === 'supermarkets'
+      this.activeHomeSheet === 'supermarkets' ||
+      this.activeHomeSheet === 'supermarketCart'
     );
   }
 
@@ -805,6 +808,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return this.activeCityCategory?.title ?? 'Город';
       case 'supermarkets':
         return 'Супермаркеты';
+      case 'supermarketCart':
+        return 'Корзина';
       default:
         return '';
     }
@@ -1071,6 +1076,23 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
+  setCartQuantity(product: SupermarketProduct, quantity: number): void {
+    this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
+    this.supermarketCart.update(cart => {
+      const nextQuantity = Math.max(0, Math.min(99, Math.round(quantity || 0)));
+      const next = { ...cart };
+
+      if (nextQuantity === 0) {
+        delete next[product.id];
+      } else {
+        next[product.id] = nextQuantity;
+      }
+
+      return next;
+    });
+  }
+
   cartQuantity(productId: string): number {
     return this.supermarketCart()[productId] ?? 0;
   }
@@ -1094,6 +1116,28 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.checkoutRequested = true;
     this.selectedCheckoutOption = null;
     this.webApp?.HapticFeedback?.impactOccurred('medium');
+  }
+
+  openSupermarketCart(): void {
+    if (this.cartTotalCount() === 0) {
+      return;
+    }
+
+    this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
+    this.openHomeSheet('supermarketCart');
+  }
+
+  backToSupermarkets(): void {
+    this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
+    this.openHomeSheet('supermarkets');
+  }
+
+  backToCartItems(): void {
+    this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
   selectCheckoutOption(option: CheckoutOption): void {

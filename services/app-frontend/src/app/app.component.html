@@ -548,133 +548,212 @@
                     <strong>Загружаем ассортимент</strong>
                     <span>Сейчас появятся товары партнеров.</span>
                   </div>
-	                } @else {
-                    @if (selectedCheckoutOption) {
-                      <section class="checkout-page">
-                        <button class="checkout-back" type="button" (click)="closeCheckoutPage()">
-                          <tui-icon icon="@tui.chevron-left" />
-                          <span>К вариантам</span>
-                        </button>
-
-                        <div class="checkout-hero-card">
-                          <span class="store-dot large" [style.background]="selectedCheckoutOption.store.brandColor"></span>
-                          <span>
-                            <strong>{{ selectedCheckoutOption.store.name }}</strong>
-                            <em>{{ selectedCheckoutOption.etaMinutes }} мин · доставка {{ formatRubles(selectedCheckoutOption.deliveryFee) }} ₽</em>
-                          </span>
-                          <span class="checkout-total-pill">{{ formatRubles(selectedCheckoutOption.total) }} ₽</span>
-                        </div>
-
-                        <div class="checkout-info-grid">
-                          <section>
-                            <tui-icon icon="@tui.map-pin" />
-                            <span>
-                              <strong>Адрес доставки</strong>
-                              <em>{{ selectedCity }}, ближайший адрес из Telegram</em>
-                            </span>
-                          </section>
-                          <section>
-                            <tui-icon icon="@tui.credit-card" />
-                            <span>
-                              <strong>Оплата</strong>
-                              <em>Black · 5619</em>
-                            </span>
-                          </section>
-                        </div>
-
-                        <section class="checkout-order-list">
-                          <h3>Состав заказа</h3>
-                          @for (line of cartLines(); track line.product.id) {
-                            <article>
-                              <img [src]="line.product.image" [alt]="line.product.name" />
-                              <span>
-                                <strong>{{ line.product.name }}</strong>
-                                <em>{{ offerForStore(line.product, selectedCheckoutOption.store.id)?.title }}</em>
-                              </span>
-                              <span>
-                                <strong>{{ formatRubles(lineTotalForStore(line, selectedCheckoutOption.store.id)) }} ₽</strong>
-                                <em>{{ line.quantity }} шт</em>
-                              </span>
-                            </article>
-                          }
-                        </section>
-
-                        <section class="checkout-summary-card">
-                          <span>
-                            <em>Товары</em>
-                            <strong>{{ formatRubles(selectedCheckoutOption.itemsTotal) }} ₽</strong>
-                          </span>
-                          <span>
-                            <em>Доставка</em>
-                            <strong>{{ formatRubles(selectedCheckoutOption.deliveryFee) }} ₽</strong>
-                          </span>
-                          <span>
-                            <em>Итого</em>
-                            <strong>{{ formatRubles(selectedCheckoutOption.total) }} ₽</strong>
-                          </span>
-                        </section>
-
-                        <button class="checkout-confirm-button" type="button" (click)="confirmSupermarketOrder()">
-                          Оформить заказ
-                        </button>
-                      </section>
-                    } @else {
-	                  <div class="supermarket-scroll-area">
-	                    @if (checkoutRequested && checkoutOptions().length > 0) {
-	                      <section class="checkout-options">
-	                        <h3>Лучшие варианты</h3>
-	                        @for (option of checkoutOptions(); track option.store.id) {
-	                          <button class="checkout-option" type="button" (click)="selectCheckoutOption(option)">
-	                            <span class="store-dot" [style.background]="option.store.brandColor"></span>
-                            <span>
-                              <strong>{{ option.store.name }}</strong>
-                              <em>{{ option.etaMinutes }} мин · доставка {{ formatRubles(option.deliveryFee) }} ₽</em>
-                            </span>
-                            <span class="checkout-option-side">
-                              <strong>{{ formatRubles(option.total) }} ₽</strong>
-                              @for (tag of option.tags; track tag) {
-                                <i>{{ tag }}</i>
-                              }
-                            </span>
-                          </button>
-                        }
-                      </section>
-                    }
-
+                } @else {
+                  <div class="supermarket-scroll-area">
                     <section class="supermarket-products">
                       @for (product of supermarketProducts(); track product.id) {
                         <article class="supermarket-product">
-                          <img [src]="product.image" [alt]="product.name" />
+                          <span class="supermarket-product-image">
+                            <img [src]="product.image" [alt]="product.name" />
+                          </span>
                           <span class="supermarket-product-copy">
+                            <strong class="supermarket-product-price">{{ formatRubles(minProductPrice(product)) }} ₽</strong>
                             <strong>{{ product.name }}</strong>
-                            <em>{{ product.category }} · {{ product.unit }}</em>
-                            <small>от {{ formatRubles(minProductPrice(product)) }} ₽ · {{ cheapestStoreName(product) }}</small>
+                            <em>{{ product.unit }}</em>
+                            <small>{{ cheapestStoreName(product) }}</small>
                           </span>
                           <span class="quantity-control">
-                            @if (cartQuantity(product.id) > 0) {
-                              <button type="button" (click)="changeCartQuantity(product, -1)">
-                                <tui-icon icon="@tui.minus" />
-                              </button>
-                              <strong>{{ cartQuantity(product.id) }}</strong>
-                            }
-                            <button type="button" (click)="changeCartQuantity(product, 1)">
-                              <tui-icon icon="@tui.plus" />
-                            </button>
+                            <tui-counter
+                              class="quantity-counter"
+                              size="s"
+                              appearance="flat-grayscale"
+                              [min]="0"
+                              [max]="99"
+                              [ngModel]="cartQuantity(product.id)"
+                              (ngModelChange)="setCartQuantity(product, $event)"
+                            />
                           </span>
                         </article>
                       }
                     </section>
                   </div>
 
-	                  <footer class="supermarket-cart-bar">
+                  <footer class="supermarket-cart-bar">
                     <span>
                       <strong>{{ cartTotalCount() ? 'В корзине ' + cartTotalCount() : 'Корзина пуста' }}</strong>
                       <em>минимум {{ formatRubles(cartMinTotal()) }} ₽</em>
                     </span>
-	                    <button type="button" [disabled]="cartTotalCount() === 0" (click)="requestCheckoutOptions()">Заказать</button>
-	                  </footer>
+                    <button type="button" [disabled]="cartTotalCount() === 0" (click)="openSupermarketCart()">Перейти в корзину</button>
+                  </footer>
+                }
+              </section>
+            }
+            @case ('supermarketCart') {
+              <section class="supermarket-sheet">
+                @if (selectedCheckoutOption) {
+                  <section class="checkout-page">
+                    <button class="checkout-back" type="button" (click)="closeCheckoutPage()">
+                      <tui-icon icon="@tui.chevron-left" />
+                      <span>К вариантам</span>
+                    </button>
+
+                    <div class="checkout-hero-card">
+                      <span class="store-dot large" [style.background]="selectedCheckoutOption.store.brandColor"></span>
+                      <span>
+                        <strong>{{ selectedCheckoutOption.store.name }}</strong>
+                        <em>{{ selectedCheckoutOption.etaMinutes }} мин · доставка {{ formatRubles(selectedCheckoutOption.deliveryFee) }} ₽</em>
+                      </span>
+                      <span class="checkout-total-pill">{{ formatRubles(selectedCheckoutOption.total) }} ₽</span>
+                    </div>
+
+                    <div class="checkout-info-grid">
+                      <section>
+                        <tui-icon icon="@tui.map-pin" />
+                        <span>
+                          <strong>Адрес доставки</strong>
+                          <em>{{ selectedCity }}, ближайший адрес из Telegram</em>
+                        </span>
+                      </section>
+                      <section>
+                        <tui-icon icon="@tui.credit-card" />
+                        <span>
+                          <strong>Оплата</strong>
+                          <em>Black · 5619</em>
+                        </span>
+                      </section>
+                    </div>
+
+                    <section class="checkout-order-list">
+                      <h3>Состав заказа</h3>
+                      @for (line of cartLines(); track line.product.id) {
+                        <article>
+                          <img [src]="line.product.image" [alt]="line.product.name" />
+                          <span>
+                            <strong>{{ line.product.name }}</strong>
+                            <em>{{ offerForStore(line.product, selectedCheckoutOption.store.id)?.title }}</em>
+                          </span>
+                          <span>
+                            <strong>{{ formatRubles(lineTotalForStore(line, selectedCheckoutOption.store.id)) }} ₽</strong>
+                            <em>{{ line.quantity }} шт</em>
+                          </span>
+                        </article>
+                      }
+                    </section>
+
+                    <section class="checkout-summary-card">
+                      <span>
+                        <em>Товары</em>
+                        <strong>{{ formatRubles(selectedCheckoutOption.itemsTotal) }} ₽</strong>
+                      </span>
+                      <span>
+                        <em>Доставка</em>
+                        <strong>{{ formatRubles(selectedCheckoutOption.deliveryFee) }} ₽</strong>
+                      </span>
+                      <span>
+                        <em>Итого</em>
+                        <strong>{{ formatRubles(selectedCheckoutOption.total) }} ₽</strong>
+                      </span>
+                    </section>
+
+                    <button class="checkout-confirm-button" type="button" (click)="confirmSupermarketOrder()">
+                      Оформить заказ
+                    </button>
+                  </section>
+                } @else {
+                  <div class="supermarket-scroll-area">
+                    @if (checkoutRequested && checkoutOptions().length > 0) {
+                      <section class="partner-selection">
+                        <button class="checkout-back" type="button" (click)="backToCartItems()">
+                          <tui-icon icon="@tui.chevron-left" />
+                          <span>К корзине</span>
+                        </button>
+
+                        <div class="partner-selection-summary">
+                          <span>
+                            <strong>{{ cartTotalCount() }} товара</strong>
+                            <em>Сравнили цены и доставку у партнеров</em>
+                          </span>
+                          <span>от {{ formatRubles(cartMinTotal()) }} ₽</span>
+                        </div>
+
+                        <h3>Выберите партнера</h3>
+                        @for (option of checkoutOptions(); track option.store.id; let index = $index) {
+                          <button
+                            class="partner-option-card"
+                            type="button"
+                            [style.animation-delay.ms]="index * 45"
+                            (click)="selectCheckoutOption(option)"
+                          >
+                            <span class="partner-option-head">
+                              <span class="store-dot" [style.background]="option.store.brandColor"></span>
+                              <strong>{{ option.store.name }}</strong>
+                              <span class="partner-tags">
+                                @for (tag of option.tags; track tag) {
+                                  <i>{{ tag }}</i>
+                                }
+                              </span>
+                            </span>
+                            <span class="partner-option-metrics">
+                              <span>
+                                <em>Привезут</em>
+                                <strong>{{ option.etaMinutes }} мин</strong>
+                              </span>
+                              <span>
+                                <em>Доставка</em>
+                                <strong>{{ formatRubles(option.deliveryFee) }} ₽</strong>
+                              </span>
+                              <span>
+                                <em>Итого</em>
+                                <strong>{{ formatRubles(option.total) }} ₽</strong>
+                              </span>
+                            </span>
+                            <span class="partner-option-footer">
+                              <em>Товары {{ formatRubles(option.itemsTotal) }} ₽</em>
+                              <span>Выбрать</span>
+                            </span>
+                          </button>
+                        }
+                      </section>
+                    } @else {
+                      <button class="cart-back-button" type="button" (click)="backToSupermarkets()">
+                        <tui-icon icon="@tui.chevron-left" />
+                        <span>К товарам</span>
+                      </button>
+
+                      <section class="cart-lines">
+                        <h3>Товары в корзине</h3>
+                        @for (line of cartLines(); track line.product.id) {
+                          <article>
+                            <img [src]="line.product.image" [alt]="line.product.name" />
+                            <span>
+                              <strong>{{ line.product.name }}</strong>
+                              <em>{{ line.product.unit }} · от {{ formatRubles(minProductPrice(line.product)) }} ₽</em>
+                            </span>
+                            <tui-counter
+                              class="cart-line-counter"
+                              size="s"
+                              appearance="flat-grayscale"
+                              [min]="0"
+                              [max]="99"
+                              [ngModel]="line.quantity"
+                              (ngModelChange)="setCartQuantity(line.product, $event)"
+                            />
+                          </article>
+                        }
+                      </section>
                     }
-	                }
+                  </div>
+
+                  @if (!checkoutRequested) {
+                    <footer class="supermarket-cart-bar">
+                      <span>
+                        <strong>{{ cartTotalCount() ? 'В корзине ' + cartTotalCount() : 'Корзина пуста' }}</strong>
+                        <em>минимум {{ formatRubles(cartMinTotal()) }} ₽</em>
+                      </span>
+                      <button type="button" [disabled]="cartTotalCount() === 0" (click)="requestCheckoutOptions()">Заказать</button>
+                    </footer>
+                  }
+                }
               </section>
             }
             @case ('orders') {

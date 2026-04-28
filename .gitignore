@@ -57,3 +57,4 @@ jacoco/
 /dataSources.local.xml
 __pycache__/
 *.pyc
+/services/app-frontend/images
