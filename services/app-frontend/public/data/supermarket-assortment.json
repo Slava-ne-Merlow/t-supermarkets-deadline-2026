@@ -1,0 +1,289 @@
+{
+  "updatedAt": "2026-04-28",
+  "currency": "RUB",
+  "city": "Москва",
+  "stores": [
+    {
+      "id": "vkusvill",
+      "name": "ВкусВилл",
+      "brandColor": "#32a852"
+    },
+    {
+      "id": "dixy",
+      "name": "Дикси",
+      "brandColor": "#f58220"
+    },
+    {
+      "id": "auchan",
+      "name": "Ашан",
+      "brandColor": "#e30613"
+    },
+    {
+      "id": "lenta",
+      "name": "Лента",
+      "brandColor": "#005bbb"
+    }
+  ],
+  "products": [
+    {
+      "id": "milk-32-1l",
+      "name": "Молоко 3.2%",
+      "unit": "1 л",
+      "category": "Молочные продукты",
+      "image": "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Молоко 3,2%, 1 л", "price": 93, "sourceQuality": "official" },
+        { "storeId": "dixy", "title": "Молоко 3,2%, 0,93 л", "price": 84.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Молоко 3,2%, около 1 л", "price": 95, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Молоко ЭкоНива 3,3-6%, 1 л", "price": 104.99, "sourceQuality": "official" }
+      ]
+    },
+    {
+      "id": "kefir-900g",
+      "name": "Кефир 2.5-3.2%",
+      "unit": "900 г",
+      "category": "Молочные продукты",
+      "image": "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Кефир ЭкоНива 3,2%, 1 кг", "price": 139, "sourceQuality": "official" },
+        { "storeId": "dixy", "title": "Кефир Хуторок 2,5%, 900 г", "price": 79.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Кефир 2,5-3,2%, около 900 г", "price": 89, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Кефир 2,5-3,2%, около 900 г", "price": 99, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "sour-cream-300g",
+      "name": "Сметана 15-20%",
+      "unit": "300 г",
+      "category": "Молочные продукты",
+      "image": "https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Сметана 15%, 300 г", "price": 126, "sourceQuality": "official" },
+        { "storeId": "dixy", "title": "Сметана Хуторок 20%, 300 г", "price": 89.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Сметана 15-20%, 300 г", "price": 94, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Сметана 15-20%, 300 г", "price": 109, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "cottage-cheese-5",
+      "name": "Творог 5%",
+      "unit": "180-300 г",
+      "category": "Молочные продукты",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Творог 5%, 180 г", "price": 108, "sourceQuality": "official" },
+        { "storeId": "dixy", "title": "Творог Хуторок 5%, 300 г", "price": 114.9, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Творог 5%, около 200 г", "price": 119, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Творог 5%, около 200-300 г", "price": 129, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "eggs-c1-10",
+      "name": "Яйца C1/C0",
+      "unit": "10 шт",
+      "category": "Яйца",
+      "image": "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Яйца куриные, 10 шт", "price": 139, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Яйцо куриное 1 категории, 10 шт", "price": 79.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Яйцо Каждый День C1, 10 шт", "price": 69.99, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Яйцо Лента C1, 10 шт", "price": 109.99, "sourceQuality": "official" }
+      ]
+    },
+    {
+      "id": "sliced-baton",
+      "name": "Батон нарезной",
+      "unit": "250-400 г",
+      "category": "Хлеб",
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Батон нарезной, 250 г", "price": 50, "sourceQuality": "official" },
+        { "storeId": "dixy", "title": "Батон нарезной, около 350 г", "price": 50, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Батон пшеничный АШАН нарезной, 400 г", "price": 39.99, "sourceQuality": "indexed" },
+        { "storeId": "lenta", "title": "Батон Лента нарезной, 400 г", "price": 46.99, "sourceQuality": "official" }
+      ]
+    },
+    {
+      "id": "potato-1kg",
+      "name": "Картофель",
+      "unit": "1 кг",
+      "category": "Овощи",
+      "image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Картофель, 1 кг", "price": 70, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Картофель, 1 кг", "price": 30.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Картофель, 1 кг", "price": 49, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Картофель, 1 кг", "price": 59, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "carrot-1kg",
+      "name": "Морковь",
+      "unit": "1 кг",
+      "category": "Овощи",
+      "image": "https://images.unsplash.com/photo-1445282768818-728615cc910a?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Морковь, 1 кг", "price": 65, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Морковь, 1 кг", "price": 18.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Морковь, 1 кг", "price": 39, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Морковь, 1 кг", "price": 49, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "onion-1kg",
+      "name": "Лук репчатый",
+      "unit": "1 кг",
+      "category": "Овощи",
+      "image": "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Лук репчатый, 1 кг", "price": 55, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Лук репчатый, 1 кг", "price": 36.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Лук репчатый, 1 кг", "price": 39, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Лук репчатый, 1 кг", "price": 49, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "cabbage-1kg",
+      "name": "Капуста белокочанная",
+      "unit": "1 кг",
+      "category": "Овощи",
+      "image": "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Капуста белокочанная, 1 кг", "price": 65, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Капуста белокочанная, 1 кг", "price": 24.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Капуста белокочанная, 1 кг", "price": 39, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Капуста белокочанная, 1 кг", "price": 49, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "bananas-1kg",
+      "name": "Бананы",
+      "unit": "1 кг",
+      "category": "Фрукты",
+      "image": "https://images.unsplash.com/photo-1603833665858-e61d17a86224?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Бананы, 1 кг", "price": 139, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Бананы спелые, 1 кг", "price": 119.9, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Бананы, 1 кг", "price": 119, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Бананы, 1 кг", "price": 129, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "apples-1kg",
+      "name": "Яблоки",
+      "unit": "1 кг",
+      "category": "Фрукты",
+      "image": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Яблоки, 1 кг", "price": 169, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Яблоки Гала, 1 кг", "price": 129.9, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Яблоки, 1 кг", "price": 129, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Яблоки, 1 кг", "price": 149, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "chicken-fillet",
+      "name": "Филе куриное",
+      "unit": "900 г - 1 кг",
+      "category": "Мясо и птица",
+      "image": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Филе куриное, около 1 кг", "price": 490, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Филе Троекурово, 900 г", "price": 429.9, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Филе куриное, около 1 кг", "price": 449, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Филе куриное, около 1 кг", "price": 499, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "water-still-15l",
+      "name": "Вода негазированная",
+      "unit": "1.5 л",
+      "category": "Напитки",
+      "image": "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Вода негазированная, 1,5 л", "price": 59, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Вода Святой Источник, 1,5 л", "price": 59.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Вода негазированная, 1,5 л", "price": 44, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Вода негазированная, 1,5 л", "price": 49, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "pasta-450g",
+      "name": "Макароны",
+      "unit": "450 г",
+      "category": "Бакалея",
+      "image": "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Макароны, около 450 г", "price": 89, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Макаронные изделия Шебекинские, 450 г", "price": 63.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Макароны, около 450 г", "price": 59, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Макароны, около 450 г", "price": 69, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "rice-900g",
+      "name": "Рис",
+      "unit": "800-900 г",
+      "category": "Бакалея",
+      "image": "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Рис, около 900 г", "price": 150, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Рис Агро-Альянс, 900 г", "price": 162.9, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Рис, около 900 г", "price": 119, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Рис MAKFA в пакетиках, 400 г", "price": 74.99, "sourceQuality": "official" }
+      ]
+    },
+    {
+      "id": "buckwheat-900g",
+      "name": "Гречка",
+      "unit": "800-900 г",
+      "category": "Бакалея",
+      "image": "https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Крупа гречневая, около 900 г", "price": 140, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Крупа гречневая, 900 г", "price": 59.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Крупа гречневая, около 900 г", "price": 99, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Крупа гречневая, около 900 г", "price": 109, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "flour-1kg",
+      "name": "Мука пшеничная",
+      "unit": "1 кг",
+      "category": "Бакалея",
+      "image": "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Мука пшеничная в/с, 1 кг", "price": 78, "sourceQuality": "official" },
+        { "storeId": "dixy", "title": "Мука пшеничная, 1 кг", "price": 55, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Мука пшеничная, 1 кг", "price": 55, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Мука Лента, 1 кг", "price": 49.99, "sourceQuality": "official" }
+      ]
+    },
+    {
+      "id": "sugar-1kg",
+      "name": "Сахар",
+      "unit": "1 кг",
+      "category": "Бакалея",
+      "image": "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Сахар, 1 кг", "price": 99, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Сахар, 1 кг", "price": 84.99, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Сахар, 1 кг", "price": 90, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Сахар, 1 кг", "price": 89, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "sunflower-oil-1l",
+      "name": "Масло подсолнечное",
+      "unit": "1 л",
+      "category": "Бакалея",
+      "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Масло подсолнечное, 1 л", "price": 149, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Масло подсолнечное, 1 л", "price": 119.9, "sourceQuality": "official" },
+        { "storeId": "auchan", "title": "Масло подсолнечное, 1 л", "price": 119, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Масло подсолнечное, 1 л", "price": 129, "sourceQuality": "proxy" }
+      ]
+    }
+  ]
+}
