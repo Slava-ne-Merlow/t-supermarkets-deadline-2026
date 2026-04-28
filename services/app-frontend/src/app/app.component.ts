@@ -126,6 +126,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private operationDetailCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private citySliderTimer: ReturnType<typeof window.setInterval> | null = null;
   private citySwipeStartX: number | null = null;
+  private cityPullStartX: number | null = null;
+  private cityPullStartY: number | null = null;
+  private cityPullResetTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -487,6 +490,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   cities = signal<readonly string[]>(['Москва', 'Санкт-Петербург', 'Казань', 'Екатеринбург', 'Новосибирск']);
   citySlideIndex = 0;
   cityDropdownOpen = false;
+  cityPullDistance = 0;
+  cityPullResetting = false;
   activeCityCategory: CityCategory | null = null;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
@@ -684,6 +689,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearSettingsScreenCloseTimer();
     this.clearOperationDetailCloseTimer();
     this.clearCitySliderTimer();
+    this.clearCityPullResetTimer();
   }
 
   markReady(): void {
@@ -716,6 +722,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
     this.cityDropdownOpen = false;
+    this.resetCityPull(true);
     this.closeSettings(true);
     this.closeAccountScreen(true);
     this.closeHomeSheet(true);
@@ -906,6 +913,45 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
+  onCityPullStart(event: TouchEvent): void {
+    if (!this.isCity || (this.screen?.nativeElement.scrollTop ?? 0) > 0) {
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+
+    this.cityPullStartX = touch?.clientX ?? null;
+    this.cityPullStartY = touch?.clientY ?? null;
+    this.cityPullResetting = false;
+  }
+
+  onCityPullMove(event: TouchEvent): void {
+    const touch = event.changedTouches[0];
+
+    if (!touch || this.cityPullStartX === null || this.cityPullStartY === null || (this.screen?.nativeElement.scrollTop ?? 0) > 0) {
+      return;
+    }
+
+    const deltaX = touch.clientX - this.cityPullStartX;
+    const deltaY = touch.clientY - this.cityPullStartY;
+
+    if (deltaY <= 0 || Math.abs(deltaY) < Math.abs(deltaX)) {
+      return;
+    }
+
+    this.cityPullDistance = Math.min(118, Math.round(deltaY * 0.46));
+    event.preventDefault();
+  }
+
+  onCityPullEnd(): void {
+    this.cityPullStartX = null;
+    this.cityPullStartY = null;
+
+    if (this.cityPullDistance > 0) {
+      this.resetCityPull();
+    }
+  }
+
   private nextCitySlide(): void {
     this.citySlideIndex = (this.citySlideIndex + 1) % this.citySlides.length;
   }
@@ -1069,6 +1115,32 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearInterval(this.citySliderTimer);
     this.citySliderTimer = null;
+  }
+
+  private resetCityPull(immediate = false): void {
+    this.clearCityPullResetTimer();
+
+    if (immediate) {
+      this.cityPullDistance = 0;
+      this.cityPullResetting = false;
+      return;
+    }
+
+    this.cityPullResetting = true;
+    this.cityPullDistance = 0;
+    this.cityPullResetTimer = window.setTimeout(() => {
+      this.cityPullResetting = false;
+      this.cityPullResetTimer = null;
+    }, 240);
+  }
+
+  private clearCityPullResetTimer(): void {
+    if (!this.cityPullResetTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.cityPullResetTimer);
+    this.cityPullResetTimer = null;
   }
 
   private startCitySlider(): void {

@@ -55,7 +55,15 @@
           <strong>Ведутся технические работы</strong>
         </div>
       } @else if (isCity) {
-        <div class="city-content">
+        <div
+          class="city-content"
+          [class.rubber-reset]="cityPullResetting"
+          [style.--city-pull.px]="cityPullDistance"
+          (touchstart)="onCityPullStart($event)"
+          (touchmove)="onCityPullMove($event)"
+          (touchend)="onCityPullEnd()"
+          (touchcancel)="onCityPullEnd()"
+        >
           <section
             class="city-hero"
             [style.background-image]="'linear-gradient(180deg, rgb(0 0 0 / 8%), rgb(0 0 0 / 8%) 45%, rgb(0 0 0 / 82%) 100%), url(' + citySlides[citySlideIndex].image + ')'"
