@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
-import { TuiAvatar, TuiTabs } from '@taiga-ui/kit';
+import { TuiAvatar, TuiProgress, TuiSelect, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
 import { AccountBalanceStore } from './account-balance.store';
 
@@ -49,7 +49,20 @@ type Story = {
   slides: readonly StorySlide[];
 };
 
-type HomeSheet = 'operations' | 'cashback' | 'cashbackBalance' | 'survey' | 'topup';
+type HomeSheet = 'operations' | 'cashback' | 'cashbackBalance' | 'survey' | 'topup' | 'orders' | 'cityCategory';
+
+type CitySlide = {
+  title: string;
+  subtitle: string;
+  image: string;
+};
+
+type CityCategory = {
+  title: string;
+  cashback: string;
+  image: string;
+  size?: 'large';
+};
 
 type OperationKind = 'expense' | 'topup';
 
@@ -87,7 +100,20 @@ declare global {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, TuiAppBar, TuiAvatar, TuiCard, TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTabs, TuiTextfield],
+  imports: [
+    FormsModule,
+    TuiAppBar,
+    TuiAvatar,
+    TuiCard,
+    TuiHint,
+    TuiIcon,
+    TuiInput,
+    TuiProgress,
+    TuiRoot,
+    TuiSelect,
+    TuiTabs,
+    TuiTextfield
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -99,9 +125,20 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private settingsScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private operationDetailCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private citySliderTimer: ReturnType<typeof window.setInterval> | null = null;
+  private citySwipeStartX: number | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
+
+  @ViewChild('searchInput')
+  set searchInput(input: ElementRef<HTMLInputElement> | undefined) {
+    if (!input || !this.searchOpen) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => input.nativeElement.focus());
+  }
 
   readonly tabs: readonly Tab[] = [
     { id: 'home', label: 'Главная', icon: '@tui.star' },
@@ -447,9 +484,68 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   accountScreenClosing = false;
   activeOperation: Operation | null = null;
   operationDetailClosing = false;
+  selectedCity = 'Москва';
+  cities = signal<readonly string[]>(['Москва', 'Санкт-Петербург', 'Казань', 'Екатеринбург', 'Новосибирск']);
+  citySlideIndex = 0;
+  activeCityCategory: CityCategory | null = null;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
+  readonly citySlides: readonly CitySlide[] = [
+    {
+      title: 'Вас ждет яркое лето',
+      subtitle: 'И призы за покупки в Шопинге',
+      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=82'
+    },
+    {
+      title: 'Билеты на вечер',
+      subtitle: 'Кино, концерты и театр рядом',
+      image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1200&q=82'
+    },
+    {
+      title: 'Супермаркеты рядом',
+      subtitle: 'Покупки с дополнительным кэшбэком',
+      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=82'
+    },
+    {
+      title: 'Маршрут на выходные',
+      subtitle: 'Короткие поездки и места для прогулок',
+      image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=82'
+    },
+    {
+      title: 'Сервисы для дома',
+      subtitle: 'Клининг, доставка и бытовые задачи',
+      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=82'
+    }
+  ];
+  readonly cityCategories: readonly CityCategory[] = [
+    {
+      title: 'Путешествия',
+      cashback: 'до 5%',
+      size: 'large',
+      image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=720&q=82'
+    },
+    {
+      title: 'Топливо',
+      cashback: '1%',
+      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=720&q=82'
+    },
+    {
+      title: 'Супермаркеты',
+      cashback: 'до 15%',
+      image: 'https://images.unsplash.com/photo-1601599963565-b7ba29c8e3ff?auto=format&fit=crop&w=720&q=82'
+    },
+    {
+      title: 'Кино',
+      cashback: 'до 10%',
+      image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=720&q=82'
+    },
+    {
+      title: 'Рестораны',
+      cashback: 'до 7%',
+      image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=720&q=82'
+    }
+  ];
   readonly spendingTotal = computed(() =>
     this.operationGroups().reduce(
       (total, group) =>
@@ -498,12 +594,16 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.activeTab === 'payments';
   }
 
+  get isCity(): boolean {
+    return this.activeTab === 'city';
+  }
+
   get hasSearchHeader(): boolean {
     return this.isHome || this.isPayments;
   }
 
   get isStubTab(): boolean {
-    return !this.hasSearchHeader;
+    return this.activeTab === 'chat' || this.activeTab === 'showcase';
   }
 
   get searchCollapsed(): boolean {
@@ -554,6 +654,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return 'Опрос';
       case 'topup':
         return 'Пополнить Black';
+      case 'orders':
+        return 'Заказы';
+      case 'cityCategory':
+        return this.activeCityCategory?.title ?? 'Город';
       default:
         return '';
     }
@@ -561,6 +665,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     document.addEventListener('touchend', this.preventDoubleTapZoom, { passive: false });
+    this.loadCities();
+    this.startCitySlider();
 
     if (!this.webApp) {
       return;
@@ -577,6 +683,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearAccountScreenCloseTimer();
     this.clearSettingsScreenCloseTimer();
     this.clearOperationDetailCloseTimer();
+    this.clearCitySliderTimer();
   }
 
   markReady(): void {
@@ -617,10 +724,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   openSearch(): void {
-    if (!this.hasSearchHeader) {
-      return;
-    }
-
     this.searchOpen = true;
     this.closeSettings();
     this.closeAccountScreen();
@@ -760,6 +863,42 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.closeOperationDetail(true);
     this.activeHomeSheet = sheet;
     this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  openCityCategory(category: CityCategory): void {
+    this.activeCityCategory = category;
+    this.openHomeSheet('cityCategory');
+  }
+
+  onCitySwipeStart(event: TouchEvent): void {
+    this.citySwipeStartX = event.changedTouches[0]?.clientX ?? null;
+  }
+
+  onCitySwipeEnd(event: TouchEvent): void {
+    const startX = this.citySwipeStartX;
+    const endX = event.changedTouches[0]?.clientX;
+
+    this.citySwipeStartX = null;
+
+    if (startX === null || endX === undefined || Math.abs(endX - startX) < 42) {
+      return;
+    }
+
+    if (endX < startX) {
+      this.nextCitySlide();
+    } else {
+      this.previousCitySlide();
+    }
+
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  private nextCitySlide(): void {
+    this.citySlideIndex = (this.citySlideIndex + 1) % this.citySlides.length;
+  }
+
+  private previousCitySlide(): void {
+    this.citySlideIndex = (this.citySlideIndex + this.citySlides.length - 1) % this.citySlides.length;
   }
 
   openOperationDetail(operation: Operation): void {
@@ -908,6 +1047,37 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.settingsScreenCloseTimer);
     this.settingsScreenCloseTimer = null;
+  }
+
+  private clearCitySliderTimer(): void {
+    if (!this.citySliderTimer) {
+      return;
+    }
+
+    window.clearInterval(this.citySliderTimer);
+    this.citySliderTimer = null;
+  }
+
+  private startCitySlider(): void {
+    this.clearCitySliderTimer();
+    this.citySliderTimer = window.setInterval(() => this.nextCitySlide(), 3600);
+  }
+
+  private loadCities(): void {
+    fetch('cities.txt')
+      .then(response => (response.ok ? response.text() : ''))
+      .then(text => {
+        const cities = text
+          .split(/\r?\n/)
+          .map(city => city.trim())
+          .filter(Boolean);
+
+        if (cities.length > 0) {
+          this.cities.set(cities);
+          this.selectedCity = cities.includes(this.selectedCity) ? this.selectedCity : cities[0];
+        }
+      })
+      .catch(() => undefined);
   }
 
   private readonly preventDoubleTapZoom = (event: TouchEvent): void => {

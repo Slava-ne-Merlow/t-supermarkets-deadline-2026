@@ -636,6 +636,244 @@
   line-height: 1.25;
 }
 
+.city-content {
+  min-height: calc(100dvh - 104px - env(safe-area-inset-bottom));
+  margin: 0 calc(-1 * clamp(16px, 4vw, 30px));
+  background: #000;
+}
+
+.city-hero {
+  position: relative;
+  min-height: min(64dvh, 560px);
+  display: grid;
+  align-content: end;
+  gap: 18px;
+  padding: calc(20px + env(safe-area-inset-top)) clamp(20px, 5vw, 34px) 34px;
+  overflow: hidden;
+  background-color: #1c1d20;
+  background-position: center;
+  background-size: cover;
+}
+
+.city-select-field {
+  --t-height: 38px;
+  position: absolute;
+  top: calc(18px + env(safe-area-inset-top));
+  left: clamp(18px, 5vw, 34px);
+  width: 160px;
+  max-width: calc(100% - 40px);
+  color: #fff;
+}
+
+.city-select-field select {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.city-select-field :is(select, input) {
+  background: transparent !important;
+}
+
+.city-hero-copy {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 34%);
+}
+
+.city-hero-copy strong {
+  max-width: 92%;
+  font-size: clamp(24px, 6.2vw, 36px);
+  font-weight: 850;
+  line-height: 1.08;
+}
+
+.city-hero-copy span {
+  max-width: 92%;
+  font-size: clamp(16px, 4.2vw, 22px);
+  line-height: 1.2;
+}
+
+.city-hero-progress {
+  justify-self: center;
+  width: 128px;
+  height: 6px;
+  color: #fff;
+  opacity: .9;
+}
+
+.city-market {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 22px;
+  margin-top: -18px;
+  padding: 20px clamp(16px, 4vw, 30px) 26px;
+  border-radius: 28px 28px 0 0;
+  background: #000;
+}
+
+.city-search-row {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  margin: -20px calc(-1 * clamp(16px, 4vw, 30px)) 0;
+  padding: 20px clamp(16px, 4vw, 30px) 10px;
+  background: #000;
+}
+
+.city-search-button,
+.city-orders-button,
+.city-category-card {
+  border: 0;
+  color: #f7f7f8;
+  font: inherit;
+}
+
+.city-search-button,
+.city-orders-button {
+  height: 34px;
+  display: grid;
+  grid-auto-flow: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.city-search-button {
+  min-width: 0;
+  justify-content: start;
+  padding: 0 11px;
+  background: #242426;
+  color: #9ca0a8;
+  text-align: left;
+}
+
+.city-search-button tui-icon {
+  inline-size: 18px;
+  block-size: 18px;
+}
+
+.city-search-button span {
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.city-orders-button {
+  min-width: 92px;
+  padding: 0 12px;
+  background: #5b94ff;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.city-orders-button tui-icon {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.city-categories {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 14px;
+}
+
+.city-category-card {
+  position: relative;
+  min-height: 112px;
+  display: grid;
+  align-content: space-between;
+  justify-items: start;
+  gap: 18px;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: 22px;
+  background-color: #222326;
+  background-position: center;
+  background-size: cover;
+  text-align: left;
+}
+
+.city-category-card.large {
+  grid-row: span 2;
+  min-height: 238px;
+}
+
+.city-category-card strong {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(18px, 4.8vw, 24px);
+  font-weight: 850;
+  line-height: 1.08;
+}
+
+.city-category-card span {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 4px;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #ffe85b;
+  color: #151515;
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.city-category-card tui-icon {
+  inline-size: 15px;
+  block-size: 15px;
+}
+
+.search-backdrop {
+  z-index: 19;
+}
+
+.search-bottom-sheet {
+  height: calc(100dvh - 14px);
+  min-height: 0;
+  gap: 0;
+  padding-top: 18px;
+}
+
+.search-sheet-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.search-sheet-field {
+  --t-height: 34px;
+  height: 34px;
+  max-height: 34px;
+  min-height: 34px;
+}
+
+.search-cancel-button {
+  border: 0;
+  color: #6ea0ff;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 650;
+}
+
 .subscreen {
   position: absolute;
   inset: 0;

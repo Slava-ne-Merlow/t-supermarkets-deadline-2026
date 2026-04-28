@@ -1,7 +1,7 @@
 <tui-root>
   <main class="miniapp-shell">
     <section #screen class="screen" (scroll)="onScroll($event)">
-      @if (!isStubTab) {
+      @if (!isStubTab && !isCity) {
         <header
           class="top-region"
           [class.search-collapsed]="searchCollapsed"
@@ -40,6 +40,8 @@
                 inputmode="search"
                 placeholder="Поиск"
                 [(ngModel)]="searchQuery"
+                readonly
+                (click)="openSearch()"
                 (focus)="openSearch()"
               />
             </tui-textfield>
@@ -51,6 +53,70 @@
         <div class="maintenance">
           <tui-icon icon="@tui.info" />
           <strong>Ведутся технические работы</strong>
+        </div>
+      } @else if (isCity) {
+        <div class="city-content">
+          <section
+            class="city-hero"
+            [style.background-image]="'linear-gradient(180deg, rgb(0 0 0 / 8%), rgb(0 0 0 / 8%) 45%, rgb(0 0 0 / 82%) 100%), url(' + citySlides[citySlideIndex].image + ')'"
+            (touchstart)="onCitySwipeStart($event)"
+            (touchend)="onCitySwipeEnd($event)"
+          >
+            <tui-textfield
+              class="city-select-field"
+              iconEnd="@tui.chevron-down"
+              tuiTextfieldAppearance="flat"
+              tuiTextfieldSize="s"
+            >
+              <select tuiSelect name="citySelect" [items]="cities()" [(ngModel)]="selectedCity"></select>
+            </tui-textfield>
+
+            <div class="city-hero-copy">
+              <strong>{{ citySlides[citySlideIndex].title }}</strong>
+              <span>{{ citySlides[citySlideIndex].subtitle }}</span>
+            </div>
+
+            <progress
+              tuiProgressBar
+              class="city-hero-progress"
+              color="#ffffff"
+              [max]="citySlides.length"
+              [segments]="citySlides.length"
+              [value]="citySlideIndex + 1"
+            ></progress>
+          </section>
+
+          <section class="city-market">
+            <div class="city-search-row">
+              <button class="city-search-button" type="button" (click)="openSearch()">
+                <tui-icon icon="@tui.search" />
+                <span>Поиск</span>
+              </button>
+
+              <button class="city-orders-button" type="button" (click)="openHomeSheet('orders')">
+                <tui-icon icon="@tui.receipt-text" />
+                <span>Заказы</span>
+              </button>
+            </div>
+
+            <div class="city-categories">
+              @for (category of cityCategories; track category.title) {
+                <button
+                  class="city-category-card"
+                  [class.large]="category.size === 'large'"
+                  type="button"
+                  [style.background-image]="'linear-gradient(180deg, rgb(0 0 0 / 10%), rgb(0 0 0 / 50%)), url(' + category.image + ')'"
+                  (click)="openCityCategory(category)"
+                >
+                  <strong>{{ category.title }}</strong>
+                  <span>
+                    <tui-icon icon="@tui.crown" />
+                    {{ category.cashback }}
+                  </span>
+                </button>
+              }
+            </div>
+          </section>
         </div>
       } @else {
         <div class="content-stack" [class.payments]="isPayments">
@@ -178,34 +244,28 @@
     </tui-tabs>
 
     @if (searchOpen) {
-      <section class="subscreen">
-        <tui-app-bar class="subscreen-bar" size="l">
-          <button class="back-button" type="button" tuiSlot="start" (click)="closeSearch()">
-            <tui-icon icon="@tui.chevron-left" />
-          </button>
-          <span>Поиск</span>
-        </tui-app-bar>
+      <section class="sheet-backdrop search-backdrop" (click)="closeSearch()">
+        <div class="bottom-sheet large search-bottom-sheet" (click)="$event.stopPropagation()">
+          <div class="search-sheet-row">
+            <tui-textfield
+              class="search-field search-sheet-field"
+              iconStart="@tui.search"
+              tuiTextfieldAppearance="textfield"
+              [tuiTextfieldCleaner]="true"
+              tuiTextfieldSize="m"
+            >
+              <input
+                #searchInput
+                tuiInput
+                name="searchSheet"
+                inputmode="search"
+                placeholder="Поиск"
+                [(ngModel)]="searchQuery"
+              />
+            </tui-textfield>
 
-        <div class="subscreen-body">
-          <tui-textfield
-            class="search-field active-search"
-            iconStart="@tui.search"
-            tuiTextfieldAppearance="textfield"
-            [tuiTextfieldCleaner]="true"
-            tuiTextfieldSize="l"
-          >
-            <input
-              tuiInput
-              name="searchScreen"
-              inputmode="search"
-              placeholder="Поиск"
-              [(ngModel)]="searchQuery"
-            />
-          </tui-textfield>
-
-          <div class="placeholder slim" tuiCardMedium></div>
-          <div class="placeholder slim" tuiCardMedium></div>
-          <div class="placeholder slim" tuiCardMedium></div>
+            <button class="search-cancel-button" type="button" (click)="closeSearch()">Отменить</button>
+          </div>
         </div>
       </section>
     }
@@ -439,6 +499,20 @@
                 @for (amount of topUpAmounts; track amount) {
                   <button type="button" (click)="topUpBalance(amount)">{{ amount }} ₽</button>
                 }
+              </div>
+            }
+            @case ('orders') {
+              <div class="sheet-placeholder">
+                <tui-icon icon="@tui.receipt-text" />
+                <strong>Заказов пока нет</strong>
+                <span>Когда вы оформите покупку в Т-Городе, статус появится здесь.</span>
+              </div>
+            }
+            @case ('cityCategory') {
+              <div class="sheet-placeholder">
+                <tui-icon icon="@tui.store" />
+                <strong>{{ activeCityCategory?.title }}</strong>
+                <span>Скоро здесь появятся партнеры, предложения и кэшбэк.</span>
               </div>
             }
           }
