@@ -349,28 +349,38 @@
 
                     @for (operation of group.items; track operation.id) {
                       <button class="operation-row" type="button" (click)="openOperationDetail(operation)">
-                        <span class="operation-logo" [style.background]="operation.logoTone">{{ operation.logo }}</span>
+                        <span class="operation-logo" [style.background]="operation.logoTone">
+                          @if (operation.icon) {
+                            <tui-icon [icon]="operation.icon" />
+                          } @else {
+                            {{ operation.logo }}
+                          }
+                        </span>
                         <span class="operation-copy">
                           <strong>{{ operation.merchant }}</strong>
                           <span>{{ operation.category }}</span>
                         </span>
                         <span class="operation-meta">
-                          <strong>−{{ formatRubles(operation.amount) }} ₽</strong>
-                          <span class="operation-meta-bottom">
-                            @if (operation.extraCashback) {
-                              <em class="cashback-badge crown">
-                                <tui-icon icon="@tui.crown" />
-                                {{ operation.extraCashback }} ₽
-                              </em>
-                            }
-                            @if (operation.cashback) {
-                              <em class="cashback-badge">+{{ operation.cashback }}</em>
-                            }
-                            @if (operation.missedCashback) {
-                              <em class="cashback-badge missed">{{ operation.missedCashback }}</em>
-                            }
-                            <span>Black</span>
-                          </span>
+                          <strong [class.income]="operation.kind === 'topup'">
+                            {{ operation.kind === 'topup' ? '+' : '−' }}{{ formatRubles(operation.amount) }} ₽
+                          </strong>
+                          @if (operation.kind === 'expense') {
+                            <span class="operation-meta-bottom">
+                              @if (operation.extraCashback) {
+                                <em class="cashback-badge crown">
+                                  <tui-icon icon="@tui.crown" />
+                                  {{ operation.extraCashback }} ₽
+                                </em>
+                              }
+                              @if (operation.cashback) {
+                                <em class="cashback-badge">+{{ operation.cashback }}</em>
+                              }
+                              @if (operation.missedCashback) {
+                                <em class="cashback-badge missed">{{ operation.missedCashback }}</em>
+                              }
+                              <span>Black</span>
+                            </span>
+                          }
                         </span>
                       </button>
                     }
@@ -443,53 +453,68 @@
             <tui-icon icon="@tui.x" />
           </button>
           <span class="operation-detail-date">{{ activeOperation.dateTime }}</span>
-          <span class="operation-detail-logo" [style.background]="activeOperation.logoTone">{{ activeOperation.logo }}</span>
+          <span class="operation-detail-logo" [style.background]="activeOperation.logoTone">
+            @if (activeOperation.icon) {
+              <tui-icon [icon]="activeOperation.icon" />
+            } @else {
+              {{ activeOperation.logo }}
+            }
+          </span>
           <strong class="operation-detail-merchant">{{ activeOperation.merchant }}</strong>
           <span class="operation-detail-category">
             <i></i>
-            {{ activeOperation.category }} · MCC {{ activeOperation.mcc }}
-          </span>
-          <strong class="operation-detail-amount">−{{ formatRubles(activeOperation.amount) }} ₽</strong>
-
-          <div class="operation-detail-cashback">
-            @if (activeOperation.cashback) {
-              <span>Кэшбэк за покупку</span>
-              <strong class="received">+{{ activeOperation.cashback }} ₽</strong>
-            } @else {
-              <span>Кэшбэк за покупку</span>
-              <strong>0 ₽</strong>
+            {{ activeOperation.category }}
+            @if (activeOperation.kind === 'expense') {
+              · MCC {{ activeOperation.mcc }}
             }
-          </div>
+          </span>
+          <strong class="operation-detail-amount" [class.income]="activeOperation.kind === 'topup'">
+            {{ activeOperation.kind === 'topup' ? '+' : '−' }}{{ formatRubles(activeOperation.amount) }} ₽
+          </strong>
 
-          @if (activeOperation.extraCashback) {
-            <div class="operation-detail-cashback accent">
-              <span>Дополнительный кэшбэк в приложении</span>
-              <strong
-                class="received"
-                tuiHint="Покупайте в разделе Т-Город, чтобы получать дополнительный кэшбэк"
-                tuiHintDescribe
-                tuiHintDirection="top"
-              >
-                <tui-icon icon="@tui.crown" />
-                +{{ activeOperation.extraCashback }} ₽
-              </strong>
+          @if (activeOperation.kind === 'expense') {
+            <div class="operation-detail-cashback">
+              @if (activeOperation.cashback) {
+                <span>Кэшбэк за покупку</span>
+                <strong class="received">+{{ activeOperation.cashback }} ₽</strong>
+              } @else {
+                <span>Кэшбэк за покупку</span>
+                <strong>0 ₽</strong>
+              }
             </div>
+
+            @if (activeOperation.extraCashback) {
+              <div class="operation-detail-cashback accent">
+                <span>Дополнительный кэшбэк в приложении</span>
+                <strong
+                  class="received"
+                  tuiHint="Покупайте в разделе Т-Город, чтобы получать дополнительный кэшбэк"
+                  tuiHintDescribe
+                  tuiHintDirection="top"
+                >
+                  <tui-icon icon="@tui.crown" />
+                  +{{ activeOperation.extraCashback }} ₽
+                </strong>
+              </div>
+            }
+
+            @if (activeOperation.missedCashback) {
+              <div class="operation-detail-cashback missed">
+                <span>Упущенный кэшбэк</span>
+                <strong
+                  tuiHint="Покупайте в разделе Т-Город, чтобы получать дополнительный кэшбэк"
+                  tuiHintDescribe
+                  tuiHintDirection="top"
+                >
+                  {{ activeOperation.missedCashback }} ₽
+                </strong>
+              </div>
+            }
           }
 
-          @if (activeOperation.missedCashback) {
-            <div class="operation-detail-cashback missed">
-              <span>Упущенный кэшбэк</span>
-              <strong
-                tuiHint="Покупайте в разделе Т-Город, чтобы получать дополнительный кэшбэк"
-                tuiHintDescribe
-                tuiHintDirection="top"
-              >
-                {{ activeOperation.missedCashback }} ₽
-              </strong>
-            </div>
+          @if (activeOperation.kind === 'expense') {
+            <span class="operation-detail-card-name">Black</span>
           }
-
-          <span class="operation-detail-card-name">Black</span>
         </div>
       </section>
     }

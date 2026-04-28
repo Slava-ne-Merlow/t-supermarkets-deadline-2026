@@ -51,8 +51,11 @@ type Story = {
 
 type HomeSheet = 'operations' | 'cashback' | 'cashbackBalance' | 'survey' | 'topup';
 
+type OperationKind = 'expense' | 'topup';
+
 type Operation = {
   id: number;
+  kind: OperationKind;
   day: string;
   dateTime: string;
   merchant: string;
@@ -64,6 +67,7 @@ type Operation = {
   missedCashback?: number;
   partner?: boolean;
   logo: string;
+  icon?: string;
   logoTone: string;
 };
 
@@ -238,6 +242,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       items: [
         {
           id: 1,
+          kind: 'expense',
           day: 'Сегодня',
           dateTime: '28 апреля · 12:18',
           merchant: 'ВкусВилл',
@@ -252,6 +257,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         },
         {
           id: 2,
+          kind: 'expense',
           day: 'Сегодня',
           dateTime: '28 апреля · 09:44',
           merchant: 'Кофейня у дома',
@@ -261,6 +267,19 @@ export class AppComponent implements AfterViewInit, OnDestroy {
           cashback: 3,
           logo: 'К',
           logoTone: '#8b5a2b'
+        },
+        {
+          id: 11,
+          kind: 'topup',
+          day: 'Сегодня',
+          dateTime: '28 апреля · 08:10',
+          merchant: 'Пополнение счета',
+          category: 'Перевод с карты',
+          mcc: '0000',
+          amount: 2000,
+          logo: '+',
+          icon: '@tui.plus',
+          logoTone: '#1f8f4d'
         }
       ]
     },
@@ -269,6 +288,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       items: [
         {
           id: 3,
+          kind: 'expense',
           day: 'Вчера',
           dateTime: '27 апреля · 21:07',
           merchant: 'Подружка',
@@ -282,6 +302,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         },
         {
           id: 4,
+          kind: 'expense',
           day: 'Вчера',
           dateTime: '27 апреля · 18:32',
           merchant: 'Метро',
@@ -296,6 +317,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         },
         {
           id: 5,
+          kind: 'expense',
           day: 'Вчера',
           dateTime: '27 апреля · 10:15',
           merchant: 'Такси',
@@ -304,6 +326,19 @@ export class AppComponent implements AfterViewInit, OnDestroy {
           amount: 510,
           logo: 'Т',
           logoTone: '#303237'
+        },
+        {
+          id: 12,
+          kind: 'topup',
+          day: 'Вчера',
+          dateTime: '27 апреля · 08:50',
+          merchant: 'Пополнение баланса',
+          category: 'СБП',
+          mcc: '0000',
+          amount: 1000,
+          logo: '+',
+          icon: '@tui.plus',
+          logoTone: '#1f8f4d'
         }
       ]
     },
@@ -312,6 +347,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       items: [
         {
           id: 6,
+          kind: 'expense',
           day: '24 апреля',
           dateTime: '24 апреля · 15:22',
           merchant: 'Теремок',
@@ -324,6 +360,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         },
         {
           id: 7,
+          kind: 'expense',
           day: '24 апреля',
           dateTime: '24 апреля · 13:05',
           merchant: 'Лента',
@@ -337,6 +374,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         },
         {
           id: 8,
+          kind: 'expense',
           day: '24 апреля',
           dateTime: '24 апреля · 11:34',
           merchant: 'Ашан',
@@ -356,6 +394,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       items: [
         {
           id: 9,
+          kind: 'expense',
           day: '22 апреля',
           dateTime: '22 апреля · 20:46',
           merchant: 'Дикси',
@@ -369,6 +408,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         },
         {
           id: 10,
+          kind: 'expense',
           day: '22 апреля',
           dateTime: '22 апреля · 17:18',
           merchant: 'Глобус',
@@ -411,7 +451,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
   readonly spendingTotal = computed(() =>
-    this.operationGroups().reduce((total, group) => total + group.items.reduce((sum, operation) => sum + operation.amount, 0), 0)
+    this.operationGroups().reduce(
+      (total, group) =>
+        total + group.items.reduce((sum, operation) => sum + (operation.kind === 'expense' ? operation.amount : 0), 0),
+      0
+    )
   );
   readonly spendingTotalLabel = computed(() => `${this.formatRubles(this.spendingTotal())} ₽`);
   readonly cashbackOperationGroups = computed<readonly OperationGroup[]>(() =>
@@ -748,6 +792,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   topUpBalance(amount: number): void {
     this.accountBalanceStore.topUp(amount);
+    this.addTopUpOperation(amount);
     this.webApp?.HapticFeedback?.impactOccurred('medium');
     this.closeHomeSheet();
   }
@@ -808,6 +853,34 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.homeSheetCloseTimer);
     this.homeSheetCloseTimer = null;
+  }
+
+  private addTopUpOperation(amount: number): void {
+    const now = new Date();
+    const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const operation: Operation = {
+      id: now.getTime(),
+      kind: 'topup',
+      day: 'Сегодня',
+      dateTime: `Сегодня · ${time}`,
+      merchant: 'Пополнение счета',
+      category: 'Пополнение баланса',
+      mcc: '0000',
+      amount,
+      logo: '+',
+      icon: '@tui.plus',
+      logoTone: '#1f8f4d'
+    };
+
+    this.operationGroups.update(groups => {
+      const today = groups[0];
+
+      if (today?.day === 'Сегодня') {
+        return [{ ...today, items: [operation, ...today.items] }, ...groups.slice(1)];
+      }
+
+      return [{ day: 'Сегодня', items: [operation] }, ...groups];
+    });
   }
 
   private clearAccountScreenCloseTimer(): void {

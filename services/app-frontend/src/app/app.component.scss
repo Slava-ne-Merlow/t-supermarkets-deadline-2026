@@ -1181,6 +1181,11 @@
   font-size: 16px;
 }
 
+.operation-logo tui-icon {
+  inline-size: 24px;
+  block-size: 24px;
+}
+
 .operation-copy,
 .operation-meta {
   min-width: 0;
@@ -1196,6 +1201,11 @@
   line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.operation-meta strong.income,
+.operation-detail-amount.income {
+  color: #20c95a;
 }
 
 .operation-copy span {
@@ -1383,6 +1393,11 @@
   height: 104px;
   margin-top: 18px;
   font-size: 34px;
+}
+
+.operation-detail-logo tui-icon {
+  inline-size: 56px;
+  block-size: 56px;
 }
 
 .operation-detail-merchant {
