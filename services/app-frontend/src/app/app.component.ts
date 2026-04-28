@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
-import { TuiAvatar, TuiProgress, TuiSelect, TuiTabs } from '@taiga-ui/kit';
+import { TuiAvatar, TuiProgress, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
 import { AccountBalanceStore } from './account-balance.store';
 
@@ -110,7 +110,6 @@ declare global {
     TuiInput,
     TuiProgress,
     TuiRoot,
-    TuiSelect,
     TuiTabs,
     TuiTextfield
   ],
@@ -487,6 +486,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   selectedCity = 'Москва';
   cities = signal<readonly string[]>(['Москва', 'Санкт-Петербург', 'Казань', 'Екатеринбург', 'Новосибирск']);
   citySlideIndex = 0;
+  cityDropdownOpen = false;
   activeCityCategory: CityCategory | null = null;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
@@ -715,6 +715,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.accountScrollTop = 0;
     this.screen?.nativeElement.scrollTo({ top: 0 });
     this.searchOpen = false;
+    this.cityDropdownOpen = false;
     this.closeSettings(true);
     this.closeAccountScreen(true);
     this.closeHomeSheet(true);
@@ -724,6 +725,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   openSearch(): void {
+    this.cityDropdownOpen = false;
     this.searchOpen = true;
     this.closeSettings();
     this.closeAccountScreen();
@@ -734,6 +736,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   closeSearch(): void {
     this.searchOpen = false;
+  }
+
+  toggleCityDropdown(): void {
+    this.cityDropdownOpen = !this.cityDropdownOpen;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  selectCity(city: string): void {
+    this.selectedCity = city || this.selectedCity;
+    this.cityDropdownOpen = false;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
   openSettings(): void {

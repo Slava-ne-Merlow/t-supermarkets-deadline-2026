@@ -62,14 +62,22 @@
             (touchstart)="onCitySwipeStart($event)"
             (touchend)="onCitySwipeEnd($event)"
           >
-            <tui-textfield
-              class="city-select-field"
-              iconEnd="@tui.chevron-down"
-              tuiTextfieldAppearance="flat"
-              tuiTextfieldSize="s"
-            >
-              <select tuiSelect name="citySelect" [items]="cities()" [(ngModel)]="selectedCity"></select>
-            </tui-textfield>
+            <div class="city-select">
+              <button class="city-select-button" type="button" (click)="toggleCityDropdown()">
+                <span>{{ selectedCity }}</span>
+                <tui-icon icon="@tui.chevron-down" />
+              </button>
+
+              @if (cityDropdownOpen) {
+                <div class="city-select-menu">
+                  @for (city of cities(); track city) {
+                    <button type="button" [class.active]="city === selectedCity" (click)="selectCity(city)">
+                      {{ city }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
 
             <div class="city-hero-copy">
               <strong>{{ citySlides[citySlideIndex].title }}</strong>
@@ -115,6 +123,13 @@
                   </span>
                 </button>
               }
+            </div>
+
+            <div class="city-placeholder-stack" aria-hidden="true">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
             </div>
           </section>
         </div>
