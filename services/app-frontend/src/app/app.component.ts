@@ -51,6 +51,27 @@ type Story = {
 
 type HomeSheet = 'operations' | 'cashback' | 'cashbackBalance' | 'survey' | 'topup';
 
+type Operation = {
+  id: number;
+  day: string;
+  dateTime: string;
+  merchant: string;
+  category: string;
+  mcc: string;
+  amount: number;
+  cashback?: number;
+  extraCashback?: number;
+  missedCashback?: number;
+  partner?: boolean;
+  logo: string;
+  logoTone: string;
+};
+
+type OperationGroup = {
+  day: string;
+  items: readonly Operation[];
+};
+
 declare global {
   interface Window {
     Telegram?: {
@@ -73,6 +94,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private homeSheetCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private settingsScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private operationDetailCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private cashbackCommentTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   @ViewChild('screen')
   private readonly screen?: ElementRef<HTMLElement>;
@@ -210,6 +233,159 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
   ];
 
+  readonly operationGroups: readonly OperationGroup[] = [
+    {
+      day: 'Сегодня',
+      items: [
+        {
+          id: 1,
+          day: 'Сегодня',
+          dateTime: '28 апреля · 12:18',
+          merchant: 'ВкусВилл',
+          category: 'Супермаркеты',
+          mcc: '5411',
+          amount: 1240,
+          cashback: 12,
+          extraCashback: 37,
+          partner: true,
+          logo: 'ВВ',
+          logoTone: '#32a852'
+        },
+        {
+          id: 2,
+          day: 'Сегодня',
+          dateTime: '28 апреля · 09:44',
+          merchant: 'Кофейня у дома',
+          category: 'Кафе и рестораны',
+          mcc: '5812',
+          amount: 320,
+          cashback: 3,
+          logo: 'К',
+          logoTone: '#8b5a2b'
+        }
+      ]
+    },
+    {
+      day: 'Вчера',
+      items: [
+        {
+          id: 3,
+          day: 'Вчера',
+          dateTime: '27 апреля · 21:07',
+          merchant: 'Подружка',
+          category: 'Красота',
+          mcc: '5977',
+          amount: 890,
+          missedCashback: 45,
+          partner: true,
+          logo: 'П',
+          logoTone: '#d82d86'
+        },
+        {
+          id: 4,
+          day: 'Вчера',
+          dateTime: '27 апреля · 18:32',
+          merchant: 'Метро',
+          category: 'Супермаркеты',
+          mcc: '5411',
+          amount: 3480,
+          cashback: 35,
+          extraCashback: 104,
+          partner: true,
+          logo: 'М',
+          logoTone: '#174ea6'
+        },
+        {
+          id: 5,
+          day: 'Вчера',
+          dateTime: '27 апреля · 10:15',
+          merchant: 'Такси',
+          category: 'Транспорт',
+          mcc: '4121',
+          amount: 510,
+          logo: 'Т',
+          logoTone: '#303237'
+        }
+      ]
+    },
+    {
+      day: '24 апреля',
+      items: [
+        {
+          id: 6,
+          day: '24 апреля',
+          dateTime: '24 апреля · 15:22',
+          merchant: 'Теремок',
+          category: 'Фастфуд',
+          mcc: '5814',
+          amount: 616,
+          cashback: 6,
+          logo: 'Т',
+          logoTone: '#e30613'
+        },
+        {
+          id: 7,
+          day: '24 апреля',
+          dateTime: '24 апреля · 13:05',
+          merchant: 'Лента',
+          category: 'Супермаркеты',
+          mcc: '5411',
+          amount: 2210,
+          missedCashback: 66,
+          partner: true,
+          logo: 'Л',
+          logoTone: '#005bbb'
+        },
+        {
+          id: 8,
+          day: '24 апреля',
+          dateTime: '24 апреля · 11:34',
+          merchant: 'Ашан',
+          category: 'Супермаркеты',
+          mcc: '5411',
+          amount: 1780,
+          cashback: 18,
+          extraCashback: 53,
+          partner: true,
+          logo: 'А',
+          logoTone: '#d71920'
+        }
+      ]
+    },
+    {
+      day: '22 апреля',
+      items: [
+        {
+          id: 9,
+          day: '22 апреля',
+          dateTime: '22 апреля · 20:46',
+          merchant: 'Дикси',
+          category: 'Супермаркеты',
+          mcc: '5411',
+          amount: 960,
+          missedCashback: 29,
+          partner: true,
+          logo: 'Д',
+          logoTone: '#f58220'
+        },
+        {
+          id: 10,
+          day: '22 апреля',
+          dateTime: '22 апреля · 17:18',
+          merchant: 'Глобус',
+          category: 'Супермаркеты',
+          mcc: '5411',
+          amount: 2890,
+          cashback: 29,
+          extraCashback: 87,
+          partner: true,
+          logo: 'Г',
+          logoTone: '#18884f'
+        }
+      ]
+    }
+  ];
+
   readonly user = this.webApp?.initDataUnsafe?.user;
   readonly launchedInTelegram = Boolean(this.webApp);
   readonly platform = this.webApp?.platform ?? 'browser';
@@ -230,6 +406,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   homeSheetClosing = false;
   accountScreenOpen = false;
   accountScreenClosing = false;
+  activeOperation: Operation | null = null;
+  operationDetailClosing = false;
+  cashbackCommentVisible = false;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
@@ -336,6 +515,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearHomeSheetCloseTimer();
     this.clearAccountScreenCloseTimer();
     this.clearSettingsScreenCloseTimer();
+    this.clearOperationDetailCloseTimer();
+    this.clearCashbackCommentTimer();
   }
 
   markReady(): void {
@@ -370,6 +551,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.closeSettings(true);
     this.closeAccountScreen(true);
     this.closeHomeSheet(true);
+    this.closeOperationDetail(true);
     this.closeStory();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -383,6 +565,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.closeSettings();
     this.closeAccountScreen();
     this.closeHomeSheet();
+    this.closeOperationDetail();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -400,6 +583,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.settingsOpen = true;
     this.closeAccountScreen();
     this.closeHomeSheet();
+    this.closeOperationDetail();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -434,6 +618,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.closeSettings();
     this.closeAccountScreen();
     this.closeHomeSheet();
+    this.closeOperationDetail();
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
 
@@ -512,14 +697,62 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   openHomeSheet(sheet: HomeSheet): void {
     this.clearHomeSheetCloseTimer();
     this.homeSheetClosing = false;
+    this.closeOperationDetail(true);
     this.activeHomeSheet = sheet;
     this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  openOperationDetail(operation: Operation): void {
+    this.clearOperationDetailCloseTimer();
+    this.operationDetailClosing = false;
+    this.activeOperation = operation;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeOperationDetail(immediate = false): void {
+    if (!this.activeOperation) {
+      return;
+    }
+
+    this.clearOperationDetailCloseTimer();
+
+    if (immediate) {
+      this.operationDetailClosing = false;
+      this.activeOperation = null;
+      return;
+    }
+
+    this.operationDetailClosing = true;
+    this.operationDetailCloseTimer = window.setTimeout(() => {
+      this.activeOperation = null;
+      this.operationDetailClosing = false;
+      this.operationDetailCloseTimer = null;
+    }, 280);
   }
 
   topUpBalance(amount: number): void {
     this.accountBalanceStore.topUp(amount);
     this.webApp?.HapticFeedback?.impactOccurred('medium');
     this.closeHomeSheet();
+  }
+
+  formatRubles(amount: number): string {
+    return new Intl.NumberFormat('ru-RU', {
+      maximumFractionDigits: 0
+    })
+      .format(amount)
+      .replace(/\u00a0/g, ' ');
+  }
+
+  showCashbackComment(event: Event): void {
+    event.stopPropagation();
+    this.clearCashbackCommentTimer();
+    this.cashbackCommentVisible = true;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+    this.cashbackCommentTimer = window.setTimeout(() => {
+      this.cashbackCommentVisible = false;
+      this.cashbackCommentTimer = null;
+    }, 2600);
   }
 
   closeHomeSheet(immediate = false): void {
@@ -532,9 +765,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (immediate) {
       this.homeSheetClosing = false;
       this.activeHomeSheet = null;
+      this.closeOperationDetail(true);
       return;
     }
 
+    this.closeOperationDetail();
     this.homeSheetClosing = true;
     this.homeSheetCloseTimer = window.setTimeout(() => {
       this.activeHomeSheet = null;
@@ -573,6 +808,24 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.accountScreenCloseTimer);
     this.accountScreenCloseTimer = null;
+  }
+
+  private clearOperationDetailCloseTimer(): void {
+    if (!this.operationDetailCloseTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.operationDetailCloseTimer);
+    this.operationDetailCloseTimer = null;
+  }
+
+  private clearCashbackCommentTimer(): void {
+    if (!this.cashbackCommentTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.cashbackCommentTimer);
+    this.cashbackCommentTimer = null;
   }
 
   private clearSettingsScreenCloseTimer(): void {

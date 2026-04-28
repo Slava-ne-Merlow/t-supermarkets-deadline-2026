@@ -306,7 +306,9 @@
             }
           </div>
 
-          <button class="story-close" type="button" (click)="closeStory()">×</button>
+          <button class="story-close" type="button" aria-label="Закрыть" (click)="closeStory()">
+            <tui-icon icon="@tui.x" />
+          </button>
           <button class="story-touch previous" type="button" aria-label="Предыдущий слайд" (click)="previousStorySlide()"></button>
           <button class="story-touch next" type="button" aria-label="Следующий слайд" (click)="nextStorySlide()"></button>
 
@@ -340,10 +342,41 @@
 
           @switch (activeHomeSheet) {
             @case ('operations') {
-              <div class="sheet-placeholder">
-                <tui-icon icon="@tui.info" />
-                <span>Здесь позже появится детализация операций.</span>
-              </div>
+              <section class="operations-list">
+                @for (group of operationGroups; track group.day) {
+                  <section class="operation-day">
+                    <h3>{{ group.day }}</h3>
+
+                    @for (operation of group.items; track operation.id) {
+                      <button class="operation-row" type="button" (click)="openOperationDetail(operation)">
+                        <span class="operation-logo" [style.background]="operation.logoTone">{{ operation.logo }}</span>
+                        <span class="operation-copy">
+                          <strong>{{ operation.merchant }}</strong>
+                          <span>{{ operation.category }}</span>
+                        </span>
+                        <span class="operation-meta">
+                          <strong>−{{ formatRubles(operation.amount) }} ₽</strong>
+                          <span class="operation-meta-bottom">
+                            @if (operation.extraCashback) {
+                              <em class="cashback-badge crown" (click)="showCashbackComment($event)">
+                                <tui-icon icon="@tui.crown" />
+                                {{ operation.extraCashback }} ₽
+                              </em>
+                            }
+                            @if (operation.cashback) {
+                              <em class="cashback-badge" (click)="showCashbackComment($event)">+{{ operation.cashback }}</em>
+                            }
+                            @if (operation.missedCashback) {
+                              <em class="cashback-badge missed" (click)="showCashbackComment($event)">{{ operation.missedCashback }}</em>
+                            }
+                            <span>Black</span>
+                          </span>
+                        </span>
+                      </button>
+                    }
+                  </section>
+                }
+              </section>
             }
             @case ('cashback') {
               <div class="sheet-placeholder">
@@ -373,6 +406,59 @@
           }
         </div>
       </section>
+    }
+
+    @if (activeOperation) {
+      <section class="operation-detail-backdrop" [class.closing]="operationDetailClosing" (click)="closeOperationDetail()">
+        <div class="operation-detail-sheet" [class.closing]="operationDetailClosing" (click)="$event.stopPropagation()">
+          <button class="operation-detail-close" type="button" aria-label="Закрыть" (click)="closeOperationDetail()">
+            <tui-icon icon="@tui.x" />
+          </button>
+          <span class="operation-detail-date">{{ activeOperation.dateTime }}</span>
+          <span class="operation-detail-logo" [style.background]="activeOperation.logoTone">{{ activeOperation.logo }}</span>
+          <strong class="operation-detail-merchant">{{ activeOperation.merchant }}</strong>
+          <span class="operation-detail-category">
+            <i></i>
+            {{ activeOperation.category }} · MCC {{ activeOperation.mcc }}
+          </span>
+          <strong class="operation-detail-amount">−{{ formatRubles(activeOperation.amount) }} ₽</strong>
+
+          <div class="operation-detail-cashback">
+            @if (activeOperation.cashback) {
+              <span>Кэшбэк за покупку</span>
+              <strong class="received" (click)="showCashbackComment($event)">+{{ activeOperation.cashback }} ₽</strong>
+            } @else {
+              <span>Кэшбэк за покупку</span>
+              <strong>0 ₽</strong>
+            }
+          </div>
+
+          @if (activeOperation.extraCashback) {
+            <div class="operation-detail-cashback accent">
+              <span>Дополнительный кэшбэк в приложении</span>
+              <strong class="received" (click)="showCashbackComment($event)">
+                <tui-icon icon="@tui.crown" />
+                +{{ activeOperation.extraCashback }} ₽
+              </strong>
+            </div>
+          }
+
+          @if (activeOperation.missedCashback) {
+            <div class="operation-detail-cashback missed">
+              <span>Упущенный кэшбэк</span>
+              <strong (click)="showCashbackComment($event)">{{ activeOperation.missedCashback }} ₽</strong>
+            </div>
+          }
+
+          <span class="operation-detail-card-name">Black</span>
+        </div>
+      </section>
+    }
+
+    @if (cashbackCommentVisible) {
+      <div class="cashback-comment">
+        Покупайте в разделе Т-Город, чтобы получать дополнительный кэшбэк
+      </div>
     }
   </main>
 </tui-root>
