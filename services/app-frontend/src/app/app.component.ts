@@ -49,7 +49,15 @@ type Story = {
   slides: readonly StorySlide[];
 };
 
-type HomeSheet = 'operations' | 'cashback' | 'cashbackBalance' | 'survey' | 'topup' | 'orders' | 'cityCategory';
+type HomeSheet =
+  | 'operations'
+  | 'cashback'
+  | 'cashbackBalance'
+  | 'survey'
+  | 'topup'
+  | 'orders'
+  | 'cityCategory'
+  | 'supermarkets';
 
 type CitySlide = {
   title: string;
@@ -87,6 +95,47 @@ type Operation = {
 type OperationGroup = {
   day: string;
   items: readonly Operation[];
+};
+
+type SupermarketStore = {
+  id: string;
+  name: string;
+  brandColor: string;
+};
+
+type SupermarketOffer = {
+  storeId: string;
+  title: string;
+  price: number;
+  sourceQuality: string;
+};
+
+type SupermarketProduct = {
+  id: string;
+  name: string;
+  unit: string;
+  category: string;
+  image: string;
+  offers: readonly SupermarketOffer[];
+};
+
+type SupermarketAssortment = {
+  stores: readonly SupermarketStore[];
+  products: readonly SupermarketProduct[];
+};
+
+type CartLine = {
+  product: SupermarketProduct;
+  quantity: number;
+};
+
+type CheckoutOption = {
+  store: SupermarketStore;
+  itemsTotal: number;
+  deliveryFee: number;
+  total: number;
+  etaMinutes: number;
+  tags: readonly string[];
 };
 
 declare global {
@@ -493,9 +542,19 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   cityPullDistance = 0;
   cityPullResetting = false;
   activeCityCategory: CityCategory | null = null;
+  checkoutRequested = false;
+  supermarketAssortment = signal<SupermarketAssortment | null>(null);
+  supermarketCart = signal<Record<string, number>>({});
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
+  readonly suggestedBasketIds = ['milk-32-1l', 'sliced-baton', 'eggs-c1-10', 'potato-1kg', 'chicken-fillet'];
+  readonly deliveryByStore: Record<string, { etaMinutes: number; deliveryFee: number }> = {
+    vkusvill: { etaMinutes: 35, deliveryFee: 149 },
+    dixy: { etaMinutes: 50, deliveryFee: 99 },
+    auchan: { etaMinutes: 75, deliveryFee: 149 },
+    lenta: { etaMinutes: 60, deliveryFee: 129 }
+  };
   readonly citySlides: readonly CitySlide[] = [
     {
       title: 'Вас ждет яркое лето',
@@ -574,6 +633,81 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     )
   );
   readonly cashbackTotalLabel = computed(() => `${this.formatRubles(this.cashbackTotal())} ₽`);
+  readonly supermarketProducts = computed(() => this.supermarketAssortment()?.products ?? []);
+  readonly suggestedBasketProducts = computed(() => {
+    const products = this.supermarketProducts();
+
+    return this.suggestedBasketIds
+      .map(id => products.find(product => product.id === id))
+      .filter((product): product is SupermarketProduct => Boolean(product));
+  });
+  readonly suggestedBasketTotal = computed(() =>
+    this.suggestedBasketProducts().reduce((total, product) => total + this.minProductPrice(product), 0)
+  );
+  readonly cartLines = computed<readonly CartLine[]>(() => {
+    const cart = this.supermarketCart();
+
+    return this.supermarketProducts()
+      .map(product => ({ product, quantity: cart[product.id] ?? 0 }))
+      .filter(line => line.quantity > 0);
+  });
+  readonly cartTotalCount = computed(() => this.cartLines().reduce((total, line) => total + line.quantity, 0));
+  readonly cartMinTotal = computed(() =>
+    this.cartLines().reduce((total, line) => total + this.minProductPrice(line.product) * line.quantity, 0)
+  );
+  readonly checkoutOptions = computed<readonly CheckoutOption[]>(() => {
+    const assortment = this.supermarketAssortment();
+    const lines = this.cartLines();
+
+    if (!assortment || lines.length === 0) {
+      return [];
+    }
+
+    const options = assortment.stores.map(store => {
+      const delivery = this.deliveryByStore[store.id] ?? { etaMinutes: 70, deliveryFee: 149 };
+      const itemsTotal = lines.reduce((total, line) => {
+        const offer = line.product.offers.find(item => item.storeId === store.id);
+
+        return total + (offer?.price ?? this.minProductPrice(line.product)) * line.quantity;
+      }, 0);
+
+      return {
+        store,
+        itemsTotal,
+        deliveryFee: delivery.deliveryFee,
+        total: itemsTotal + delivery.deliveryFee,
+        etaMinutes: delivery.etaMinutes,
+        tags: [] as readonly string[]
+      };
+    });
+
+    const cheapest = Math.min(...options.map(option => option.total));
+    const fastest = Math.min(...options.map(option => option.etaMinutes));
+
+    return options
+      .map(option => ({
+        ...option,
+        tags: [
+          ...(option.etaMinutes === fastest ? ['Самый быстрый'] : []),
+          ...(option.total === cheapest ? ['Самый дешевый'] : [])
+        ]
+      }))
+      .sort((a, b) => {
+        const rank = (option: CheckoutOption): number => {
+          if (option.tags.includes('Самый быстрый')) {
+            return 0;
+          }
+
+          if (option.tags.includes('Самый дешевый')) {
+            return 1;
+          }
+
+          return 2;
+        };
+
+        return rank(a) - rank(b) || a.total - b.total;
+      });
+  });
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
@@ -644,7 +778,12 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   get isLargeHomeSheet(): boolean {
-    return this.activeHomeSheet === 'operations' || this.activeHomeSheet === 'cashback' || this.activeHomeSheet === 'cashbackBalance';
+    return (
+      this.activeHomeSheet === 'operations' ||
+      this.activeHomeSheet === 'cashback' ||
+      this.activeHomeSheet === 'cashbackBalance' ||
+      this.activeHomeSheet === 'supermarkets'
+    );
   }
 
   get homeSheetTitle(): string {
@@ -663,6 +802,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return 'Заказы';
       case 'cityCategory':
         return this.activeCityCategory?.title ?? 'Город';
+      case 'supermarkets':
+        return 'Супермаркеты';
       default:
         return '';
     }
@@ -671,6 +812,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     document.addEventListener('touchend', this.preventDoubleTapZoom, { passive: false });
     this.loadCities();
+    this.loadSupermarketAssortment();
     this.startCitySlider();
 
     if (!this.webApp) {
@@ -886,8 +1028,67 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   openCityCategory(category: CityCategory): void {
+    if (category.title === 'Супермаркеты') {
+      this.checkoutRequested = false;
+      this.openHomeSheet('supermarkets');
+      return;
+    }
+
     this.activeCityCategory = category;
     this.openHomeSheet('cityCategory');
+  }
+
+  openSuggestedBasket(): void {
+    const cart = { ...this.supermarketCart() };
+
+    for (const product of this.suggestedBasketProducts()) {
+      cart[product.id] = Math.max(1, cart[product.id] ?? 0);
+    }
+
+    this.supermarketCart.set(cart);
+    this.checkoutRequested = false;
+    this.openHomeSheet('supermarkets');
+  }
+
+  changeCartQuantity(product: SupermarketProduct, delta: number): void {
+    this.checkoutRequested = false;
+    this.supermarketCart.update(cart => {
+      const quantity = Math.max(0, (cart[product.id] ?? 0) + delta);
+      const next = { ...cart };
+
+      if (quantity === 0) {
+        delete next[product.id];
+      } else {
+        next[product.id] = quantity;
+      }
+
+      return next;
+    });
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  cartQuantity(productId: string): number {
+    return this.supermarketCart()[productId] ?? 0;
+  }
+
+  minProductPrice(product: SupermarketProduct): number {
+    return Math.min(...product.offers.map(offer => offer.price));
+  }
+
+  cheapestStoreName(product: SupermarketProduct): string {
+    const offer = product.offers.reduce((best, current) => (current.price < best.price ? current : best), product.offers[0]);
+    const store = this.supermarketAssortment()?.stores.find(item => item.id === offer?.storeId);
+
+    return store?.name ?? '';
+  }
+
+  requestCheckoutOptions(): void {
+    if (this.cartTotalCount() === 0) {
+      return;
+    }
+
+    this.checkoutRequested = true;
+    this.webApp?.HapticFeedback?.impactOccurred('medium');
   }
 
   onCitySwipeStart(event: TouchEvent): void {
@@ -1017,6 +1218,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (immediate) {
       this.homeSheetClosing = false;
       this.activeHomeSheet = null;
+      this.checkoutRequested = false;
       this.closeOperationDetail(true);
       return;
     }
@@ -1026,6 +1228,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.homeSheetCloseTimer = window.setTimeout(() => {
       this.activeHomeSheet = null;
       this.homeSheetClosing = false;
+      this.checkoutRequested = false;
       this.homeSheetCloseTimer = null;
     }, 280);
   }
@@ -1160,6 +1363,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         if (cities.length > 0) {
           this.cities.set(cities);
           this.selectedCity = cities.includes(this.selectedCity) ? this.selectedCity : cities[0];
+        }
+      })
+      .catch(() => undefined);
+  }
+
+  private loadSupermarketAssortment(): void {
+    fetch('data/supermarket-assortment.json')
+      .then(response => (response.ok ? response.json() : null))
+      .then((assortment: SupermarketAssortment | null) => {
+        if (assortment?.stores?.length && assortment.products?.length) {
+          this.supermarketAssortment.set(assortment);
         }
       })
       .catch(() => undefined);
