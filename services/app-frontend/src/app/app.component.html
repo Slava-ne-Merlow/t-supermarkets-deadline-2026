@@ -548,14 +548,84 @@
                     <strong>Загружаем ассортимент</strong>
                     <span>Сейчас появятся товары партнеров.</span>
                   </div>
-                } @else {
-                  <div class="supermarket-scroll-area">
-                    @if (checkoutRequested && checkoutOptions().length > 0) {
-                      <section class="checkout-options">
-                        <h3>Лучшие варианты</h3>
-                        @for (option of checkoutOptions(); track option.store.id) {
-                          <button class="checkout-option" type="button">
-                            <span class="store-dot" [style.background]="option.store.brandColor"></span>
+	                } @else {
+                    @if (selectedCheckoutOption) {
+                      <section class="checkout-page">
+                        <button class="checkout-back" type="button" (click)="closeCheckoutPage()">
+                          <tui-icon icon="@tui.chevron-left" />
+                          <span>К вариантам</span>
+                        </button>
+
+                        <div class="checkout-hero-card">
+                          <span class="store-dot large" [style.background]="selectedCheckoutOption.store.brandColor"></span>
+                          <span>
+                            <strong>{{ selectedCheckoutOption.store.name }}</strong>
+                            <em>{{ selectedCheckoutOption.etaMinutes }} мин · доставка {{ formatRubles(selectedCheckoutOption.deliveryFee) }} ₽</em>
+                          </span>
+                          <span class="checkout-total-pill">{{ formatRubles(selectedCheckoutOption.total) }} ₽</span>
+                        </div>
+
+                        <div class="checkout-info-grid">
+                          <section>
+                            <tui-icon icon="@tui.map-pin" />
+                            <span>
+                              <strong>Адрес доставки</strong>
+                              <em>{{ selectedCity }}, ближайший адрес из Telegram</em>
+                            </span>
+                          </section>
+                          <section>
+                            <tui-icon icon="@tui.credit-card" />
+                            <span>
+                              <strong>Оплата</strong>
+                              <em>Black · 5619</em>
+                            </span>
+                          </section>
+                        </div>
+
+                        <section class="checkout-order-list">
+                          <h3>Состав заказа</h3>
+                          @for (line of cartLines(); track line.product.id) {
+                            <article>
+                              <img [src]="line.product.image" [alt]="line.product.name" />
+                              <span>
+                                <strong>{{ line.product.name }}</strong>
+                                <em>{{ offerForStore(line.product, selectedCheckoutOption.store.id)?.title }}</em>
+                              </span>
+                              <span>
+                                <strong>{{ formatRubles(lineTotalForStore(line, selectedCheckoutOption.store.id)) }} ₽</strong>
+                                <em>{{ line.quantity }} шт</em>
+                              </span>
+                            </article>
+                          }
+                        </section>
+
+                        <section class="checkout-summary-card">
+                          <span>
+                            <em>Товары</em>
+                            <strong>{{ formatRubles(selectedCheckoutOption.itemsTotal) }} ₽</strong>
+                          </span>
+                          <span>
+                            <em>Доставка</em>
+                            <strong>{{ formatRubles(selectedCheckoutOption.deliveryFee) }} ₽</strong>
+                          </span>
+                          <span>
+                            <em>Итого</em>
+                            <strong>{{ formatRubles(selectedCheckoutOption.total) }} ₽</strong>
+                          </span>
+                        </section>
+
+                        <button class="checkout-confirm-button" type="button" (click)="confirmSupermarketOrder()">
+                          Оформить заказ
+                        </button>
+                      </section>
+                    } @else {
+	                  <div class="supermarket-scroll-area">
+	                    @if (checkoutRequested && checkoutOptions().length > 0) {
+	                      <section class="checkout-options">
+	                        <h3>Лучшие варианты</h3>
+	                        @for (option of checkoutOptions(); track option.store.id) {
+	                          <button class="checkout-option" type="button" (click)="selectCheckoutOption(option)">
+	                            <span class="store-dot" [style.background]="option.store.brandColor"></span>
                             <span>
                               <strong>{{ option.store.name }}</strong>
                               <em>{{ option.etaMinutes }} мин · доставка {{ formatRubles(option.deliveryFee) }} ₽</em>
@@ -596,14 +666,15 @@
                     </section>
                   </div>
 
-                  <footer class="supermarket-cart-bar">
+	                  <footer class="supermarket-cart-bar">
                     <span>
                       <strong>{{ cartTotalCount() ? 'В корзине ' + cartTotalCount() : 'Корзина пуста' }}</strong>
                       <em>минимум {{ formatRubles(cartMinTotal()) }} ₽</em>
                     </span>
-                    <button type="button" [disabled]="cartTotalCount() === 0" (click)="requestCheckoutOptions()">Заказать</button>
-                  </footer>
-                }
+	                    <button type="button" [disabled]="cartTotalCount() === 0" (click)="requestCheckoutOptions()">Заказать</button>
+	                  </footer>
+                    }
+	                }
               </section>
             }
             @case ('orders') {

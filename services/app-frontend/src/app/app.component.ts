@@ -543,6 +543,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   cityPullResetting = false;
   activeCityCategory: CityCategory | null = null;
   checkoutRequested = false;
+  selectedCheckoutOption: CheckoutOption | null = null;
   supermarketAssortment = signal<SupermarketAssortment | null>(null);
   supermarketCart = signal<Record<string, number>>({});
 
@@ -1030,6 +1031,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   openCityCategory(category: CityCategory): void {
     if (category.title === 'Супермаркеты') {
       this.checkoutRequested = false;
+      this.selectedCheckoutOption = null;
       this.openHomeSheet('supermarkets');
       return;
     }
@@ -1047,11 +1049,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     this.supermarketCart.set(cart);
     this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
     this.openHomeSheet('supermarkets');
   }
 
   changeCartQuantity(product: SupermarketProduct, delta: number): void {
     this.checkoutRequested = false;
+    this.selectedCheckoutOption = null;
     this.supermarketCart.update(cart => {
       const quantity = Math.max(0, (cart[product.id] ?? 0) + delta);
       const next = { ...cart };
@@ -1088,7 +1092,35 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.checkoutRequested = true;
+    this.selectedCheckoutOption = null;
     this.webApp?.HapticFeedback?.impactOccurred('medium');
+  }
+
+  selectCheckoutOption(option: CheckoutOption): void {
+    this.selectedCheckoutOption = option;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeCheckoutPage(): void {
+    this.selectedCheckoutOption = null;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  offerForStore(product: SupermarketProduct, storeId: string): SupermarketOffer | null {
+    return product.offers.find(offer => offer.storeId === storeId) ?? null;
+  }
+
+  lineTotalForStore(line: CartLine, storeId: string): number {
+    return (this.offerForStore(line.product, storeId)?.price ?? this.minProductPrice(line.product)) * line.quantity;
+  }
+
+  confirmSupermarketOrder(): void {
+    if (!this.selectedCheckoutOption) {
+      return;
+    }
+
+    this.webApp?.HapticFeedback?.impactOccurred('medium');
+    this.closeHomeSheet();
   }
 
   onCitySwipeStart(event: TouchEvent): void {
@@ -1219,6 +1251,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.homeSheetClosing = false;
       this.activeHomeSheet = null;
       this.checkoutRequested = false;
+      this.selectedCheckoutOption = null;
       this.closeOperationDetail(true);
       return;
     }
@@ -1229,6 +1262,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.activeHomeSheet = null;
       this.homeSheetClosing = false;
       this.checkoutRequested = false;
+      this.selectedCheckoutOption = null;
       this.homeSheetCloseTimer = null;
     }, 280);
   }

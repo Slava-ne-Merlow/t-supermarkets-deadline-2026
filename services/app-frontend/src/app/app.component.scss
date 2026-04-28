@@ -2132,6 +2132,217 @@
   color: #8d9098;
 }
 
+.checkout-page {
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  overflow-y: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.checkout-page::-webkit-scrollbar {
+  display: none;
+}
+
+.checkout-back {
+  justify-self: start;
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 4px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  color: #6ea0ff;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.checkout-back tui-icon {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+.checkout-hero-card,
+.checkout-summary-card,
+.checkout-info-grid section,
+.checkout-order-list article {
+  border-radius: 22px;
+  background: #242529;
+}
+
+.checkout-hero-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+}
+
+.store-dot.large {
+  width: 32px;
+  height: 32px;
+}
+
+.checkout-hero-card span:not(.store-dot, .checkout-total-pill) {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.checkout-hero-card strong {
+  color: #f7f7f8;
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.checkout-hero-card em {
+  color: #9da0a8;
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1.1;
+}
+
+.checkout-total-pill {
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #6ea0ff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.checkout-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.checkout-info-grid section {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.checkout-info-grid tui-icon {
+  inline-size: 24px;
+  block-size: 24px;
+  color: #6ea0ff;
+}
+
+.checkout-info-grid span {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.checkout-info-grid strong,
+.checkout-order-list h3,
+.checkout-summary-card strong {
+  color: #f7f7f8;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.checkout-info-grid em,
+.checkout-order-list em,
+.checkout-summary-card em {
+  color: #9da0a8;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.15;
+}
+
+.checkout-order-list {
+  display: grid;
+  gap: 10px;
+}
+
+.checkout-order-list h3 {
+  margin: 2px 0 0;
+}
+
+.checkout-order-list article {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+}
+
+.checkout-order-list img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.checkout-order-list article > span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.checkout-order-list article > span:last-child {
+  justify-items: end;
+  text-align: right;
+}
+
+.checkout-order-list strong {
+  overflow: hidden;
+  color: #f7f7f8;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkout-order-list em {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkout-summary-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.checkout-summary-card span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout-summary-card span:last-child {
+  padding-top: 10px;
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.checkout-summary-card span:last-child strong {
+  color: #6ea0ff;
+}
+
+.checkout-confirm-button {
+  min-height: 50px;
+  border: 0;
+  border-radius: 18px;
+  background: #6ea0ff;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 850;
+}
+
 @keyframes sheet-slide-in {
   from {
     transform: translateY(104%);
