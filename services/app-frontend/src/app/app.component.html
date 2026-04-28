@@ -252,8 +252,55 @@
             </button>
           }
 
-          @for (height of contentPlaceholders; track $index) {
-            <div class="placeholder" tuiCardMedium [style.min-height.px]="height"></div>
+          @if (isPayments) {
+            <section class="payments-favorites">
+              <h2>Избранное</h2>
+              <div class="favorite-payments-row">
+                <button class="favorite-payment support" type="button" (click)="openDeepLink(transferDeepLink)">
+                  <span class="favorite-payment-logo"><tui-icon icon="@tui.arrow-right" /></span>
+                  <strong>Перевести</strong>
+                </button>
+                <button class="favorite-payment topup" type="button" (click)="openHomeSheet('topup')">
+                  <span class="favorite-payment-logo"><tui-icon icon="@tui.plus" /></span>
+                  <strong>Пополнить</strong>
+                </button>
+                <button class="favorite-payment qr" type="button" (click)="openDeepLink('bank100000000004://Main/Pay/ScanQR')">
+                  <span class="favorite-payment-logo"><tui-icon icon="@tui.qr-code" /></span>
+                  <strong>QR-код</strong>
+                </button>
+                <button class="favorite-payment phone" type="button" (click)="openDeepLink('bank100000000004://Main/tpaybluetooth')">
+                  <span class="favorite-payment-logo"><tui-icon icon="@tui.contactless" /></span>
+                  <strong>Оплатить</strong>
+                </button>
+              </div>
+            </section>
+
+            <button class="regular-payments-card" type="button" (click)="openRegularPaymentsScreen()">
+              <span><tui-icon icon="@tui.arrow-right" /></span>
+              <strong>Регулярные платежи</strong>
+            </button>
+
+            <section class="phone-transfer-card">
+              <h2>Перевод по телефону <tui-icon icon="@tui.sparkles" /></h2>
+              <tui-textfield
+                class="phone-transfer-field"
+                tuiTextfieldAppearance="textfield"
+                tuiTextfieldSize="m"
+              >
+                <input
+                  tuiInputPhone
+                  name="paymentPhoneNumber"
+                  autocomplete="tel"
+                  style="height: 100%"
+                  mask="+7 ### ###-##-##"
+                  placeholder="+7 999 123-45-67"
+                  [(ngModel)]="paymentPhoneNumber"
+                />
+              </tui-textfield>
+              <button type="button" [disabled]="!isPaymentPhoneValid" (click)="openPaymentPhoneTransfer()">
+                Перевести
+              </button>
+            </section>
           }
         </div>
       }
@@ -389,6 +436,25 @@
           </section>
 
           <div class="account-screen-placeholder"></div>
+        </div>
+      </section>
+    }
+
+    @if (regularPaymentsScreenOpen) {
+      <section class="account-screen regular-payments-screen" [class.closing]="regularPaymentsScreenClosing">
+        <tui-app-bar class="account-screen-bar regular-payments-bar" size="l">
+          <button class="back-button" type="button" tuiSlot="start" (click)="closeRegularPaymentsScreen()">
+            <tui-icon icon="@tui.chevron-left" />
+          </button>
+          <span class="account-bar-title visible">Регулярные платежи</span>
+        </tui-app-bar>
+
+        <div class="regular-payments-body">
+          <section class="regular-empty-state">
+            <tui-icon icon="@tui.calendar-clock" />
+            <strong>Пока пусто</strong>
+            <span>Здесь появятся регулярные платежи и автоплатежи.</span>
+          </section>
         </div>
       </section>
     }

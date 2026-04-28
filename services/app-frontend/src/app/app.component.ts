@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiHint, TuiIcon, TuiInput, TuiRoot, TuiTextfield } from '@taiga-ui/core';
-import { TuiAvatar, TuiCounter, TuiProgress, TuiTabs } from '@taiga-ui/kit';
+import { TuiAvatar, TuiCounter, TuiInputPhone, TuiProgress, TuiTabs } from '@taiga-ui/kit';
 import { TuiAppBar, TuiCard } from '@taiga-ui/layout';
 import { AccountBalanceStore } from './account-balance.store';
 
@@ -158,6 +158,7 @@ declare global {
     TuiHint,
     TuiIcon,
     TuiInput,
+    TuiInputPhone,
     TuiCounter,
     TuiProgress,
     TuiRoot,
@@ -174,6 +175,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private homeSheetCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private accountScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private settingsScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private regularPaymentsScreenCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private operationDetailCloseTimer: ReturnType<typeof window.setTimeout> | null = null;
   private citySliderTimer: ReturnType<typeof window.setInterval> | null = null;
   private citySwipeStartX: number | null = null;
@@ -529,6 +531,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   searchOpen = false;
   settingsOpen = false;
   settingsScreenClosing = false;
+  regularPaymentsScreenOpen = false;
+  regularPaymentsScreenClosing = false;
   activeStoryIndex: number | null = null;
   activeSlideIndex = 0;
   activeHomeSheet: HomeSheet | null = null;
@@ -548,9 +552,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   selectedCheckoutOption: CheckoutOption | null = null;
   supermarketAssortment = signal<SupermarketAssortment | null>(null);
   supermarketCart = signal<Record<string, number>>({});
+  paymentPhoneNumber = '';
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
+  readonly phoneTransferDeepLinkBase = 'bank100000000004://Main/PayByMobileNumber';
   readonly suggestedBasketIds = ['milk-32-1l', 'sliced-baton', 'eggs-c1-10', 'potato-1kg', 'chicken-fillet'];
   readonly deliveryByStore: Record<string, { etaMinutes: number; deliveryFee: number }> = {
     vkusvill: { etaMinutes: 35, deliveryFee: 149 },
@@ -768,8 +774,22 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return this.accountScrollTop > 120;
   }
 
-  get contentPlaceholders(): readonly number[] {
-    return this.isPayments ? [104, 118, 96, 128, 112, 132] : [];
+  get isPaymentPhoneValid(): boolean {
+    return this.normalizedPaymentPhone.length === 11;
+  }
+
+  get normalizedPaymentPhone(): string {
+    const digits = this.paymentPhoneNumber.replace(/\D/g, '');
+
+    if (digits.length === 10) {
+      return `7${digits}`;
+    }
+
+    if (digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'))) {
+      return `7${digits.slice(1)}`;
+    }
+
+    return digits;
   }
 
   get activeStory(): Story | null {
@@ -835,6 +855,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearHomeSheetCloseTimer();
     this.clearAccountScreenCloseTimer();
     this.clearSettingsScreenCloseTimer();
+    this.clearRegularPaymentsScreenCloseTimer();
     this.clearOperationDetailCloseTimer();
     this.clearCitySliderTimer();
     this.clearCityPullResetTimer();
@@ -873,6 +894,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.resetCityPull(true);
     this.closeSettings(true);
     this.closeAccountScreen(true);
+    this.closeRegularPaymentsScreen(true);
     this.closeHomeSheet(true);
     this.closeOperationDetail(true);
     this.closeStory();
@@ -884,6 +906,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.searchOpen = true;
     this.closeSettings();
     this.closeAccountScreen();
+    this.closeRegularPaymentsScreen();
     this.closeHomeSheet();
     this.closeOperationDetail();
     this.webApp?.HapticFeedback?.impactOccurred('light');
@@ -913,6 +936,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.settingsScreenClosing = false;
     this.settingsOpen = true;
     this.closeAccountScreen();
+    this.closeRegularPaymentsScreen();
     this.closeHomeSheet();
     this.closeOperationDetail();
     this.webApp?.HapticFeedback?.impactOccurred('light');
@@ -948,6 +972,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.activeSlideIndex = 0;
     this.closeSettings();
     this.closeAccountScreen();
+    this.closeRegularPaymentsScreen();
     this.closeHomeSheet();
     this.closeOperationDetail();
     this.webApp?.HapticFeedback?.impactOccurred('light');
@@ -1000,6 +1025,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.accountScreenClosing = false;
     this.accountScreenOpen = true;
     this.accountScrollTop = 0;
+    this.closeRegularPaymentsScreen();
     this.closeHomeSheet(true);
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -1022,6 +1048,38 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.accountScreenOpen = false;
       this.accountScreenClosing = false;
       this.accountScreenCloseTimer = null;
+    }, 280);
+  }
+
+  openRegularPaymentsScreen(): void {
+    this.clearRegularPaymentsScreenCloseTimer();
+    this.regularPaymentsScreenClosing = false;
+    this.regularPaymentsScreenOpen = true;
+    this.searchOpen = false;
+    this.closeAccountScreen();
+    this.closeHomeSheet();
+    this.closeOperationDetail();
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  closeRegularPaymentsScreen(immediate = false): void {
+    if (!this.regularPaymentsScreenOpen) {
+      return;
+    }
+
+    this.clearRegularPaymentsScreenCloseTimer();
+
+    if (immediate) {
+      this.regularPaymentsScreenOpen = false;
+      this.regularPaymentsScreenClosing = false;
+      return;
+    }
+
+    this.regularPaymentsScreenClosing = true;
+    this.regularPaymentsScreenCloseTimer = window.setTimeout(() => {
+      this.regularPaymentsScreenOpen = false;
+      this.regularPaymentsScreenClosing = false;
+      this.regularPaymentsScreenCloseTimer = null;
     }, 280);
   }
 
@@ -1325,6 +1383,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     link.remove();
   }
 
+  openPaymentPhoneTransfer(): void {
+    const phone = this.normalizedPaymentPhone;
+
+    if (!this.isPaymentPhoneValid) {
+      this.webApp?.HapticFeedback?.impactOccurred('medium');
+      return;
+    }
+
+    this.openDeepLink(`${this.phoneTransferDeepLinkBase}?numberPhone=${encodeURIComponent(`+${phone}`)}`);
+  }
+
   private clearHomeSheetCloseTimer(): void {
     if (!this.homeSheetCloseTimer) {
       return;
@@ -1369,6 +1438,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     window.clearTimeout(this.accountScreenCloseTimer);
     this.accountScreenCloseTimer = null;
+  }
+
+  private clearRegularPaymentsScreenCloseTimer(): void {
+    if (!this.regularPaymentsScreenCloseTimer) {
+      return;
+    }
+
+    window.clearTimeout(this.regularPaymentsScreenCloseTimer);
+    this.regularPaymentsScreenCloseTimer = null;
   }
 
   private clearOperationDetailCloseTimer(): void {

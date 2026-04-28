@@ -210,17 +210,6 @@
   padding-top: 6px;
 }
 
-.placeholder {
-  width: 100%;
-  border-radius: 8px;
-  background: #454546;
-  box-shadow: none;
-}
-
-.placeholder.slim {
-  min-height: 82px;
-}
-
 .stories-strip {
   position: relative;
   z-index: 1;
@@ -388,6 +377,30 @@
   font-style: normal;
   line-height: 1.12;
 }
+
+.payments-favorites,.phone-transfer-card{overflow:hidden;border-radius:24px;background:#1c1d20}
+.payments-favorites{display:grid;gap:14px;padding:clamp(16px,4.4vw,22px) 0 clamp(16px,4.4vw,22px) clamp(16px,4.4vw,22px)}
+.payments-favorites h2,.phone-transfer-card h2{margin:0;color:#f7f7f8;font-size:clamp(18px,5vw,24px);font-weight:850;line-height:1.08}
+.favorite-payments-row{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(92px,26vw,112px);gap:10px;overflow-x:auto;overscroll-behavior-x:contain;padding-right:clamp(16px,4.4vw,22px);scrollbar-width:none}
+.favorite-payments-row::-webkit-scrollbar{display:none}
+.favorite-payment{min-height:92px;display:grid;align-content:space-between;justify-items:start;gap:10px;padding:12px;border:0;border-radius:16px;color:#fff;background:#2a2c31;text-align:left;font:inherit}
+.favorite-payment.support{background:#055f31}.favorite-payment.topup,.favorite-payment.qr{background:#5b4b00}.favorite-payment.phone{background:#333438}
+.favorite-payment-logo{width:34px;aspect-ratio:1;display:grid;place-items:center;border-radius:999px;background:#ffdf38;color:#1c1d20}
+.favorite-payment.support .favorite-payment-logo,.favorite-payment.phone .favorite-payment-logo{background:#08d66d;color:#fff}
+.favorite-payment-logo tui-icon{inline-size:21px;block-size:21px}
+.favorite-payment strong{overflow:hidden;max-width:100%;font-size:clamp(12px,3.4vw,15px);font-weight:750;line-height:1.12;text-overflow:ellipsis}
+.regular-payments-card{min-height:64px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:14px 18px;border:0;border-radius:22px;background:#1c1d20;color:#f7f7f8;text-align:left;font:inherit}
+.regular-payments-card>span{width:34px;aspect-ratio:1;display:grid;place-items:center;border-radius:9px;background:linear-gradient(135deg,#6da2ff,#236eea);color:#fff}
+.regular-payments-card tui-icon{inline-size:24px;block-size:24px}
+.regular-payments-card strong{overflow:hidden;font-size:clamp(16px,4.4vw,21px);font-weight:850;line-height:1.1;text-overflow:ellipsis;white-space:nowrap}
+.phone-transfer-card{display:grid;gap:16px;padding:clamp(18px,4.8vw,24px)}
+.phone-transfer-card h2{display:flex;gap:8px;align-items:center}
+.phone-transfer-card h2 tui-icon{color:#4a8cff;inline-size:22px;block-size:22px}
+.phone-transfer-field{--tui-background-base:#34353a;min-height:50px}
+.phone-transfer-field input{font-size:14px}
+.phone-transfer-field input::placeholder{color:#9da0a8}
+.phone-transfer-card button{justify-self:start;min-height:38px;padding:0;border:0;color:#6ea0ff;background:transparent;font:inherit;font-size:clamp(15px,4.2vw,20px);font-weight:500}
+.phone-transfer-card button:disabled{color:#5d6572}
 
 .bank-account-card {
   width: 100%;
@@ -1148,6 +1161,12 @@
   background: #151516;
 }
 
+.regular-payments-screen,
+.regular-payments-bar {
+  --tui-background-base: #000;
+  background: #000;
+}
+
 .settings-screen-body {
   display: grid;
   gap: 18px;
@@ -1178,6 +1197,45 @@
   display: grid;
   gap: 24px;
   //padding-top: 24px;
+}
+
+.regular-payments-body {
+  min-height: calc(100% - 74px);
+  display: grid;
+  align-items: start;
+  padding-top: 18px;
+}
+
+.regular-empty-state {
+  min-height: 210px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  padding: 24px;
+  border-radius: 28px;
+  background: #1c1d20;
+  text-align: center;
+}
+
+.regular-empty-state tui-icon {
+  color: #6ea0ff;
+  inline-size: 42px;
+  block-size: 42px;
+}
+
+.regular-empty-state strong {
+  color: #f7f7f8;
+  font-size: 22px;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.regular-empty-state span {
+  max-width: 260px;
+  color: #9da0a8;
+  font-size: 14px;
+  line-height: 1.25;
 }
 
 .account-hero {
@@ -1922,76 +1980,10 @@
   display: none;
 }
 
-.checkout-options {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
-.checkout-options h3 {
-  margin: 0;
-  color: #f7f7f8;
-  font-size: 18px;
-  font-weight: 850;
-  line-height: 1.1;
-}
-
-.checkout-option {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  padding: 12px;
-  border: 0;
-  border-radius: 18px;
-  background: #2a2c31;
-  color: #f7f7f8;
-  text-align: left;
-  font: inherit;
-}
-
 .store-dot {
   width: 16px;
   height: 16px;
   border-radius: 999px;
-}
-
-.checkout-option span:not(.store-dot, .checkout-option-side) {
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
-
-.checkout-option strong {
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.checkout-option em {
-  color: #9da0a8;
-  font-size: 12px;
-  font-style: normal;
-  line-height: 1.1;
-}
-
-.checkout-option-side {
-  display: grid;
-  justify-items: end;
-  gap: 5px;
-  text-align: right;
-}
-
-.checkout-option-side i {
-  padding: 4px 7px;
-  border-radius: 999px;
-  background: #ffe85b;
-  color: #151515;
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 850;
-  line-height: 1;
 }
 
 .partner-selection {
@@ -2156,17 +2148,17 @@
 
 .supermarket-product {
   min-width: 0;
-  min-height: 300px;
+  min-height: 276px;
   display: grid;
-  grid-template-rows: auto minmax(96px, 1fr) auto;
-  gap: 12px;
-  padding: 10px 10px 12px;
+  grid-template-rows: auto minmax(82px, 1fr) auto;
+  gap: 10px;
+  padding: 9px 9px 11px;
   border-radius: 24px;
   background: #1f2024;
 }
 
 .supermarket-product-image {
-  aspect-ratio: 1 / .92;
+  aspect-ratio: 1 / .82;
   display: block;
   overflow: hidden;
   border-radius: 22px;
