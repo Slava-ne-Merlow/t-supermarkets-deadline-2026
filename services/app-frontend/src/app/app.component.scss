@@ -1833,8 +1833,9 @@
 .word-game-sheet {
   min-height: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
-  gap: clamp(8px, 1.8dvh, 20px);
+  grid-template-rows: auto auto auto auto;
+  align-content: start;
+  gap: clamp(6px, 1.1dvh, 16px);
   padding-top: 4px;
 }
 
@@ -1846,10 +1847,10 @@
 }
 
 .word-game-logo i {
-  width: clamp(34px, min(11vw, 6dvh), 54px);
-  height: clamp(34px, min(11vw, 6dvh), 54px);
+  width: clamp(32px, min(10vw, 5.2dvh), 54px);
+  height: clamp(32px, min(10vw, 5.2dvh), 54px);
   border-radius: 9px;
-  font-size: clamp(21px, min(7.2vw, 4.1dvh), 34px);
+  font-size: clamp(20px, min(6.7vw, 3.6dvh), 34px);
 }
 
 .word-game-reset {
@@ -1873,19 +1874,19 @@
   display: grid;
   align-content: start;
   justify-content: center;
-  gap: clamp(6px, 1.2dvh, 12px);
+  gap: clamp(5px, 0.7dvh, 12px);
   padding: 0;
 }
 
 .word-game-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(6px, min(2.2vw, 1.3dvh), 14px);
+  gap: clamp(5px, min(2vw, 0.8dvh), 14px);
   width: min(100%, 390px);
 }
 
 .word-game-cell {
-  width: clamp(38px, min(15vw, 7.5dvh), 66px);
+  width: clamp(36px, min(14vw, 6.35dvh), 66px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -1893,7 +1894,7 @@
   border-radius: 10px;
   color: #f7f7f8;
   background: #1c1d20;
-  font-size: clamp(22px, min(7.2vw, 4.5dvh), 34px);
+  font-size: clamp(20px, min(6.7vw, 3.8dvh), 34px);
   font-weight: 900;
   line-height: 1;
   text-transform: uppercase;
@@ -1916,17 +1917,17 @@
 }
 
 .word-game-message {
-  min-height: 18px;
+  min-height: 16px;
   margin: 0;
   color: #c9ccd3;
-  font-size: clamp(13px, 2dvh, 15px);
+  font-size: clamp(12px, 1.65dvh, 15px);
   font-weight: 750;
   text-align: center;
 }
 
 .word-game-keyboard {
   display: grid;
-  gap: clamp(5px, 1dvh, 8px);
+  gap: clamp(4px, 0.7dvh, 8px);
   padding-bottom: 0;
 }
 
@@ -1939,7 +1940,7 @@
 
 .word-game-key {
   min-width: 0;
-  height: clamp(38px, min(10.8vw, 6.5dvh), 58px);
+  height: clamp(34px, min(10vw, 5.55dvh), 58px);
   display: grid;
   place-items: center;
   padding: 0;
@@ -1948,7 +1949,7 @@
   background: #202124;
   color: #f7f7f8;
   font: inherit;
-  font-size: clamp(17px, min(5vw, 3.3dvh), 26px);
+  font-size: clamp(16px, min(4.8vw, 3dvh), 26px);
   font-weight: 850;
   line-height: 1;
 }
