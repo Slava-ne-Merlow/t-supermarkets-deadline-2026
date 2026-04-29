@@ -925,7 +925,13 @@
   block-size: 15px;
 }
 
+.curated-baskets {
+  display: grid;
+  gap: 14px;
+}
+
 .suggested-basket-card {
+  position: relative;
   min-height: 142px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -943,15 +949,35 @@
   font: inherit;
 }
 
+.suggested-basket-card.vibe {
+  background:
+    radial-gradient(circle at 50% 50%, rgb(255 232 91 / 22%), transparent 22%),
+    radial-gradient(circle at 92% 18%, rgb(238 89 168 / 28%), transparent 30%),
+    #1c1d20;
+}
+
 .suggested-basket-copy {
+  min-width: 0;
   display: grid;
   gap: 7px;
 }
 
+.suggested-basket-copy > span {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, auto) auto;
+  justify-content: start;
+  gap: 8px;
+  align-items: center;
+}
+
 .suggested-basket-copy strong {
+  overflow: hidden;
   font-size: clamp(18px, 4.8vw, 24px);
   font-weight: 850;
   line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .suggested-basket-copy em {
@@ -962,7 +988,52 @@
   line-height: 1.18;
 }
 
+.basket-hint-button {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #34353a;
+  color: #9da0a8;
+}
+
+.basket-hint-button tui-icon {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.vibe-pulse {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 54px;
+  height: 54px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.vibe-pulse i {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid rgb(255 232 91 / 74%);
+  animation: vibe-pulse 1.8s ease-out infinite;
+}
+
+.vibe-pulse i:nth-child(2) {
+  animation-delay: .45s;
+}
+
+.vibe-pulse i:nth-child(3) {
+  animation-delay: .9s;
+}
+
 .suggested-basket-preview {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 42px;
@@ -986,9 +1057,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #f7f7f8;
   font-size: 14px;
   font-weight: 800;
+  font: inherit;
+  text-align: left;
 }
 
 .suggested-basket-footer i {
@@ -2640,6 +2716,17 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes vibe-pulse {
+  from {
+    opacity: .9;
+    transform: scale(.35);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.45);
   }
 }
 

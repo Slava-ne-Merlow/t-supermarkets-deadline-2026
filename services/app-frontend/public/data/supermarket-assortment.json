@@ -284,6 +284,84 @@
         { "storeId": "auchan", "title": "Масло подсолнечное, 1 л", "price": 119, "sourceQuality": "proxy" },
         { "storeId": "lenta", "title": "Масло подсолнечное, 1 л", "price": 129, "sourceQuality": "proxy" }
       ]
+    },
+    {
+      "id": "dark-chocolate-90g",
+      "name": "Тёмный шоколад",
+      "unit": "90 г",
+      "category": "Сладости",
+      "image": "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Шоколад тёмный, 90 г", "price": 169, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Шоколад тёмный, 90 г", "price": 119.99, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Шоколад тёмный, 90 г", "price": 109, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Шоколад тёмный, 90 г", "price": 129.99, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "potato-chips-140g",
+      "name": "Чипсы",
+      "unit": "140 г",
+      "category": "Снэки",
+      "image": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Чипсы картофельные, 140 г", "price": 189, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Чипсы, 140 г", "price": 149.99, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Чипсы, 140 г", "price": 139, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Чипсы, 140 г", "price": 159.99, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "ice-cream-pint",
+      "name": "Мороженое пломбир",
+      "unit": "400-450 г",
+      "category": "Десерты",
+      "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Мороженое пломбир, 400 г", "price": 289, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Пломбир, 450 г", "price": 219.99, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Мороженое пломбир, 400 г", "price": 209, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Мороженое пломбир, 450 г", "price": 239.99, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "gummy-candy-150g",
+      "name": "Жевательные конфеты",
+      "unit": "150 г",
+      "category": "Сладости",
+      "image": "https://images.unsplash.com/photo-1581798459219-318e76aecc7b?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Жевательные конфеты, 150 г", "price": 179, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Мармелад жевательный, 150 г", "price": 119.99, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Жевательные конфеты, 150 г", "price": 99, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Жевательные конфеты, 150 г", "price": 129.99, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "kombucha-330ml",
+      "name": "Комбуча",
+      "unit": "330 мл",
+      "category": "Напитки",
+      "image": "https://images.unsplash.com/photo-1622484212850-eb596d769edc?auto=format&fit=crop&w=720&q=80",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Комбуча, 330 мл", "price": 159, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Комбуча, 330 мл", "price": 129.99, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Комбуча, 330 мл", "price": 119, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Комбуча, 330 мл", "price": 139.99, "sourceQuality": "proxy" }
+      ]
+    },
+    {
+      "id": "protein-bar-50g",
+      "name": "Протеиновый батончик",
+      "unit": "50 г",
+      "category": "Снэки",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Three_protein_bars.jpg/960px-Three_protein_bars.jpg",
+      "offers": [
+        { "storeId": "vkusvill", "title": "Протеиновый батончик, 50 г", "price": 139, "sourceQuality": "proxy" },
+        { "storeId": "dixy", "title": "Протеиновый батончик, 50 г", "price": 99.99, "sourceQuality": "proxy" },
+        { "storeId": "auchan", "title": "Протеиновый батончик, 50 г", "price": 89, "sourceQuality": "proxy" },
+        { "storeId": "lenta", "title": "Протеиновый батончик, 50 г", "price": 109.99, "sourceQuality": "proxy" }
+      ]
     }
   ]
 }

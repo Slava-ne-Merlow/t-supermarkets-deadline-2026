@@ -133,21 +133,45 @@
               }
 	            </div>
 
-            <button class="suggested-basket-card" type="button" (click)="openSuggestedBasket()">
-              <span class="suggested-basket-copy">
-                <strong>Корзина под вас</strong>
-                <em>Собрали базовые продукты из предложений партнеров</em>
-              </span>
-              <span class="suggested-basket-preview">
-                @for (product of suggestedBasketProducts().slice(0, 3); track product.id) {
-                  <img [src]="product.image" [alt]="product.name" />
-                }
-              </span>
-              <span class="suggested-basket-footer">
-                <span>от {{ formatRubles(suggestedBasketTotal()) }} ₽</span>
-                <i>Открыть</i>
-              </span>
-            </button>
+            <section class="curated-baskets">
+              @for (basket of curatedBasketCards(); track basket.id) {
+                <article class="suggested-basket-card" [class.vibe]="basket.pulse">
+                  <span class="suggested-basket-copy">
+                    <span>
+                      <strong>{{ basket.title }}</strong>
+                      <button
+                        class="basket-hint-button"
+                        type="button"
+                        [tuiHint]="basket.hint"
+                        tuiHintDescribe
+                        tuiHintDirection="top"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <tui-icon icon="@tui.circle-help" />
+                      </button>
+                    </span>
+                    <em>{{ basket.description }}</em>
+                  </span>
+
+                  @if (basket.pulse) {
+                    <span class="vibe-pulse" aria-hidden="true">
+                      <i></i><i></i><i></i>
+                    </span>
+                  }
+
+                  <span class="suggested-basket-preview">
+                    @for (product of basket.products.slice(0, 3); track product.id) {
+                      <img [src]="product.image" [alt]="product.name" />
+                    }
+                  </span>
+
+                  <button class="suggested-basket-footer" type="button" (click)="openCuratedBasket(basket.id)">
+                    <span>{{ basket.count }} товаров · от {{ formatRubles(basket.total) }} ₽</span>
+                    <i>Открыть</i>
+                  </button>
+                </article>
+              }
+            </section>
 
             <div class="city-placeholder-stack" aria-hidden="true">
               <div></div>

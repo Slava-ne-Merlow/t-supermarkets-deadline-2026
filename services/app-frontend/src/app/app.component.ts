@@ -131,6 +131,16 @@ type CartLine = {
   quantity: number;
 };
 
+type CuratedBasket = {
+  id: string;
+  title: string;
+  description: string;
+  hint: string;
+  productIds: readonly string[];
+  quantities: Record<string, number>;
+  pulse?: boolean;
+};
+
 type CheckoutOption = {
   store: SupermarketStore;
   itemsTotal: number;
@@ -612,7 +622,39 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     { value: 'eggs', label: 'Яйца', icon: '@tui.egg' },
     { value: 'honey', label: 'Мёд', icon: '@tui.hexagon' }
   ];
-  readonly suggestedBasketIds = ['milk-32-1l', 'sliced-baton', 'eggs-c1-10', 'potato-1kg', 'chicken-fillet'];
+  readonly curatedBaskets: readonly CuratedBasket[] = [
+    {
+      id: 'essentials',
+      title: 'Корзина под вас',
+      description: 'База на пару дней: завтрак, гарнир, овощи и вода',
+      hint: 'Собираем корзину из частых покупок и базовых продуктов.',
+      productIds: ['milk-32-1l', 'sliced-baton', 'eggs-c1-10', 'potato-1kg', 'chicken-fillet', 'bananas-1kg'],
+      quantities: {
+        'milk-32-1l': 1,
+        'sliced-baton': 1,
+        'eggs-c1-10': 1,
+        'potato-1kg': 1,
+        'chicken-fillet': 1,
+        'bananas-1kg': 1
+      }
+    },
+    {
+      id: 'vibe',
+      title: 'Под ваш вкус',
+      description: 'Сладости, снэки и напитки для вечера без плана',
+      hint: 'Это не базовая корзина, а подборка настроения: вкусности, снэки и пара необычных позиций из супермаркетов.',
+      productIds: ['dark-chocolate-90g', 'potato-chips-140g', 'ice-cream-pint', 'gummy-candy-150g', 'kombucha-330ml', 'protein-bar-50g'],
+      quantities: {
+        'dark-chocolate-90g': 1,
+        'potato-chips-140g': 1,
+        'ice-cream-pint': 1,
+        'gummy-candy-150g': 1,
+        'kombucha-330ml': 2,
+        'protein-bar-50g': 2
+      },
+      pulse: true
+    }
+  ];
   readonly deliveryByStore: Record<string, { etaMinutes: number; deliveryFee: number }> = {
     vkusvill: { etaMinutes: 35, deliveryFee: 149 },
     dixy: { etaMinutes: 50, deliveryFee: 99 },
@@ -698,15 +740,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   );
   readonly cashbackTotalLabel = computed(() => `${this.formatRubles(this.cashbackTotal())} ₽`);
   readonly supermarketProducts = computed(() => this.supermarketAssortment()?.products ?? []);
-  readonly suggestedBasketProducts = computed(() => {
-    const products = this.supermarketProducts();
-
-    return this.suggestedBasketIds
-      .map(id => products.find(product => product.id === id))
-      .filter((product): product is SupermarketProduct => Boolean(product));
-  });
-  readonly suggestedBasketTotal = computed(() =>
-    this.suggestedBasketProducts().reduce((total, product) => total + this.minProductPrice(product), 0)
+  readonly curatedBasketCards = computed(() =>
+    this.curatedBaskets.map(basket => ({
+      ...basket,
+      products: this.curatedBasketProducts(basket),
+      total: this.curatedBasketTotal(basket),
+      count: this.curatedBasketCount(basket)
+    }))
   );
   readonly cartLines = computed<readonly CartLine[]>(() => {
     const cart = this.supermarketCart();
@@ -1186,6 +1226,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     if (category.title === 'Супермаркеты') {
       this.checkoutRequested = false;
       this.selectedCheckoutOption = null;
+      this.supermarketCart.set({});
       this.openHomeSheet('supermarkets');
       return;
     }
@@ -1194,17 +1235,36 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.openHomeSheet('cityCategory');
   }
 
-  openSuggestedBasket(): void {
-    const cart = { ...this.supermarketCart() };
+  openCuratedBasket(basketId: string): void {
+    const basket = this.curatedBaskets.find(item => item.id === basketId);
 
-    for (const product of this.suggestedBasketProducts()) {
-      cart[product.id] = Math.max(1, cart[product.id] ?? 0);
+    if (!basket) {
+      return;
     }
 
-    this.supermarketCart.set(cart);
+    this.supermarketCart.set({ ...basket.quantities });
     this.checkoutRequested = false;
     this.selectedCheckoutOption = null;
-    this.openHomeSheet('supermarkets');
+    this.openHomeSheet('supermarketCart');
+  }
+
+  curatedBasketProducts(basket: CuratedBasket): readonly SupermarketProduct[] {
+    const products = this.supermarketProducts();
+
+    return basket.productIds
+      .map(id => products.find(product => product.id === id))
+      .filter((product): product is SupermarketProduct => Boolean(product));
+  }
+
+  curatedBasketTotal(basket: CuratedBasket): number {
+    return this.curatedBasketProducts(basket).reduce(
+      (total, product) => total + this.minProductPrice(product) * (basket.quantities[product.id] ?? 1),
+      0
+    );
+  }
+
+  curatedBasketCount(basket: CuratedBasket): number {
+    return Object.values(basket.quantities).reduce((total, quantity) => total + quantity, 0);
   }
 
   openRegularPaymentAddSheet(): void {
