@@ -115,6 +115,17 @@
               </button>
             </div>
 
+            <button class="city-word-game-card" type="button" (click)="openHomeSheet('wordGame')">
+              <span class="city-word-game-logo">
+                <i>5</i><i>Б</i><i>У</i><i>К</i><i>В</i>
+              </span>
+              <span>
+                <strong>Игра «5 букв»</strong>
+                <em>Угадайте слово дня в Т-Городе</em>
+              </span>
+              <tui-icon icon="@tui.gamepad-2" />
+            </button>
+
             <div class="city-categories">
               @for (category of cityCategories; track category.title) {
                 <button
@@ -1053,6 +1064,56 @@
                 <strong>{{ activeCityCategory?.title }}</strong>
                 <span>Скоро здесь появятся партнеры, предложения и кэшбэк.</span>
               </div>
+            }
+            @case ('wordGame') {
+              <section class="word-game-sheet">
+                <header class="word-game-head">
+                  <span class="word-game-logo" aria-label="5 букв">
+                    <i>5</i><i>Б</i><i>У</i><i>К</i><i>В</i>
+                  </span>
+                  <button class="word-game-reset" type="button" aria-label="Новая игра" (click)="resetWordGame()">
+                    <tui-icon icon="@tui.rotate-ccw" />
+                  </button>
+                </header>
+
+                <section class="word-game-board" aria-label="Поле игры 5 букв">
+                  @for (row of wordGameRows(); track $index) {
+                    <div class="word-game-row">
+                      @for (letter of row.letters; track $index) {
+                        <span class="word-game-cell" [attr.data-status]="row.statuses[$index]">
+                          {{ letter }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </section>
+
+                <p class="word-game-message">{{ wordGameMessage }}</p>
+
+                <section class="word-game-keyboard" aria-label="Русская клавиатура">
+                  @for (keyRow of wordGameKeyboard; track $index) {
+                    <div class="word-game-key-row">
+                      @for (key of keyRow; track key) {
+                        <button
+                          class="word-game-key"
+                          [class.wide]="key === 'ENTER' || key === 'BACKSPACE'"
+                          [attr.data-status]="wordGameKeyboardStatuses()[key] ?? 'empty'"
+                          type="button"
+                          (click)="pressWordGameKey(key)"
+                        >
+                          @if (key === 'ENTER') {
+                            <tui-icon icon="@tui.corner-down-left" />
+                          } @else if (key === 'BACKSPACE') {
+                            <tui-icon icon="@tui.delete" />
+                          } @else {
+                            {{ key }}
+                          }
+                        </button>
+                      }
+                    </div>
+                  }
+                </section>
+              </section>
             }
           }
         </div>

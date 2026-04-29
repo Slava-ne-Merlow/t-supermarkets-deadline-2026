@@ -868,6 +868,80 @@
   block-size: 16px;
 }
 
+.city-word-game-card {
+  min-height: 92px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border: 0;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 92% 20%, rgb(255 232 91 / 24%), transparent 28%),
+    #1c1d20;
+  color: #f7f7f8;
+  text-align: left;
+  font: inherit;
+}
+
+.city-word-game-logo,
+.word-game-logo {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 3px;
+  justify-content: start;
+}
+
+.city-word-game-logo i,
+.word-game-logo i {
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: #ffe24c;
+  color: #27282d;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.city-word-game-logo i {
+  width: 27px;
+  height: 27px;
+  font-size: 18px;
+}
+
+.city-word-game-card > span:nth-child(2) {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.city-word-game-card strong {
+  overflow: hidden;
+  font-size: clamp(18px, 4.8vw, 24px);
+  font-weight: 850;
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.city-word-game-card em {
+  overflow: hidden;
+  color: #b7bac2;
+  font-size: clamp(13px, 3.5vw, 16px);
+  font-style: normal;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.city-word-game-card > tui-icon {
+  color: #ffe24c;
+  inline-size: 28px;
+  block-size: 28px;
+}
+
 .city-categories {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1754,6 +1828,155 @@
 
 .cashback-choice-save:disabled {
   opacity: 0.42;
+}
+
+.word-game-sheet {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: clamp(12px, 3.8vw, 24px);
+  padding-top: 4px;
+}
+
+.word-game-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.word-game-logo i {
+  width: clamp(42px, 11vw, 54px);
+  height: clamp(42px, 11vw, 54px);
+  border-radius: 9px;
+  font-size: clamp(25px, 7.2vw, 34px);
+}
+
+.word-game-reset {
+  width: 44px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: #2a2c31;
+  color: #f7f7f8;
+}
+
+.word-game-reset tui-icon {
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.word-game-board {
+  min-height: 0;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  gap: clamp(8px, 2.4vw, 12px);
+  padding: 4px 0;
+}
+
+.word-game-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(8px, 2.2vw, 14px);
+  width: min(100%, 390px);
+}
+
+.word-game-cell {
+  width: clamp(48px, 15vw, 66px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid #ffe24c;
+  border-radius: 10px;
+  color: #f7f7f8;
+  background: #1c1d20;
+  font-size: clamp(24px, 7.2vw, 34px);
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.word-game-cell[data-status='correct'] {
+  border-color: #36b37e;
+  background: #23865e;
+}
+
+.word-game-cell[data-status='present'] {
+  border-color: #e4b443;
+  background: #9a7626;
+}
+
+.word-game-cell[data-status='absent'] {
+  border-color: #45484f;
+  background: #34353a;
+  color: #aeb2bb;
+}
+
+.word-game-message {
+  min-height: 22px;
+  margin: 0;
+  color: #c9ccd3;
+  font-size: 15px;
+  font-weight: 750;
+  text-align: center;
+}
+
+.word-game-keyboard {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+.word-game-key-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 5px;
+}
+
+.word-game-key {
+  min-width: 0;
+  height: clamp(44px, 10.8vw, 58px);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #555961;
+  border-radius: 10px;
+  background: #202124;
+  color: #f7f7f8;
+  font: inherit;
+  font-size: clamp(18px, 5vw, 26px);
+  font-weight: 850;
+  line-height: 1;
+}
+
+.word-game-key.wide {
+  grid-column: span 2;
+  background: #424347;
+}
+
+.word-game-key tui-icon {
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.word-game-key[data-status='correct'] {
+  border-color: #23865e;
+  background: #23865e;
+}
+
+.word-game-key[data-status='present'] {
+  border-color: #9a7626;
+  background: #9a7626;
+}
+
+.word-game-key[data-status='absent'] {
+  border-color: #34353a;
+  background: #34353a;
+  color: #8d9098;
 }
 
 .operations-list {

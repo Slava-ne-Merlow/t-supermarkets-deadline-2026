@@ -58,8 +58,16 @@ type HomeSheet =
   | 'regularPaymentAdd'
   | 'orders'
   | 'cityCategory'
+  | 'wordGame'
   | 'supermarkets'
   | 'supermarketCart';
+
+type WordGameCellStatus = 'empty' | 'absent' | 'present' | 'correct';
+
+type WordGameRow = {
+  letters: readonly string[];
+  statuses: readonly WordGameCellStatus[];
+};
 
 type CitySlide = {
   title: string;
@@ -599,11 +607,22 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   surveyAllergies = signal<readonly string[]>(['none']);
   selectedCashbackOfferIds = signal<readonly string[]>([]);
   draftCashbackOfferIds = signal<readonly string[]>([]);
+  wordGameTargetIndex = 0;
+  wordGameCurrent = signal('');
+  wordGameMessage = 'Угадайте слово из 5 букв';
+  wordGameFinished = false;
+  wordGameGuesses = signal<readonly string[]>([]);
   private regularPaymentId = 1;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
   readonly phoneTransferDeepLinkBase = 'bank100000000004://Main/PayByMobileNumber';
+  readonly wordGameWords = ['ГОРОД', 'БИЛЕТ', 'МЕТРО', 'ТОВАР', 'КНИГА', 'СЫРОК', 'ЛЕНТА', 'ПЯТНО'];
+  readonly wordGameKeyboard = [
+    ['Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ'],
+    ['Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э'],
+    ['ENTER', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю', 'BACKSPACE']
+  ];
   readonly surveySteps = ['Семья', 'Занятость', 'Питание', 'Аллергии'];
   readonly familyOptions: readonly SurveyOption[] = [
     { value: 'solo', label: 'Живу один', description: 'Покупки только для себя', icon: '@tui.user' },
@@ -866,6 +885,42 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return rank(a) - rank(b) || a.total - b.total;
       });
   });
+  readonly wordGameRows = computed<readonly WordGameRow[]>(() => {
+    const guesses = this.wordGameGuesses();
+
+    return Array.from({ length: 6 }, (_, index) => {
+      const guess = guesses[index];
+      const word = guess ?? (index === guesses.length ? this.wordGameCurrent() : '');
+      const statuses = guess ? this.wordGameGuessStatuses(guess) : Array<WordGameCellStatus>(5).fill('empty');
+
+      return {
+        letters: Array.from({ length: 5 }, (__, letterIndex) => word[letterIndex] ?? ''),
+        statuses
+      };
+    });
+  });
+  readonly wordGameKeyboardStatuses = computed<Partial<Record<string, WordGameCellStatus>>>(() => {
+    const rank: Record<WordGameCellStatus, number> = {
+      empty: 0,
+      absent: 1,
+      present: 2,
+      correct: 3
+    };
+
+    return this.wordGameGuesses().reduce<Partial<Record<string, WordGameCellStatus>>>((result, guess) => {
+      this.wordGameGuessStatuses(guess).forEach((status, index) => {
+        const letter = guess[index];
+
+        if (!letter || rank[status] <= rank[result[letter] ?? 'empty']) {
+          return;
+        }
+
+        result[letter] = status;
+      });
+
+      return result;
+    }, {});
+  });
 
   get displayName(): string {
     return [this.user?.first_name, this.user?.last_name].filter(Boolean).join(' ') || 'Гость';
@@ -954,6 +1009,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       this.activeHomeSheet === 'operations' ||
       this.activeHomeSheet === 'cashback' ||
       this.activeHomeSheet === 'cashbackBalance' ||
+      this.activeHomeSheet === 'wordGame' ||
       this.activeHomeSheet === 'supermarkets' ||
       this.activeHomeSheet === 'supermarketCart'
     );
@@ -993,6 +1049,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return allergies.map(value => this.optionLabel(this.allergyOptions, value)).join(', ');
   }
 
+  get wordGameTarget(): string {
+    return this.wordGameWords[this.wordGameTargetIndex] ?? this.wordGameWords[0];
+  }
+
   get draftCashbackSelectionCount(): number {
     return this.draftCashbackOfferIds().length;
   }
@@ -1019,6 +1079,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         return 'Заказы';
       case 'cityCategory':
         return this.activeCityCategory?.title ?? 'Город';
+      case 'wordGame':
+        return '';
       case 'supermarkets':
         return 'Супермаркеты';
       case 'supermarketCart':
@@ -1621,6 +1683,121 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     this.selectedCashbackOfferIds.set([...this.draftCashbackOfferIds()]);
     this.closeHomeSheet();
+  }
+
+  wordGameCellClass(status: WordGameCellStatus): string {
+    return `word-game-cell-${status}`;
+  }
+
+  wordGameKeyClass(key: string): string {
+    const status = this.wordGameKeyboardStatuses()[key];
+
+    return status ? `word-game-key-${status}` : '';
+  }
+
+  pressWordGameKey(key: string): void {
+    if (key === 'ENTER') {
+      this.submitWordGameGuess();
+      return;
+    }
+
+    if (key === 'BACKSPACE') {
+      this.deleteWordGameLetter();
+      return;
+    }
+
+    this.addWordGameLetter(key);
+  }
+
+  addWordGameLetter(letter: string): void {
+    if (this.wordGameFinished || this.wordGameCurrent().length >= 5) {
+      return;
+    }
+
+    this.wordGameCurrent.update(current => `${current}${letter}`);
+    this.wordGameMessage = 'Угадайте слово из 5 букв';
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  deleteWordGameLetter(): void {
+    if (this.wordGameFinished || this.wordGameCurrent().length === 0) {
+      return;
+    }
+
+    this.wordGameCurrent.update(current => current.slice(0, -1));
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  submitWordGameGuess(): void {
+    if (this.wordGameFinished) {
+      return;
+    }
+
+    if (this.wordGameCurrent().length !== 5) {
+      this.wordGameMessage = 'Нужно ровно 5 букв';
+      this.webApp?.HapticFeedback?.impactOccurred('medium');
+      return;
+    }
+
+    const guess = this.wordGameCurrent();
+    this.wordGameGuesses.update(guesses => [...guesses, guess]);
+    this.wordGameCurrent.set('');
+
+    if (guess === this.wordGameTarget) {
+      this.wordGameFinished = true;
+      this.wordGameMessage = 'Есть! Слово угадано';
+      this.webApp?.HapticFeedback?.impactOccurred('heavy');
+      return;
+    }
+
+    if (this.wordGameGuesses().length >= 6) {
+      this.wordGameFinished = true;
+      this.wordGameMessage = `Не угадали: ${this.wordGameTarget}`;
+      this.webApp?.HapticFeedback?.impactOccurred('medium');
+      return;
+    }
+
+    this.wordGameMessage = 'Пробуйте дальше';
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  resetWordGame(): void {
+    this.wordGameTargetIndex = (this.wordGameTargetIndex + 1) % this.wordGameWords.length;
+    this.wordGameCurrent.set('');
+    this.wordGameFinished = false;
+    this.wordGameMessage = 'Угадайте слово из 5 букв';
+    this.wordGameGuesses.set([]);
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  private wordGameGuessStatuses(guess: string): readonly WordGameCellStatus[] {
+    const target = this.wordGameTarget;
+    const statuses = Array<WordGameCellStatus>(5).fill('absent');
+    const targetCounts = new Map<string, number>();
+
+    [...target].forEach((letter, index) => {
+      if (guess[index] === letter) {
+        statuses[index] = 'correct';
+        return;
+      }
+
+      targetCounts.set(letter, (targetCounts.get(letter) ?? 0) + 1);
+    });
+
+    [...guess].forEach((letter, index) => {
+      if (statuses[index] === 'correct') {
+        return;
+      }
+
+      const count = targetCounts.get(letter) ?? 0;
+
+      if (count > 0) {
+        statuses[index] = 'present';
+        targetCounts.set(letter, count - 1);
+      }
+    });
+
+    return statuses;
   }
 
   closeHomeSheet(immediate = false): void {
