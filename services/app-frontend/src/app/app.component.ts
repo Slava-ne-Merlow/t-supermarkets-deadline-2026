@@ -166,6 +166,14 @@ type SurveyOption = {
   icon?: string;
 };
 
+type CashbackOffer = {
+  id: string;
+  title: string;
+  hint: string;
+  icon: string;
+  tone: string;
+};
+
 declare global {
   interface Window {
     Telegram?: {
@@ -589,6 +597,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   surveyActivity = 'work';
   surveyDiet = 'none';
   surveyAllergies = signal<readonly string[]>(['none']);
+  selectedCashbackOfferIds = signal<readonly string[]>([]);
+  draftCashbackOfferIds = signal<readonly string[]>([]);
   private regularPaymentId = 1;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
@@ -621,6 +631,50 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     { value: 'milk', label: 'Молоко', icon: '@tui.milk' },
     { value: 'eggs', label: 'Яйца', icon: '@tui.egg' },
     { value: 'honey', label: 'Мёд', icon: '@tui.hexagon' }
+  ];
+  readonly cashbackOffers: readonly CashbackOffer[] = [
+    {
+      id: 'lefties',
+      title: '3% товары для левшей',
+      hint: 'Кэшбэк за покупки товаров, которые удобнее держать левой рукой.',
+      icon: '@tui.hand',
+      tone: '#7a5cff'
+    },
+    {
+      id: 'palm-depilation',
+      title: '7% на депиляцию ладошек',
+      hint: 'Редкая категория ухода, зато с самым заметным процентом.',
+      icon: '@tui.sparkles',
+      tone: '#ff8a1f'
+    },
+    {
+      id: 'birch-bark',
+      title: '2% на товары из бересты',
+      hint: 'Для коробов, сувениров и других полезных вещей из бересты.',
+      icon: '@tui.package',
+      tone: '#a56b39'
+    },
+    {
+      id: 'feathers',
+      title: '5% на все перья',
+      hint: 'Подойдет для декора, творчества и внезапных перьевых покупок.',
+      icon: '@tui.feather',
+      tone: '#ffcc3d'
+    },
+    {
+      id: 'sanatorium',
+      title: '3% на туберкулёзный санаторий',
+      hint: 'Категория для профильного санаторного лечения и отдыха.',
+      icon: '@tui.hospital',
+      tone: '#e64b59'
+    },
+    {
+      id: 'snake-manicure',
+      title: '5% на маникюр для змей',
+      hint: 'Для аккуратных коготков, даже если коготков не предусмотрено.',
+      icon: '@tui.scissors',
+      tone: '#36b37e'
+    }
   ];
   readonly curatedBaskets: readonly CuratedBasket[] = [
     {
@@ -939,6 +993,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     return allergies.map(value => this.optionLabel(this.allergyOptions, value)).join(', ');
   }
 
+  get draftCashbackSelectionCount(): number {
+    return this.draftCashbackOfferIds().length;
+  }
+
+  get canSaveCashbackOffers(): boolean {
+    return this.draftCashbackSelectionCount === 4;
+  }
+
   get homeSheetTitle(): string {
     switch (this.activeHomeSheet) {
       case 'operations':
@@ -1218,6 +1280,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearHomeSheetCloseTimer();
     this.homeSheetClosing = false;
     this.closeOperationDetail(true);
+
+    if (sheet === 'cashback') {
+      this.draftCashbackOfferIds.set([...this.selectedCashbackOfferIds()]);
+    }
+
     this.activeHomeSheet = sheet;
     this.webApp?.HapticFeedback?.impactOccurred('light');
   }
@@ -1518,6 +1585,42 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   operationCashbackTotal(operation: Operation): number {
     return (operation.cashback ?? 0) + (operation.extraCashback ?? 0);
+  }
+
+  isCashbackOfferSelected(id: string): boolean {
+    return this.draftCashbackOfferIds().includes(id);
+  }
+
+  isCashbackOfferDisabled(id: string): boolean {
+    return this.draftCashbackSelectionCount >= 4 && !this.isCashbackOfferSelected(id);
+  }
+
+  toggleCashbackOffer(id: string): void {
+    const selected = this.draftCashbackOfferIds();
+
+    if (selected.includes(id)) {
+      this.draftCashbackOfferIds.set(selected.filter(item => item !== id));
+      this.webApp?.HapticFeedback?.impactOccurred('light');
+      return;
+    }
+
+    if (selected.length >= 4) {
+      this.webApp?.HapticFeedback?.impactOccurred('medium');
+      return;
+    }
+
+    this.draftCashbackOfferIds.set([...selected, id]);
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  saveCashbackOffers(): void {
+    if (!this.canSaveCashbackOffers) {
+      this.webApp?.HapticFeedback?.impactOccurred('medium');
+      return;
+    }
+
+    this.selectedCashbackOfferIds.set([...this.draftCashbackOfferIds()]);
+    this.closeHomeSheet();
   }
 
   closeHomeSheet(immediate = false): void {

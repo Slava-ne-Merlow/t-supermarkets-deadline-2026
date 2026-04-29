@@ -602,10 +602,59 @@
               </section>
             }
             @case ('cashback') {
-              <div class="sheet-placeholder">
-                <tui-icon icon="@tui.star" />
-                <span>Здесь позже появятся кэшбэк, бонусы и партнерские предложения.</span>
-              </div>
+              <section class="cashback-choice-sheet">
+                <header class="cashback-choice-head">
+                  <h2>Какие 4 категории выбираете на май?</h2>
+                  <span>{{ draftCashbackSelectionCount }}/4 выбрано</span>
+                </header>
+
+                <div class="cashback-choice-list">
+                  @for (offer of cashbackOffers; track offer.id) {
+                    <article
+                      class="cashback-choice-row"
+                      [class.selected]="isCashbackOfferSelected(offer.id)"
+                      [class.disabled]="isCashbackOfferDisabled(offer.id)"
+                    >
+                      <span class="cashback-choice-icon" [style.background]="offer.tone">
+                        <tui-icon [icon]="offer.icon" />
+                      </span>
+                      <button
+                        class="cashback-choice-main"
+                        type="button"
+                        [disabled]="isCashbackOfferDisabled(offer.id)"
+                        (click)="toggleCashbackOffer(offer.id)"
+                      >
+                        {{ offer.title }}
+                      </button>
+                      <button
+                        class="cashback-choice-hint"
+                        type="button"
+                        [tuiHint]="offer.hint"
+                        tuiHintDescribe
+                        tuiHintDirection="start"
+                        (click)="$event.stopPropagation()"
+                      >
+                        ?
+                      </button>
+                      <button
+                        class="cashback-choice-check"
+                        type="button"
+                        [disabled]="isCashbackOfferDisabled(offer.id)"
+                        [attr.aria-label]="isCashbackOfferSelected(offer.id) ? 'Убрать категорию' : 'Выбрать категорию'"
+                        (click)="toggleCashbackOffer(offer.id)"
+                      >
+                        @if (isCashbackOfferSelected(offer.id)) {
+                          <tui-icon icon="@tui.check" />
+                        }
+                      </button>
+                    </article>
+                  }
+                </div>
+
+                <button class="cashback-choice-save" type="button" [disabled]="!canSaveCashbackOffers" (click)="saveCashbackOffers()">
+                  Готово
+                </button>
+              </section>
             }
             @case ('cashbackBalance') {
               <section class="cashback-balance-sheet">

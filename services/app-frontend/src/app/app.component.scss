@@ -1624,6 +1624,138 @@
   min-height: 0;
 }
 
+.cashback-choice-sheet {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 18px;
+}
+
+.cashback-choice-head {
+  display: grid;
+  gap: 8px;
+}
+
+.cashback-choice-head h2 {
+  max-width: 430px;
+  margin: 0;
+  color: #f7f7f8;
+  font-size: clamp(28px, 8.2vw, 42px);
+  font-weight: 850;
+  line-height: 1.15;
+}
+
+.cashback-choice-head span {
+  color: #9da0a8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cashback-choice-list {
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  overflow-y: auto;
+  padding: 2px 0;
+  scrollbar-width: none;
+}
+
+.cashback-choice-list::-webkit-scrollbar {
+  display: none;
+}
+
+.cashback-choice-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 64px;
+}
+
+.cashback-choice-icon,
+.cashback-choice-hint,
+.cashback-choice-check {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+}
+
+.cashback-choice-icon {
+  width: 48px;
+  color: #fff;
+}
+
+.cashback-choice-icon tui-icon {
+  inline-size: 27px;
+  block-size: 27px;
+}
+
+.cashback-choice-main {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f7f7f8;
+  font: inherit;
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 500;
+  line-height: 1.22;
+  text-align: left;
+}
+
+.cashback-choice-hint {
+  width: 34px;
+  background: #2a2c31;
+  color: #9da0a8;
+  font-size: 19px;
+  font-weight: 850;
+}
+
+.cashback-choice-check {
+  width: 38px;
+  background: transparent;
+  color: #1c1d20;
+  box-shadow: inset 0 0 0 2px #555961;
+}
+
+.cashback-choice-check tui-icon {
+  inline-size: 23px;
+  block-size: 23px;
+}
+
+.cashback-choice-row.selected .cashback-choice-check {
+  background: #6ea0ff;
+  color: #fff;
+  box-shadow: none;
+}
+
+.cashback-choice-row.disabled {
+  opacity: 0.38;
+}
+
+.cashback-choice-row.disabled .cashback-choice-main,
+.cashback-choice-row.disabled .cashback-choice-check {
+  cursor: not-allowed;
+}
+
+.cashback-choice-save {
+  min-height: 62px;
+  border: 0;
+  border-radius: 20px;
+  background: #ffe35b;
+  color: #303136;
+  font: inherit;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.cashback-choice-save:disabled {
+  opacity: 0.42;
+}
+
 .operations-list {
   min-height: 0;
   overflow-y: auto;
