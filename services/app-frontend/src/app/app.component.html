@@ -516,6 +516,7 @@
           class="bottom-sheet"
           [class.large]="isLargeHomeSheet"
           [class.compact]="!isLargeHomeSheet"
+          [class.survey]="activeHomeSheet === 'survey'"
           [class.closing]="homeSheetClosing"
           (click)="$event.stopPropagation()"
         >
@@ -617,10 +618,113 @@
               </section>
             }
             @case ('survey') {
-              <div class="sheet-placeholder">
-                <tui-icon icon="@tui.circle-check" />
-                <span>Здесь позже появится короткий опрос про предпочтения.</span>
-              </div>
+              <section class="onboarding-survey">
+                @if (surveyCompleted) {
+                  <div class="survey-done-card">
+                    <span><tui-icon icon="@tui.circle-check" /></span>
+                    <strong>Профиль собран</strong>
+                    <em>Будем точнее подбирать корзины, категории и предложения.</em>
+                  </div>
+
+                  <section class="survey-summary">
+                    <span><strong>Семья</strong><em>{{ selectedFamilyLabel }} · {{ surveyFamilySize }} чел.</em></span>
+                    <span><strong>Занятость</strong><em>{{ selectedActivityLabel }}</em></span>
+                    <span><strong>Питание</strong><em>{{ selectedDietLabel }}</em></span>
+                    <span><strong>Аллергии</strong><em>{{ selectedAllergiesLabel }}</em></span>
+                  </section>
+
+                  <button class="survey-secondary-button" type="button" (click)="restartSurvey()">Изменить ответы</button>
+                } @else {
+                  <div class="survey-progress">
+                    <span [style.width.%]="surveyProgress"></span>
+                  </div>
+
+                  <header class="survey-head">
+                    <em>{{ surveyStepIndex + 1 }} из {{ surveySteps.length }}</em>
+                    @switch (surveyStepIndex) {
+                      @case (0) {
+                        <h2>Для кого собираем покупки?</h2>
+                        <p>Это поможет подобрать размер корзины и частоту доставок.</p>
+                      }
+                      @case (1) {
+                        <h2>Чем сейчас заняты?</h2>
+                        <p>Подстроим предложения под ритм дня.</p>
+                      }
+                      @case (2) {
+                        <h2>Есть особенности питания?</h2>
+                        <p>Будем учитывать это в супермаркетах.</p>
+                      }
+                      @case (3) {
+                        <h2>Какие аллергии учитывать?</h2>
+                        <p>Можно выбрать несколько вариантов.</p>
+                      }
+                    }
+                  </header>
+
+                  @switch (surveyStepIndex) {
+                    @case (0) {
+                      <div class="survey-options">
+                        @for (option of familyOptions; track option.value) {
+                          <button type="button" [class.selected]="surveyFamily === option.value" (click)="selectSurveyFamily(option.value)">
+                            <tui-icon [icon]="option.icon ?? '@tui.circle'" />
+                            <span><strong>{{ option.label }}</strong><em>{{ option.description }}</em></span>
+                          </button>
+                        }
+                      </div>
+
+                      @if (surveyFamily === 'family') {
+                        <div class="survey-family-size">
+                          <span><strong>Сколько человек?</strong><em>Включая вас</em></span>
+                          <span>
+                            <button type="button" (click)="setSurveyFamilySize(-1)">−</button>
+                            <strong>{{ surveyFamilySize }}</strong>
+                            <button type="button" (click)="setSurveyFamilySize(1)">+</button>
+                          </span>
+                        </div>
+                      }
+                    }
+                    @case (1) {
+                      <div class="survey-options">
+                        @for (option of activityOptions; track option.value) {
+                          <button type="button" [class.selected]="surveyActivity === option.value" (click)="surveyActivity = option.value">
+                            <tui-icon [icon]="option.icon ?? '@tui.circle'" />
+                            <span><strong>{{ option.label }}</strong><em>{{ option.description }}</em></span>
+                          </button>
+                        }
+                      </div>
+                    }
+                    @case (2) {
+                      <div class="survey-chips">
+                        @for (option of dietOptions; track option.value) {
+                          <button type="button" [class.selected]="surveyDiet === option.value" (click)="surveyDiet = option.value">
+                            <tui-icon [icon]="option.icon ?? '@tui.circle'" />
+                            <span>{{ option.label }}</span>
+                          </button>
+                        }
+                      </div>
+                    }
+                    @case (3) {
+                      <div class="survey-chips">
+                        @for (option of allergyOptions; track option.value) {
+                          <button
+                            type="button"
+                            [class.selected]="surveyAllergies().includes(option.value)"
+                            (click)="toggleSurveyAllergy(option.value)"
+                          >
+                            <tui-icon [icon]="option.icon ?? '@tui.circle'" />
+                            <span>{{ option.label }}</span>
+                          </button>
+                        }
+                      </div>
+                    }
+                  }
+
+                  <footer class="survey-actions">
+                    <button type="button" [disabled]="surveyStepIndex === 0" (click)="previousSurveyStep()">Назад</button>
+                    <button type="button" (click)="nextSurveyStep()">{{ surveyPrimaryText }}</button>
+                  </footer>
+                }
+              </section>
             }
             @case ('topup') {
               <div class="topup-grid">

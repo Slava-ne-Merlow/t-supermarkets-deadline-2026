@@ -149,6 +149,13 @@ type RegularPayment = {
   itemsCount: number;
 };
 
+type SurveyOption = {
+  value: string;
+  label: string;
+  description?: string;
+  icon?: string;
+};
+
 declare global {
   interface Window {
     Telegram?: {
@@ -565,11 +572,46 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   regularPayments = signal<readonly RegularPayment[]>([]);
   paymentPhoneNumber = '';
   regularPaymentSetupActive = false;
+  surveyStepIndex = 0;
+  surveyCompleted = false;
+  surveyFamily = 'solo';
+  surveyFamilySize = 2;
+  surveyActivity = 'work';
+  surveyDiet = 'none';
+  surveyAllergies = signal<readonly string[]>(['none']);
   private regularPaymentId = 1;
 
   readonly topUpAmounts = [100, 200, 500, 1000, 2000];
   readonly transferDeepLink = 'bank100000000004://Main/PayByMobileNumber?numberPhone=+79269061483&amount=100';
   readonly phoneTransferDeepLinkBase = 'bank100000000004://Main/PayByMobileNumber';
+  readonly surveySteps = ['Семья', 'Занятость', 'Питание', 'Аллергии'];
+  readonly familyOptions: readonly SurveyOption[] = [
+    { value: 'solo', label: 'Живу один', description: 'Покупки только для себя', icon: '@tui.user' },
+    { value: 'couple', label: 'Вдвоём', description: 'Планируем корзину на двоих', icon: '@tui.heart' },
+    { value: 'family', label: 'Семья', description: 'Несколько человек дома', icon: '@tui.users' },
+    { value: 'parents', label: 'С родителями', description: 'Покупки на общий дом', icon: '@tui.home' }
+  ];
+  readonly activityOptions: readonly SurveyOption[] = [
+    { value: 'study', label: 'Учусь', description: 'Нужны быстрые и недорогие варианты', icon: '@tui.graduation-cap' },
+    { value: 'work', label: 'Работаю', description: 'Ценим доставку в удобное время', icon: '@tui.briefcase-business' },
+    { value: 'both', label: 'Учусь и работаю', description: 'Покажем самые практичные предложения', icon: '@tui.clock' },
+    { value: 'none', label: 'Пока без работы', description: 'Соберём экономные корзины', icon: '@tui.badge-help' }
+  ];
+  readonly dietOptions: readonly SurveyOption[] = [
+    { value: 'none', label: 'Без диеты', icon: '@tui.utensils' },
+    { value: 'keto', label: 'Кето', icon: '@tui.dumbbell' },
+    { value: 'gluten_free', label: 'Без глютена', icon: '@tui.wheat-off' },
+    { value: 'lactose_free', label: 'Без лактозы', icon: '@tui.milk-off' },
+    { value: 'vegan', label: 'Веган', icon: '@tui.leaf' }
+  ];
+  readonly allergyOptions: readonly SurveyOption[] = [
+    { value: 'none', label: 'Нет аллергий', icon: '@tui.circle-check' },
+    { value: 'nuts', label: 'Орехи', icon: '@tui.nut' },
+    { value: 'fish', label: 'Рыба и морепродукты', icon: '@tui.fish' },
+    { value: 'milk', label: 'Молоко', icon: '@tui.milk' },
+    { value: 'eggs', label: 'Яйца', icon: '@tui.egg' },
+    { value: 'honey', label: 'Мёд', icon: '@tui.hexagon' }
+  ];
   readonly suggestedBasketIds = ['milk-32-1l', 'sliced-baton', 'eggs-c1-10', 'potato-1kg', 'chicken-fillet'];
   readonly deliveryByStore: Record<string, { etaMinutes: number; deliveryFee: number }> = {
     vkusvill: { etaMinutes: 35, deliveryFee: 149 },
@@ -825,6 +867,36 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   get hasHomeSheetAppBar(): boolean {
     return this.activeHomeSheet !== 'regularPaymentAdd';
+  }
+
+  get surveyProgress(): number {
+    return ((this.surveyStepIndex + 1) / this.surveySteps.length) * 100;
+  }
+
+  get surveyPrimaryText(): string {
+    return this.surveyStepIndex === this.surveySteps.length - 1 ? 'Готово' : 'Дальше';
+  }
+
+  get selectedFamilyLabel(): string {
+    return this.optionLabel(this.familyOptions, this.surveyFamily);
+  }
+
+  get selectedActivityLabel(): string {
+    return this.optionLabel(this.activityOptions, this.surveyActivity);
+  }
+
+  get selectedDietLabel(): string {
+    return this.optionLabel(this.dietOptions, this.surveyDiet);
+  }
+
+  get selectedAllergiesLabel(): string {
+    const allergies = this.surveyAllergies();
+
+    if (allergies.includes('none')) {
+      return 'Нет аллергий';
+    }
+
+    return allergies.map(value => this.optionLabel(this.allergyOptions, value)).join(', ');
   }
 
   get homeSheetTitle(): string {
@@ -1431,6 +1503,64 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     link.remove();
   }
 
+  selectSurveyFamily(value: string): void {
+    this.surveyFamily = value;
+
+    if (value !== 'family') {
+      this.surveyFamilySize = value === 'solo' ? 1 : 2;
+    } else {
+      this.surveyFamilySize = Math.max(2, this.surveyFamilySize);
+    }
+
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  setSurveyFamilySize(delta: number): void {
+    this.surveyFamilySize = Math.max(2, Math.min(9, this.surveyFamilySize + delta));
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  toggleSurveyAllergy(value: string): void {
+    this.surveyAllergies.update(current => {
+      if (value === 'none') {
+        return ['none'];
+      }
+
+      const withoutNone = current.filter(item => item !== 'none');
+
+      if (withoutNone.includes(value)) {
+        const next = withoutNone.filter(item => item !== value);
+
+        return next.length ? next : ['none'];
+      }
+
+      return [...withoutNone, value];
+    });
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  nextSurveyStep(): void {
+    if (this.surveyStepIndex >= this.surveySteps.length - 1) {
+      this.surveyCompleted = true;
+      this.webApp?.HapticFeedback?.impactOccurred('medium');
+      return;
+    }
+
+    this.surveyStepIndex += 1;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  previousSurveyStep(): void {
+    this.surveyStepIndex = Math.max(0, this.surveyStepIndex - 1);
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
+  restartSurvey(): void {
+    this.surveyCompleted = false;
+    this.surveyStepIndex = 0;
+    this.webApp?.HapticFeedback?.impactOccurred('light');
+  }
+
   openPaymentPhoneTransfer(): void {
     const phone = this.normalizedPaymentPhone;
 
@@ -1440,6 +1570,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     this.openDeepLink(`${this.phoneTransferDeepLinkBase}?numberPhone=${encodeURIComponent(`+${phone}`)}`);
+  }
+
+  private optionLabel(options: readonly SurveyOption[], value: string): string {
+    return options.find(option => option.value === value)?.label ?? value;
   }
 
   private clearHomeSheetCloseTimer(): void {
