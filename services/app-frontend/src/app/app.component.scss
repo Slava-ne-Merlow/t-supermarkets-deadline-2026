@@ -1834,7 +1834,7 @@
   min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto;
-  gap: clamp(12px, 3.8vw, 24px);
+  gap: clamp(8px, 1.8dvh, 20px);
   padding-top: 4px;
 }
 
@@ -1846,14 +1846,14 @@
 }
 
 .word-game-logo i {
-  width: clamp(42px, 11vw, 54px);
-  height: clamp(42px, 11vw, 54px);
+  width: clamp(34px, min(11vw, 6dvh), 54px);
+  height: clamp(34px, min(11vw, 6dvh), 54px);
   border-radius: 9px;
-  font-size: clamp(25px, 7.2vw, 34px);
+  font-size: clamp(21px, min(7.2vw, 4.1dvh), 34px);
 }
 
 .word-game-reset {
-  width: 44px;
+  width: clamp(38px, 5.7dvh, 44px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -1871,21 +1871,21 @@
 .word-game-board {
   min-height: 0;
   display: grid;
-  align-content: center;
+  align-content: start;
   justify-content: center;
-  gap: clamp(8px, 2.4vw, 12px);
-  padding: 4px 0;
+  gap: clamp(6px, 1.2dvh, 12px);
+  padding: 0;
 }
 
 .word-game-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(8px, 2.2vw, 14px);
+  gap: clamp(6px, min(2.2vw, 1.3dvh), 14px);
   width: min(100%, 390px);
 }
 
 .word-game-cell {
-  width: clamp(48px, 15vw, 66px);
+  width: clamp(38px, min(15vw, 7.5dvh), 66px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -1893,7 +1893,7 @@
   border-radius: 10px;
   color: #f7f7f8;
   background: #1c1d20;
-  font-size: clamp(24px, 7.2vw, 34px);
+  font-size: clamp(22px, min(7.2vw, 4.5dvh), 34px);
   font-weight: 900;
   line-height: 1;
   text-transform: uppercase;
@@ -1916,39 +1916,39 @@
 }
 
 .word-game-message {
-  min-height: 22px;
+  min-height: 18px;
   margin: 0;
   color: #c9ccd3;
-  font-size: 15px;
+  font-size: clamp(13px, 2dvh, 15px);
   font-weight: 750;
   text-align: center;
 }
 
 .word-game-keyboard {
   display: grid;
-  gap: 8px;
-  padding-bottom: 4px;
+  gap: clamp(5px, 1dvh, 8px);
+  padding-bottom: 0;
 }
 
 .word-game-key-row {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  gap: 5px;
+  gap: clamp(3px, 0.9vw, 5px);
 }
 
 .word-game-key {
   min-width: 0;
-  height: clamp(44px, 10.8vw, 58px);
+  height: clamp(38px, min(10.8vw, 6.5dvh), 58px);
   display: grid;
   place-items: center;
   padding: 0;
   border: 1px solid #555961;
-  border-radius: 10px;
+  border-radius: clamp(8px, 2vw, 10px);
   background: #202124;
   color: #f7f7f8;
   font: inherit;
-  font-size: clamp(18px, 5vw, 26px);
+  font-size: clamp(17px, min(5vw, 3.3dvh), 26px);
   font-weight: 850;
   line-height: 1;
 }
