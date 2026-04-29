@@ -1832,9 +1832,10 @@
 
 .word-game-sheet {
   min-height: 0;
+  height: 100%;
   display: grid;
-  grid-template-rows: auto auto auto auto;
-  align-content: start;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
   gap: clamp(6px, 1.1dvh, 16px);
   padding-top: 4px;
 }
@@ -1872,7 +1873,7 @@
 .word-game-board {
   min-height: 0;
   display: grid;
-  align-content: start;
+  align-content: center;
   justify-content: center;
   gap: clamp(5px, 0.7dvh, 12px);
   padding: 0;
